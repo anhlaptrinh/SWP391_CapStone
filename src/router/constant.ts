@@ -6,7 +6,7 @@ const ADMIN_DASHBOARD_PERMISSION: Permission = {
     parentId: '',
     label: 'Dashboard',
     name: 'Dashboard',
-    icon: 'ic-analysis',
+    icon: 'ri:dashboard-fill',
     type: PermissionType.MENU,
     route: 'dashboard',
     order: 1,

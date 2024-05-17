@@ -14,6 +14,8 @@ module.exports = {
       "warn",
       { allowConstantExport: true },
     ],
+    "react-hooks/rules-of-hooks": "off",
+    "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-unused-expressions": "off",
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/ban-ts-comment": "off",

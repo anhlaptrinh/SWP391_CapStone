@@ -55,7 +55,9 @@ export interface JwtDecode {
     'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': string;
     id: string;
     user_name: string;
+    name: string;
     avartar_url: string;
+    picture: string;
     email: string;
 }
 

@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { App } from 'antd';
+import { jwtDecode } from 'jwt-decode';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { create } from 'zustand';
@@ -10,7 +11,7 @@ import {
 } from '@/router/constant';
 import { getItem, removeItem, setItem } from '@/utils/storage';
 
-import { UserInfo, UserToken } from '#/entity';
+import { JwtDecode, UserInfo, UserToken } from '#/entity';
 import { StorageEnum } from '#/enum';
 
 const { VITE_APP_HOMEPAGE: HOMEPAGE } = import.meta.env;
@@ -54,7 +55,6 @@ export const useSignIn = () => {
   const navigatge = useNavigate();
   const { notification, message } = App.useApp();
   const { setUserToken, setUserInfo } = useUserActions();
-
   const signInMutation = useMutation(userService.signin);
 
   const signIn = async (data: SignInReq) => {
@@ -87,4 +87,39 @@ export const useSignIn = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(signIn, []);
+};
+export const useSignInGoogle = () => {
+  const navigatge = useNavigate();
+  const { notification, message } = App.useApp();
+  const { setUserToken, setUserInfo } = useUserActions();
+
+  const signInGoogle = async (accessToken: string) => {
+    try {
+      setUserToken({ accessToken, refreshToken:'' });
+      const decodetoken = jwtDecode<JwtDecode>(accessToken as string);
+      const user: UserInfo = {
+        email: decodetoken.email,
+        id: '',
+        avatar: decodetoken.picture,
+        username: decodetoken.name,
+        role: ''
+      };
+      user.permissions = ADMIN_PERMISSION;
+      setUserInfo(user);
+      navigatge(HOMEPAGE, { replace: true });
+      notification.success({
+        message: 'Login sucessfully',
+        description: `Welcome back: ${decodetoken.name}`,
+        duration: 3,
+      });
+    } catch (err) {
+      message.warning({
+        content: err.message,
+        duration: 3,
+      });
+    }
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useCallback(signInGoogle, []);
 };

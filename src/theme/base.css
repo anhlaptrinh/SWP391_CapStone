@@ -581,3 +581,12 @@ small.redtext {
   background: #1890ff;
   border-radius: 0.5rem;
 }
+:global .menu-24h-main{
+  display: none;
+}
+.menu-24h-main{
+  display: none;
+}
+::global .ant-modal-body{
+  display: none;
+}

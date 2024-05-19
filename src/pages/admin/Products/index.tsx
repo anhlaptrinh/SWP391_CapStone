@@ -88,9 +88,9 @@ const product = [
     </Space>
     </Row>
     <Layout style={layoutStyle} className='flex'>
-        <Layout>
-            <Content style={contentStyle} className="mr-2">
-                <div style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 64px)' }}>
+        <Layout  >
+            <Content style={contentStyle} >
+                <div className='h-[100%] pb-4 bg-gray-100 mr-2' style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 64px)' }}>
                     <Row gutter={[0, 0]} className="rowgap-vbox">
                         {data?.map((item: Jwellery, index: number) => (
                             <Col
@@ -98,9 +98,9 @@ const product = [
                                 xs={24}
                                 sm={24}
                                 md={12}
-                                lg={8}
-                                xl={8}
-                                className="mb-5"
+                                lg={6}
+                                xl={6}
+                                className="mb-4"
                             >
                                 <div>
                                     <Card

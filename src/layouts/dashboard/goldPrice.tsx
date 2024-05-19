@@ -40,6 +40,7 @@ export function GoldPriceTable({ onClose }: GoldPriceProps) {
   ];
   return (
     <Modal
+      title={`Gold price updated at: ${data?.DataList?.Data[0]["@d_1"]}`}
       open
       onCancel={() => onClose()}
       width={1300}

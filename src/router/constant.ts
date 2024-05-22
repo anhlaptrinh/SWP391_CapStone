@@ -21,7 +21,7 @@ const STAFF_PRODUCT_PERMISSION : Permission={
     type: PermissionType.MENU,
     route: 'product',
     order: 1,
-    component: '/admin/Products/index.tsx'
+    component: '/staff/Products/index.tsx'
 }
 
 export const ADMIN_PERMISSION = [

@@ -70,7 +70,7 @@ const ButtonWrapper = ({ showSpinner }:any) => {
 
 export const Paypal=()=> {
     return (
-        <div className="mt-9" style={{ maxWidth: "750px", minHeight: "200px" }}>
+        <div className="mt-6" style={{ maxWidth: "750px", minHeight: "200px" }}>
             <PayPalScriptProvider options={{ clientId: "test", components: "buttons", currency: "USD" }}>
                 <ButtonWrapper showSpinner={false} />
             </PayPalScriptProvider>

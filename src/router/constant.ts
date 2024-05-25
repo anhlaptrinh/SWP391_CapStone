@@ -57,8 +57,46 @@ const MANAGER_PERMISSION: Permission = {
     ],
 };
 
+const INVOICE_PERMISSION: Permission = {
+    id: '9100714781927704',
+    parentId: '',
+    label: 'Invoices',
+    name: 'Invoices',
+    icon: 'teenyicons:invoice-solid',
+    type: PermissionType.MENU,
+    route: 'invoices',
+    order: 2,
+    component: '/sys/invoice/index.tsx'
+}
+
+const GEM_PERMISSION: Permission = {
+    id: '9100714781927704',
+    parentId: '',
+    label: 'Gems',
+    name: 'Gems',
+    icon: 'fa6-solid:gem',
+    type: PermissionType.MENU,
+    route: 'gems',
+    order: 3,
+    component: '/sys/gem/index.tsx'
+}
+
+const MATERIAL_PERMISSION: Permission = {
+    id: '9100714781927704',
+    parentId: '',
+    label: 'Materials',
+    name: 'Materials',
+    icon: 'academicons:open-materials',
+    type: PermissionType.MENU,
+    route: 'materials',
+    order: 4,
+    component: '/sys/material/index.tsx'
+}
 export const ADMIN_PERMISSION = [
     ADMIN_DASHBOARD_PERMISSION,
     STAFF_PRODUCT_PERMISSION,
-    MANAGER_PERMISSION
+    MANAGER_PERMISSION,
+    INVOICE_PERMISSION,
+    GEM_PERMISSION,
+    MATERIAL_PERMISSION
 ];

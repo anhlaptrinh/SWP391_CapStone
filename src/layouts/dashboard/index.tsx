@@ -11,6 +11,7 @@ import Main from './main';
 import Nav from './nav';
 
 import { ThemeMode } from '#/enum';
+import Footer from './footer';
 
 function DashboardLayout() {
   const { colorTextBase } = useThemeToken();
@@ -38,6 +39,7 @@ function DashboardLayout() {
         <Nav />
       </div>
       <Main ref={mainEl} offsetTop={offsetTop} />
+      <Footer />
     </>
   );
 

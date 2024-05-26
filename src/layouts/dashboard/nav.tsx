@@ -160,7 +160,10 @@ export default function Nav(props: Props) {
           inlineCollapsed={collapsed}
         />
       </Scrollbar>
-      <div className="m-4">
+      <div
+        className="m-4"
+        style={{ position: "fixed", bottom: "0", width: `${collapsed ?"5%":"12%"}` }}
+      >
         <div
           className="after:opacity-65 after:bg-gradient-to-tl after:from-slate-600 after:to-slate-300 relative flex min-w-0 flex-col items-center break-words rounded-2xl border-0 border-solid border-blue-900 bg-white bg-clip-border shadow-none after:absolute after:top-0 after:bottom-0 after:left-0 after:z-10 after:block after:h-full after:w-full after:rounded-2xl after:content-['']"
           sidenav-card
@@ -189,7 +192,12 @@ export default function Nav(props: Props) {
                 <p className="mt-0 mb-4 text-xs font-semibold leading-tight">
                   Please check our docs
                 </p>
-                <Button type="primary" htmlType="submit" className="w-full" onClick={() => setShowGoldPrice(true)}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="w-full"
+                  onClick={() => setShowGoldPrice(true)}
+                >
                   SEE MORE
                 </Button>
               </div>

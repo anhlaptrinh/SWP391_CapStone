@@ -141,7 +141,7 @@ export default function ModalGem() {
   };
 
   return (
-    <Card>
+    <Card className="h-full">
       <Table
         rowKey="id"
         size="small"

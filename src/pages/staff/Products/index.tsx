@@ -122,14 +122,14 @@ export default function Products() {
                         md={12}
                         lg={6}
                         xl={6}
-                        className="mb-4"
+                        className="mb-4 pl-9 pt-6"
                       >
                         <div>
                           <Card
                             bordered={false}
                             className="criclebox"
-                            style={{ width: "200px" }}
-                            cover={<Image width={200} src={item.hinhAnh} />}
+                            style={{ width: "200px",backgroundColor:"pink" }}
+                            cover={<Image width={"100%"} src={item.hinhAnh} />}
                           >
                             <Meta
                               title={item.tensanPham}
@@ -247,11 +247,12 @@ export default function Products() {
                           width: "200px",
                           position: "relative",
                           cursor: "pointer",
+                          backgroundColor:"pink"
                         }}
                         onClick={() => handleCardClick(item.id)}
                         cover={
                           <Image
-                            width={200}
+                            width={"100%"}
                             src="https://trangsuc.doji.vn/Upload/product/nhan-cuoi/nhan-cuoi-0319195w1015va-0163.jpg"
                           />
                         }

@@ -36,6 +36,7 @@
     "postcss-nesting": "^11.3.0",
     "query-string": "^8.1.0",
     "ramda": "^0.29.1",
+    "rc-virtual-list": "^3.14.2",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
     "react-beautiful-dnd": "^13.1.1",

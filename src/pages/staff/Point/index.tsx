@@ -14,10 +14,50 @@ import { useState } from "react";
 
 import { InputType } from "#/api";
 
-export default function GemList() {
+export default function DiscountPoint() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
+
+  // Thêm dữ liệu cứng cho bảng
+  const data = [
+    {
+      id: 1,
+      name: "John Doe",
+      sdt: "123456789",
+      point: 100,
+      color: "40%",
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      sdt: "987654321",
+      point: 200,
+      color: "10%",
+    },
+    {
+      id: 3,
+      name: "Alice Johnson",
+      sdt: "555666777",
+      point: 150,
+      color: "20%",
+    },
+    {
+      id: 4,
+      name: "Bob Brown",
+      sdt: "111222333",
+      point: 180,
+      color: "30%",
+    },
+    {
+      id: 5,
+      name: "Emma Davis",
+      sdt: "999888777",
+      point: 250,
+      color: "50%",
+    },
+  ];
+
   const columns: ColumnsType<any> = [
     {
       title: "No",
@@ -30,13 +70,16 @@ export default function GemList() {
       dataIndex: "name",
     },
     {
-      title: "Origin",
-      dataIndex: "origin",
+      title: "Số Điện thoại",
+      dataIndex: "sdt",
     },
-    { title: "Cara weight", dataIndex: "caraWeight" },
-    { title: "Color", dataIndex: "color" },
-    { title: "Clarity", dataIndex: "clarity" },
-    { title: "Cut", dataIndex: "cut" },
+    {
+      title: "Point",
+      dataIndex: "point",
+    },
+    {
+      title: "Ưu Đãi",
+      dataIndex: "color", },
   ];
 
   const resetHandler = () => {
@@ -84,9 +127,7 @@ export default function GemList() {
           <Col span={2}>
             <Row>
               <Col span={12}>
-                <Button type="primary">
-                  New
-                </Button>
+                <Button type="primary">New</Button>
               </Col>
             </Row>
           </Col>
@@ -98,7 +139,7 @@ export default function GemList() {
         scroll={{ x: "max-content" }}
         pagination={false}
         columns={columns}
-        // dataSource={data?.contends}
+        dataSource={data} // Sử dụng dữ liệu cứng đã tạo
         // loading={isLoading}
       />
       <Pagination

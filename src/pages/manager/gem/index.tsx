@@ -110,7 +110,7 @@ export default function GemList() {
         scroll={{ x: "max-content" }}
         pagination={false}
         columns={columns}
-        // dataSource={data?.contends}
+        dataSource={[{ name:"diamond", origin:"fire", caraWeight:"100", color:"blue", clarity:"10", cut:"10" }]}
         // loading={isLoading}
       />
       <Pagination

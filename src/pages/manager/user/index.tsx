@@ -40,29 +40,29 @@ export default function ManagerUserList() {
       render: (_text, _data, index) => <Title level={5}>{++index}</Title>,
       width: "5%",
     },
+    // {
+    //   title: "Images",
+    //   dataIndex: "stationImages",
+    //   render: (_, record: any) => (
+    //     <Avatar.Group>
+    //       <Avatar
+    //         className="shape-avatar"
+    //         shape="square"
+    //         size={40}
+    //         src={record.stationImages[0].imageUrl}
+    //       />
+    //     </Avatar.Group>
+    //   ),
+    // },
     {
-      title: "Images",
-      dataIndex: "stationImages",
-      render: (_, record: any) => (
-        <Avatar.Group>
-          <Avatar
-            className="shape-avatar"
-            shape="square"
-            size={40}
-            src={record.stationImages[0].imageUrl}
-          />
-        </Avatar.Group>
-      ),
+      title: "Full Name",
+      dataIndex: "fullName",
     },
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Phone Number",
+      dataIndex: "phoneNumber",
     },
-    {
-      title: "Description",
-      dataIndex: "description",
-    },
-    { title: "ContactPhone", dataIndex: "contactPhone" },
+    { title: "Email", dataIndex: "email" },
     {
       title: "Address",
       dataIndex: "address",
@@ -79,6 +79,7 @@ export default function ManagerUserList() {
         </div>
       ),
     },
+    { title: "Status", dataIndex: "status" },
   ];
 
   const resetHandler = () => {
@@ -140,7 +141,7 @@ export default function ManagerUserList() {
         scroll={{ x: "max-content" }}
         pagination={false}
         columns={columns}
-        // dataSource={data?.contends}
+        dataSource={[{fullName: "pham huu phuc", phoneNumber: "09362136234", email: "phphuc@gmail.com", address: "fptu", status: "sussess"}]}
         // loading={isLoading}
       />
       <Pagination

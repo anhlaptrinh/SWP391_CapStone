@@ -42,6 +42,10 @@ export default function MaterialList() {
       dataIndex: "name",
     },
     {
+      title: "Weight",
+      dataIndex: "weight",
+    },
+    {
       title: "Buy price",
       dataIndex: "buyPrice",
     },
@@ -107,7 +111,14 @@ export default function MaterialList() {
         scroll={{ x: "max-content" }}
         pagination={false}
         columns={columns}
-        // dataSource={data?.contends}
+        dataSource={[
+          {
+            name: "Gold",
+            weight: "100g",
+            buyPrice: "10.000 VND",
+            sellPrice: "13.000 VND",
+          },
+        ]}
         // loading={isLoading}
       />
       <Pagination

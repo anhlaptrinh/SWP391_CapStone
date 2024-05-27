@@ -63,55 +63,56 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         // wrapperCol={{ span: 18 }}
         layout="vertical"
       >
-        <Form.Item
-          label="Name"
-          name="name"
-          required
-          rules={[{ required: true, message: "Please input name" }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          label="Cara Weight"
-          name="caraWeight"
-          required
-          rules={[{ required: true, message: "Please input Cara Weight" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Origin"
-          name="origin"
-          required
-          rules={[{ required: true, message: "Please input Origin" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Color"
-          name="color"
-          required
-          rules={[{ required: true, message: "Please input color" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Clarity"
-          name="clarity"
-          required
-          rules={[{ required: true, message: "Please input clarity" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Cut"
-          name="cut"
-          required
-          rules={[{ required: true, message: "Please input cut" }]}
-        >
-          <Input />
-        </Form.Item>
+        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <Form.Item
+            label="Name"
+            name="name"
+            required
+            rules={[{ required: true, message: "Please input name" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Cara Weight"
+            name="caraWeight"
+            required
+            rules={[{ required: true, message: "Please input Cara Weight" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Origin"
+            name="origin"
+            required
+            rules={[{ required: true, message: "Please input Origin" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Color"
+            name="color"
+            required
+            rules={[{ required: true, message: "Please input color" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Clarity"
+            name="clarity"
+            required
+            rules={[{ required: true, message: "Please input clarity" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Cut"
+            name="cut"
+            required
+            rules={[{ required: true, message: "Please input cut" }]}
+          >
+            <Input />
+          </Form.Item>
+        </div>
       </Form>
     </Modal>
   );

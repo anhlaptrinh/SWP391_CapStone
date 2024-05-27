@@ -4,6 +4,7 @@ import {
   Card,
   Col,
   Form,
+  Image,
   Input,
   Pagination,
   Row,
@@ -38,14 +39,26 @@ export default function ProductsList() {
       width: "5%",
     },
     {
+      title: "Images",
+      dataIndex: "avatarUrl",
+      render: (text) => (
+        <Image
+          style={{ width: 100, height: 100, objectFit: "cover" }}
+          src={text}
+        />
+      ),
+    },
+    {
       title: "Name",
       dataIndex: "name",
     },
     {
-      title: "Buy price",
-      dataIndex: "buyPrice",
+      title: "Category",
+      dataIndex: "category",
     },
-    { title: "Sell price", dataIndex: "sellPrice" },
+    { title: "Gender", dataIndex: "gender" },
+    { title: "material", dataIndex: "material" },
+    { title: "Gem", dataIndex: "gem" },
   ];
 
   const resetHandler = () => {
@@ -107,7 +120,17 @@ export default function ProductsList() {
         scroll={{ x: "max-content" }}
         pagination={false}
         columns={columns}
-        // dataSource={data?.contends}
+        dataSource={[
+          {
+            avatarUrl:
+              "https://locphatjewelry.vn/backend/web/uploads/images/NHAN%20DINH%20HON/N1_0115.jpg",
+            name: "ring gold 24k",
+            category: "ring",
+            gender: "Male",
+            material: "Gold - 24k",
+            gem: "diamond",
+          },
+        ]}
         // loading={isLoading}
       />
       <Pagination

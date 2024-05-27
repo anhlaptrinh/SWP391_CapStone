@@ -200,7 +200,7 @@ export default function MenuLevel() {
         </Col>
       </Row>
 
-      <Form form={form} layout="vertical">
+      {/* <Form form={form} layout="vertical">
         <Form.Item
           label="image"
           name={["image", "imageUrl"]}
@@ -226,7 +226,7 @@ export default function MenuLevel() {
         >
           Submit
         </Button>
-      </Form>
+      </Form> */}
     </div>
   );
 }

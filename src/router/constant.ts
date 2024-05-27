@@ -86,6 +86,16 @@ const MANAGER_PERMISSION: Permission = {
             icon: 'mdi:user',
         },
         {
+            id: '8426999229400975',
+            parentId: '9100714781927705',
+            label: 'Products',
+            name: 'products',
+            type: PermissionType.MENU,
+            route: 'products',
+            component: '/manager/products/index.tsx',
+            icon: 'ri:product-hunt-fill',
+        },
+        {
             id: '8426999229400972',
             parentId: '9100714781927705',
             label: 'Voucher',
@@ -94,6 +104,26 @@ const MANAGER_PERMISSION: Permission = {
             route: 'voucher',
             component: '/manager/voucher/index.tsx',
             icon: 'mdi:voucher',
+        },
+        {
+            id: '8426999229400973',
+            parentId: '9100714781927705',
+            label: 'Gems',
+            name: 'Gems',
+            icon: 'fa6-solid:gem',
+            type: PermissionType.MENU,
+            route: 'gems',
+            component: '/manager/gem/index.tsx'
+        },
+        {
+            id: '8426999229400974',
+            parentId: '9100714781927705',
+            label: 'Materials',
+            name: 'Materials',
+            icon: 'academicons:open-materials',
+            type: PermissionType.MENU,
+            route: 'materials',
+            component: '/manager/material/index.tsx'
         },
         
     ],

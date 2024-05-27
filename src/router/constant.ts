@@ -68,8 +68,8 @@ const STAFF_PRODUCT_PERMISSION : Permission={
 const MANAGER_PERMISSION: Permission = {
     id: '9100714781927705',
     parentId: '',
-    label: 'manager',
-    name: 'Manager',
+    label: 'Manager',
+    name: 'manager',
     icon: 'material-symbols:bookmark-manager-rounded',
     type: PermissionType.CATALOGUE,
     route: 'manager',
@@ -88,8 +88,8 @@ const MANAGER_PERMISSION: Permission = {
         {
             id: '8426999229400972',
             parentId: '9100714781927705',
-            label: 'voucher',
-            name: 'Voucher',
+            label: 'Voucher',
+            name: 'voucher',
             type: PermissionType.MENU,
             route: 'voucher',
             component: '/manager/voucher/index.tsx',

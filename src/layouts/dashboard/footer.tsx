@@ -44,7 +44,7 @@ export default function Footer({ className = "" }: Props) {
         <div
           className="text-gray flex flex-grow items-center justify-center px-4 backdrop-blur xl:px-6 2xl:px-10"
           style={{
-            height: OFFSET_HEADER_HEIGHT,
+            height: "45px",
             transition: "height 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
           }}
         >

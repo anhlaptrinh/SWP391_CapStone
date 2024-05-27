@@ -18,6 +18,7 @@ const Main = forwardRef<HTMLDivElement, Props>(({ offsetTop = false }, ref) => {
 
   const mainStyle: CSSProperties = {
     paddingTop: HEADER_HEIGHT + MULTI_TABS_HEIGHT,
+    marginBottom: "45px",
     transition: 'padding 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
     width: '100%',
     backgroundColor: '#fafafa',

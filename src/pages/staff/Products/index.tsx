@@ -190,7 +190,8 @@ export default function Products() {
                 size="large"
                 options={[
                   { value: "gold", label: "Gold" },
-                  { value: "diamond", label: "Diamond" },
+                  { value: "platinum", label: "Platinum" },
+                  { value: "silver", label: "Silver" },
                 ]}
                 onChange={()=>setShowTable(false)}
               />
@@ -201,6 +202,7 @@ export default function Products() {
                   { value: "beryl", label: "Beryl" },
                   { value: "topaz", label: "Topaz" },
                   { value: "tektite", label: "Tektite" },
+                  { value: "diamond", label: "Diamond" },
                 ]}
                 size="large"
                 onChange={handleSelectChange}

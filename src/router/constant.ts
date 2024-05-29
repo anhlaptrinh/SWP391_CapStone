@@ -61,6 +61,16 @@ const STAFF_PRODUCT_PERMISSION : Permission={
         route: 'order',
         order: 4,
         component: '/staff/order/index.tsx'
+    }, {
+        id: '8426999229400874',
+        parentId: '9100714781927704',
+        label: 'Checking',
+        name: 'Checking',
+        icon: 'ri-survey-fill',
+        type: PermissionType.MENU,
+        route: 'check',
+        order: 4,
+        component: '/staff/invoiceChecked/index.tsx'
     }
 ]
 }

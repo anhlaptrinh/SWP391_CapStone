@@ -103,7 +103,7 @@ import {
       <>
         <Card
           style={{ marginTop: "2rem" }}
-          title={<Title level={2}>Invoice Checking</Title>}
+          title={<Title level={3}>Invoice Checking</Title>}
         >
           <Form>
             <Row gutter={24} justify="space-between">

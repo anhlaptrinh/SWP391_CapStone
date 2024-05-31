@@ -8,6 +8,7 @@ import {
   Typography,
   Input,
   Table,
+  Form,
 } from "antd";
 import { useState } from "react";
 
@@ -162,16 +163,40 @@ export default function InvoiceList() {
   return (
     <>
       <Card>
-        <Row className="mb-5">
-          <Space direction="vertical">
-            <Input.Search
-              placeholder="input search text"
-              allowClear
-              enterButton="Search"
-              size="large"
-            />
-          </Space>
-        </Row>
+      <Row gutter={24} justify="space-between">
+              <Col span={20}>
+                <Row gutter={24}>
+                  <Col span={8}>
+                    <Form.Item name="Search">
+                      <Input placeholder="Search by name" allowClear />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Row>
+                      <Col span={7}>
+                        <Form.Item name="search">
+                          <Button type="primary" htmlType="submit">
+                            Search
+                          </Button>
+                        </Form.Item>
+                      </Col>
+                      <Col span={7}>
+                        <Button type="primary">
+                          Reset
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={2}>
+                <Row>
+                  <Col span={12}>
+                    <Button type="primary">New</Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
         <Table
           dataSource={data}
           columns={columns}

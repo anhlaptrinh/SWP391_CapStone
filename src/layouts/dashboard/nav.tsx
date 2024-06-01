@@ -143,7 +143,8 @@ export default function Nav(props: Props) {
 
       <Scrollbar
         style={{
-          height: "calc(100vh - 70px)",
+          height: "calc(100vh - 270px)",
+          overflow: "auto"
         }}
       >
         <Menu
@@ -162,11 +163,16 @@ export default function Nav(props: Props) {
       </Scrollbar>
       <div
         className="m-4"
-        style={{ position: "fixed", bottom: "0", width: `${collapsed ?"5%":"12%"}` }}
+        style={{
+          position: "fixed",
+          bottom: "0",
+          // width: `${collapsed ? "5%" : "12%"}`,
+        }}
       >
         <div
           className="after:opacity-65 after:bg-gradient-to-tl after:from-slate-600 after:to-slate-300 relative flex min-w-0 flex-col items-center break-words rounded-2xl border-0 border-solid border-blue-900 bg-white bg-clip-border shadow-none after:absolute after:top-0 after:bottom-0 after:left-0 after:z-10 after:block after:h-full after:w-full after:rounded-2xl after:content-['']"
           sidenav-card
+          style={{ width: `${collapsed ? "60px" : "222px"}` }}
         >
           <div
             className="mb-7.5 absolute h-full w-full rounded-2xl bg-cover bg-center"

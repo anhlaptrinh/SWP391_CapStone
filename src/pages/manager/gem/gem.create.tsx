@@ -19,8 +19,6 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         //   ...formData,
         //   id: formData.id,
         // };
-        // updateData.name = values.name;
-        // updateData.phone = values.phone;
         // updateMutate(updateData);
         setLoading(false);
       } else {

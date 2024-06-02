@@ -1,11 +1,11 @@
 import {
-  Avatar,
   Button,
   Card,
   Col,
   Form,
   Input,
   Pagination,
+  Popconfirm,
   Row,
   Typography,
 } from "antd";
@@ -14,11 +14,18 @@ import { useState } from "react";
 
 import { InputType } from "#/api";
 import { FormGem } from "./gem.create";
+import { useListGem, useDeleteGem } from "@/api/manager/gem";
+import { CircleLoading } from "@/components/loading";
+import { IconButton, Iconify } from "@/components/icon";
 
 export default function GemList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
+  const { data, isLoading } = useListGem(listRelateParams);
+  console.log("🚀 ~ GemList ~ data:", data)
+  const { mutateAsync: deleteMutate } = useDeleteGem();
+  if (!isLoading) return <CircleLoading />;
     const [formGem, setFormGem] = useState<any>(false);
     const onOpenFormHandler = (record?: any) => {
       if (record) {
@@ -49,6 +56,34 @@ export default function GemList() {
     { title: "Color", dataIndex: "color" },
     { title: "Clarity", dataIndex: "clarity" },
     { title: "Cut", dataIndex: "cut" },
+    {
+      title: "Action",
+      align: "center",
+      render: (_, record) => (
+        <div className="text-gray flex w-full items-center justify-center">
+          <IconButton onClick={() => onOpenFormHandler(record)}>
+            <Iconify icon="solar:pen-bold-duotone" size={18} />
+          </IconButton>
+          <Popconfirm
+            title="Delete the Gem"
+            okText="Yes"
+            cancelText="No"
+            placement="left"
+            onConfirm={() => {
+              submitHandleDelete(record.id.toString());
+            }}
+          >
+            <IconButton>
+              <Iconify
+                icon="mingcute:delete-2-fill"
+                size={18}
+                className="text-error"
+              />
+            </IconButton>
+          </Popconfirm>
+        </div>
+      ),
+    },
   ];
 
   const resetHandler = () => {
@@ -63,7 +98,11 @@ export default function GemList() {
   const onFinishHandler = (values: InputType) => {
     setListRelateParams(values);
   };
-
+  const submitHandleDelete = (record?: any) => {
+    if (record?.id) {
+      deleteMutate(record);
+    }
+  };
   return (
     <Card>
       <Form form={form} onFinish={onFinishHandler}>
@@ -110,7 +149,7 @@ export default function GemList() {
         scroll={{ x: "max-content" }}
         pagination={false}
         columns={columns}
-        dataSource={[{ name:"diamond", origin:"fire", caraWeight:"100", color:"blue", clarity:"10", cut:"10" }]}
+        dataSource={[{id:"1", name:"diamond", origin:"fire", caraWeight:"100", color:"blue", clarity:"10", cut:"10" }]}
         // loading={isLoading}
       />
       <Pagination

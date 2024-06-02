@@ -75,7 +75,7 @@ export default function Order() {
         <Space size="middle" style={{ display: 'flex', justifyContent: 'center' }}>
           <Button type="primary" >Submit</Button>
           <Button type="primary" danger>Delete</Button>
-          <Button type="primary" className="bg-green-700">Edit</Button>
+          {/* <Button type="primary" className="bg-green-700">Edit</Button> */}
         </Space>
       ),
     },

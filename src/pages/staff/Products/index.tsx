@@ -33,15 +33,26 @@ export default function Products() {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     {}
   );
-
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const handleBox=(id:string)=>{
+   console.log(id);
+  }
+  const handleOk = () => {
+    setInvoice(false);
+    // console.log("Checked Items:", selectedProductIds);
+    // Pass the checkedItems to another component or handle as needed
+  };
   const handleCardClick = (itemId: string) => {
+    console.log(itemId);
     setCheckedItems({
       ...checkedItems,
       [itemId]: !checkedItems[itemId], // Toggle the checked state
     });
+
   };
   const handleSelectChange = () => {
     setShowTable(true);
+    
   };
   const products = [
     {
@@ -86,8 +97,11 @@ export default function Products() {
     },
     onError: (error) => console.log(error),
   });
-  const handleDelete = (id: any) => {
+  const handleDelete = (id: string) => {
     handledeletePro(id);
+  };
+  const handleDeleteProduct = (id: string) => {
+   console.log(id);
   };
   const [showTable, setShowTable] = useState(false);
   return (
@@ -154,7 +168,7 @@ export default function Products() {
                               shape="round"
                               size="small"
                               danger
-                              onClick={() => handleDelete(item.tensanPham)}
+                              onClick={() => handleDeleteProduct(item.tensanPham)}
                             >
                               Delete
                             </Button>
@@ -177,7 +191,7 @@ export default function Products() {
         title="Product"
         centered
         open={isInvoice}
-        onOk={() => setInvoice(false)}
+        onOk={handleOk}
         onCancel={() => setInvoice(false)}
         width={1000}
       >
@@ -264,14 +278,16 @@ export default function Products() {
                           className="pb-3 text-center"
                         />
                         <Checkbox
-                          checked={checkedItems[item.id] || false}
+                          checked={checkedItems[item.id] ||  false}
                           style={{
                             position: "absolute",
                             top: "1px",
                             right: "4px",
                             zIndex: 1,
                             transform: "scale(1.5)",
+
                           }}
+                          onChange={()=>handleBox(item.id)}
                         />
                         <Button
                           type="primary"

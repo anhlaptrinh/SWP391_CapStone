@@ -35,7 +35,7 @@ export default function InvoiceList() {
       id: 1,
       invoiceID: "INV001",
       invoiceDate: '2023-05-20',
-      buyerName: 'John Doe',
+      
       buyerPhone: '123-456-7890',
       createdBy: 'Alice Smith',
       productName: 'Product 1',
@@ -48,7 +48,7 @@ export default function InvoiceList() {
       id: 2,
       invoiceID: "INV002",
       invoiceDate: '2023-05-21',
-      buyerName: 'Jane Doe',
+      
       buyerPhone: '123-456-7891',
       createdBy: 'Bob Johnson',
       productName: 'Product 2',
@@ -61,7 +61,7 @@ export default function InvoiceList() {
       id: 3,
       invoiceID: "INV003",
       invoiceDate: '2023-05-22',
-      buyerName: 'Jim Beam',
+      
       buyerPhone: '123-456-7892',
       createdBy: 'Charlie Brown',
       productName: 'Product 3',
@@ -74,7 +74,6 @@ export default function InvoiceList() {
       id: 4,
       invoiceID: "INV004",
       invoiceDate: '2023-05-23',
-      buyerName: 'Jack Daniels',
       buyerPhone: '123-456-7893',
       createdBy: 'David Smith',
       productName: 'Product 4',
@@ -87,7 +86,7 @@ export default function InvoiceList() {
       id: 5,
       invoiceID: "INV005",
       invoiceDate: '2023-05-24',
-      buyerName: 'Johnny Walker',
+
       buyerPhone: '123-456-7894',
       createdBy: 'Eve White',
       productName: 'Product 5',
@@ -108,11 +107,6 @@ export default function InvoiceList() {
       title: "Invoice Date",
       dataIndex: "invoiceDate",
       key: "invoiceDate",
-    },
-    {
-      title: "Buyer Name",
-      dataIndex: "buyerName",
-      key: "buyerName",
     },
     {
       title: "Buyer Phone",

@@ -40,7 +40,7 @@ export default function InvoiceList() {
       createdBy: 'Alice Smith',
       productName: 'Product 1',
       price: '$100',
-      total: '$120',
+      ratio: '3%',
       discount: '$20',
       amount: '$100',
     },
@@ -53,7 +53,7 @@ export default function InvoiceList() {
       createdBy: 'Bob Johnson',
       productName: 'Product 2',
       price: '$200',
-      total: '$220',
+      ratio: '4%',
       discount: '$20',
       amount: '$200',
     },
@@ -66,7 +66,7 @@ export default function InvoiceList() {
       createdBy: 'Charlie Brown',
       productName: 'Product 3',
       price: '$150',
-      total: '$170',
+      ratio: '6%',
       discount: '$20',
       amount: '$150',
     },
@@ -78,7 +78,7 @@ export default function InvoiceList() {
       createdBy: 'David Smith',
       productName: 'Product 4',
       price: '$180',
-      total: '$200',
+      ratio: '7%',
       discount: '$20',
       amount: '$180',
     },
@@ -91,7 +91,7 @@ export default function InvoiceList() {
       createdBy: 'Eve White',
       productName: 'Product 5',
       price: '$120',
-      total: '$140',
+      ratio: '8%',
       discount: '$20',
       amount: '$120',
     },
@@ -129,9 +129,9 @@ export default function InvoiceList() {
       key: "price",
     },
     {
-      title: "Total",
-      dataIndex: "total",
-      key: "total",
+      title: "Price Ratio",
+      dataIndex: "ratio",
+      key: "ratio",
     },
     {
       title: "Discount",
@@ -183,13 +183,7 @@ export default function InvoiceList() {
                   </Col>
                 </Row>
               </Col>
-              <Col span={2}>
-                <Row>
-                  <Col span={12}>
-                    <Button type="primary">New</Button>
-                  </Col>
-                </Row>
-              </Col>
+             
             </Row>
         <Table
           dataSource={data}

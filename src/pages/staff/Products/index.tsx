@@ -58,7 +58,7 @@ export default function Products() {
     {
       tensanPham: "Nhẫn",
       hinhAnh:
-        "https://trangsuc.doji.vn/Upload/product/nhan-cuoi/nhan-cuoi-0319195w1015va-0163.jpg",
+        "https://www.ytuongviet.vn/wp-content/uploads/2021/10/0-y-nghia-cac-ky-hieu-tren-nhan-vang-moi-nhat.jpg.webp",
     },
     {
       tensanPham: "Khuyên Tai",
@@ -269,7 +269,7 @@ export default function Products() {
                         cover={
                           <Image
                             width={"100%"}
-                            src="https://trangsuc.doji.vn/Upload/product/nhan-cuoi/nhan-cuoi-0319195w1015va-0163.jpg"
+                            src="https://www.ytuongviet.vn/wp-content/uploads/2021/10/0-y-nghia-cac-ky-hieu-tren-nhan-vang-moi-nhat.jpg.webp"
                           />
                         }
                       >

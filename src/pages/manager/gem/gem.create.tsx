@@ -7,7 +7,8 @@ export type GemCreateFormProps = {
 };
 export function FormGem({ formData, onClose }: GemCreateFormProps) {
   const [form] = Form.useForm();
-  //   const { mutateAsync: createMutate } = useCreateGem(stationId);
+  //   const { mutateAsync: createMutate } = useCreateGem();
+  //   const { mutateAsync: updateMutate } = useUpdateGem(gemId);
   const [loading, setLoading] = useState<boolean>(false);
 
   const submitHandle = async () => {

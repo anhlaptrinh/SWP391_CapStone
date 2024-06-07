@@ -15,7 +15,7 @@ import {
   beforeUpload,
   fakeUpload,
   normFile,
-  uploadFileToFirebase,
+  // uploadFileToFirebase,
 } from "@/utils/file";
 export type ProductCreateFormProps = {
   formData?: any;
@@ -23,14 +23,15 @@ export type ProductCreateFormProps = {
 };
 export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
   const [form] = Form.useForm();
-  //   const { mutateAsync: createMutate } = useCreateUser(stationId);
+  //   const { mutateAsync: createMutate } = useCreateProduct();
+  //   const { mutateAsync: updateMutate } = useUpdateProduct(productId);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [gender, setGender] = useState<any>([
-    { value: "male", label: "Male" },
-    { value: "female", label: "Female" },
-    { value: "other", label: "Other" },
-  ]);
+  // const [gender, setGender] = useState<any>([
+  //   { value: "male", label: "Male" },
+  //   { value: "female", label: "Female" },
+  //   { value: "other", label: "Other" },
+  // ]);
   const submitHandle = async () => {
     setLoading(true);
     // const values = await form.validateFields();
@@ -40,6 +41,13 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
         //   ...formData,
         //   id: formData.id,
         // };
+        // if (values.image.imageUrl) {
+        //   const updateImageUrl: string = await uploadFileToFirebase(
+        //     values?.image?.imageUrl[0]
+        //   );
+        //   console.log(updateImageUrl);
+        //   setLoading(false);
+        // }
         // updateData.name = values.name;
         // updateData.phone = values.phone;
         // updateMutate(updateData);

@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Button,
   Card,
   Col,
@@ -14,22 +13,27 @@ import { useState } from "react";
 
 import { InputType } from "#/api";
 import { FormMaterial } from "./material.create";
+import { useListMaterial } from "@/api/manager/material";
+import { CircleLoading } from "@/components/loading";
+import { numberWithCommas } from "@/utils/string";
 
 export default function MaterialList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
-    const [formMaterial, setFormMaterial] = useState<any>(false);
-    const onOpenFormHandler = (record?: any) => {
-      if (record) {
-        setFormMaterial(record);
-      } else {
-        setFormMaterial(undefined);
-      }
-    };
-    const closeFormMaterial = async () => {
-      setFormMaterial(false);
-    };
+  const [formMaterial, setFormMaterial] = useState<any>(false);
+  const { data, isLoading } = useListMaterial();
+  if (isLoading) return <CircleLoading />;
+  const onOpenFormHandler = (record?: any) => {
+    if (record) {
+      setFormMaterial(record);
+    } else {
+      setFormMaterial(undefined);
+    }
+  };
+  const closeFormMaterial = async () => {
+    setFormMaterial(false);
+  };
   const columns: ColumnsType<any> = [
     {
       title: "No",
@@ -38,18 +42,23 @@ export default function MaterialList() {
       width: "5%",
     },
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Material Name",
+      dataIndex: "materialName",
     },
     {
-      title: "Weight",
-      dataIndex: "weight",
+      title: "Buy Price",
+      dataIndex: "materialPrice",
+      render: (_, record) => (
+        <div>{numberWithCommas(record.materialPrice?.buyPrice || 0)} VND</div>
+      ),
     },
     {
-      title: "Buy price",
-      dataIndex: "buyPrice",
+      title: "Sell Price",
+      dataIndex: "materialPrice",
+      render: (_, record) => (
+        <div>{numberWithCommas(record.materialPrice?.sellPrice || 0)} VND</div>
+      ),
     },
-    { title: "Sell price", dataIndex: "sellPrice" },
   ];
 
   const resetHandler = () => {
@@ -109,26 +118,19 @@ export default function MaterialList() {
         rowKey="id"
         size="small"
         scroll={{ x: "max-content" }}
-        pagination={false}
+        // pagination={false}
         columns={columns}
-        dataSource={[
-          {
-            name: "Gold",
-            weight: "100g",
-            buyPrice: "10.000 VND",
-            sellPrice: "13.000 VND",
-          },
-        ]}
+        dataSource={data?.items}
         // loading={isLoading}
       />
-      <Pagination
+      {/* <Pagination
         showSizeChanger
         onChange={onPageChange}
         // total={data?.totalPages}
         // showTotal={(total) => ` ${total} `}
         // current={data?.page}
         style={{ marginTop: "1rem" }}
-      />
+      /> */}
       {formMaterial !== false && (
         <FormMaterial formData={formMaterial} onClose={closeFormMaterial} />
       )}

@@ -6,26 +6,24 @@ import apiClient from '../apiClient';
 
 export interface MaterialPayload {
     id: number;
-    name: string;
-    weight: string;
-    buyPrice: string;
-    sellPrice: string;
+    materialName: string;
+    materialPrice: object;
 }
 export const useListMaterial = (payload?: any) => {
     return useQuery(['listMaterial'], () =>
-        apiClient.get({ url: '/material', params: { MaterialId: payload } }),
+        apiClient.get({ url: '/materials', params: { MaterialId: payload } }),
     );
 };
 export const useDetailMaterial = (payload?: any) => {
     return useQuery(['detailMaterial'], () =>
-        apiClient.get({ url: '/material', params: { MaterialId: payload } }),
+        apiClient.get({ url: '/materials', params: { MaterialId: payload } }),
     );
 };
 export const useCreateMaterial = (payload?: any) => {
     return useMutation(
         async (values: MaterialPayload) =>
             apiClient.post({
-                url: `/material`,
+                url: `/materials`,
                 params: payload,
                 data: values,
             }),
@@ -41,7 +39,7 @@ export const useUpdateMaterial = (payload?: any) => {
     return useMutation(
         async (values: MaterialPayload) =>
             apiClient.post({
-                url: `/material`,
+                url: `/materials`,
                 params: payload,
                 data: values,
             }),
@@ -56,7 +54,7 @@ export const useUpdateMaterial = (payload?: any) => {
 export const useDeleteMaterial = () => {
     return useMutation(
         async (values: any) =>
-            apiClient.delete({ url: '/material', params: { MaterialId: values }, }),
+            apiClient.delete({ url: '/materials', params: { MaterialId: values }, }),
         {
             onSuccess: () => {
                 message.success('Delete Material successfully');

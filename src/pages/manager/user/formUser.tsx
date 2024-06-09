@@ -1,3 +1,4 @@
+import { UserPayload, useCreateUser, useUpdateUser } from "@/api/manager/user";
 import { Button, Form, Input, Modal, message } from "antd";
 import { useState } from "react";
 
@@ -7,25 +8,25 @@ export type UserCreateFormProps = {
 };
 export function FormUser({ formData, onClose }: UserCreateFormProps) {
   const [form] = Form.useForm();
-  //   const { mutateAsync: createMutate } = useCreateUser(stationId);
+  const { mutateAsync: createMutate } = useCreateUser();
+  const { mutateAsync: updateMutate } = useUpdateUser();
   const [loading, setLoading] = useState<boolean>(false);
 
   const submitHandle = async () => {
-    setLoading(true);
-    // const values = await form.validateFields();
+    const values = await form.validateFields();
     try {
+      setLoading(true);
       if (formData) {
-        // const updateData: UserPayload = {
-        //   ...formData,
-        //   id: formData.id,
-        // };
-        // updateData.name = values.name;
-        // updateData.phone = values.phone;
-        // updateMutate(updateData);
+        const updateData: UserPayload = {
+          ...formData,
+          userId: formData.userId,
+        };
+        await updateMutate(updateData);
         setLoading(false);
       } else {
-        // const createData: UserPayload = { ...values };
-        // createMutate(createData);
+        const createData: UserPayload = { ...values };
+        createData.roleId = "3";
+        await createMutate(createData);
         setLoading(false);
       }
       onClose();
@@ -64,21 +65,52 @@ export function FormUser({ formData, onClose }: UserCreateFormProps) {
         layout="vertical"
       >
         <Form.Item
-          label="Name"
-          name="name"
+          label="User Name"
+          name="userName"
           required
-          rules={[{ required: true, message: "Please input name" }]}
+          rules={[{ required: true, message: "Please input userName" }]}
         >
           <Input />
         </Form.Item>
-
         <Form.Item
-          label="Phone"
-          name="phone"
+          label="Full Name"
+          name="fullName"
           required
-          rules={[{ required: true, message: "Please input phone" }]}
+          rules={[{ required: true, message: "Please input fullName" }]}
         >
-          <Input.TextArea />
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Phone Number"
+          name="phoneNumber"
+          required
+          rules={[{ required: true, message: "Please input phoneNumber" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Email"
+          name="email"
+          required
+          rules={[{ required: true, message: "Please input email" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          required
+          rules={[{ required: true, message: "Please input password" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Address"
+          name="address"
+          required
+          rules={[{ required: true, message: "Please input address" }]}
+        >
+          <Input />
         </Form.Item>
       </Form>
     </Modal>

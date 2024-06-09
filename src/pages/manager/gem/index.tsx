@@ -22,21 +22,20 @@ export default function GemList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
-  const { data, isLoading } = useListGem(listRelateParams);
-  console.log("🚀 ~ GemList ~ data:", data)
+  const { data, isLoading } = useListGem();
   const { mutateAsync: deleteMutate } = useDeleteGem();
-  if (!isLoading) return <CircleLoading />;
-    const [formGem, setFormGem] = useState<any>(false);
-    const onOpenFormHandler = (record?: any) => {
-      if (record) {
-        setFormGem(record);
-      } else {
-        setFormGem(undefined);
-      }
-    };
-    const closeFormGem = async () => {
-      setFormGem(false);
-    };
+  const [formGem, setFormGem] = useState<any>(false);
+  if (isLoading) return <CircleLoading />;
+  const onOpenFormHandler = (record?: any) => {
+    if (record) {
+      setFormGem(record);
+    } else {
+      setFormGem(undefined);
+    }
+  };
+  const closeFormGem = async () => {
+    setFormGem(false);
+  };
   const columns: ColumnsType<any> = [
     {
       title: "No",
@@ -45,15 +44,15 @@ export default function GemList() {
       width: "5%",
     },
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Gem Name",
+      dataIndex: "gemName",
     },
     {
       title: "Origin",
       dataIndex: "origin",
     },
-    { title: "Cara weight", dataIndex: "caraWeight" },
-    { title: "Color", dataIndex: "color" },
+    { title: "Carat weight", dataIndex: "caratWeight" },
+    { title: "Colour", dataIndex: "colour" },
     { title: "Clarity", dataIndex: "clarity" },
     { title: "Cut", dataIndex: "cut" },
     {
@@ -147,19 +146,19 @@ export default function GemList() {
         rowKey="id"
         size="small"
         scroll={{ x: "max-content" }}
-        pagination={false}
+        // pagination={false}
         columns={columns}
-        dataSource={[{id:"1", name:"diamond", origin:"fire", caraWeight:"100", color:"blue", clarity:"10", cut:"10" }]}
+        dataSource={data?.items}
         // loading={isLoading}
       />
-      <Pagination
+      {/* <Pagination
         showSizeChanger
         onChange={onPageChange}
         // total={data?.totalPages}
         // showTotal={(total) => ` ${total} `}
         // current={data?.page}
         style={{ marginTop: "1rem" }}
-      />
+      /> */}
       {formGem !== false && (
         <FormGem formData={formGem} onClose={closeFormGem} />
       )}

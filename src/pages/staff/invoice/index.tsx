@@ -1,18 +1,15 @@
 import ModalComponent from "@/layouts/invoice/PaypalModal";
-import { SearchOutlined } from "@ant-design/icons";
 import {
-  Avatar,
   Button,
   Card,
   Col,
-  Form,
   Row,
   Space,
   Typography,
+  Input,
   Table,
-  Input
+  Form,
 } from "antd";
-import Meta from "antd/es/card/Meta";
 import { useState } from "react";
 
 export default function InvoiceList() {
@@ -36,199 +33,170 @@ export default function InvoiceList() {
   const data = [
     {
       id: 1,
-      invoice: "Invoice 1",
+      invoiceID: "INV001",
+      invoiceDate: '2023-05-20',
+      
+      buyerPhone: '123-456-7890',
+      createdBy: 'Alice Smith',
       productName: 'Product 1',
-      gemstone: 'Diamond',
       price: '$100',
+      ratio: '3%',
+      discount: '$20',
+      amount: '$100',
     },
     {
       id: 2,
-      invoice: "Invoice 2",
+      invoiceID: "INV002",
+      invoiceDate: '2023-05-21',
+      
+      buyerPhone: '123-456-7891',
+      createdBy: 'Bob Johnson',
       productName: 'Product 2',
-      gemstone: 'Ruby',
       price: '$200',
+      ratio: '4%',
+      discount: '$20',
+      amount: '$200',
     },
     {
       id: 3,
-      invoice: "Invoice 3",
+      invoiceID: "INV003",
+      invoiceDate: '2023-05-22',
+      
+      buyerPhone: '123-456-7892',
+      createdBy: 'Charlie Brown',
       productName: 'Product 3',
-      gemstone: 'Emerald',
       price: '$150',
+      ratio: '6%',
+      discount: '$20',
+      amount: '$150',
     },
     {
       id: 4,
-      invoice: "Invoice 4",
+      invoiceID: "INV004",
+      invoiceDate: '2023-05-23',
+      buyerPhone: '123-456-7893',
+      createdBy: 'David Smith',
       productName: 'Product 4',
-      gemstone: 'Sapphire',
       price: '$180',
+      ratio: '7%',
+      discount: '$20',
+      amount: '$180',
     },
     {
       id: 5,
-      invoice: "Invoice 5",
-      productName: 'Product 5',
-      gemstone: 'Topaz',
-      price: '$120',
-    },
-  ];
+      invoiceID: "INV005",
+      invoiceDate: '2023-05-24',
 
-  const tableData = [
-    {
-      no: 1,
-      invoiceCode: "INV001",
-      productName: "Product A",
-      totalAmount: "$500",
-      staffName: "John Doe",
-    },
-    {
-      no: 2,
-      invoiceCode: "INV002",
-      productName: "Product B",
-      totalAmount: "$700",
-      staffName: "Jane Smith",
-    },
-    {
-      no: 3,
-      invoiceCode: "INV003",
-      productName: "Product C",
-      totalAmount: "$900",
-      staffName: "Alice Johnson",
-    },
-    {
-      no: 4,
-      invoiceCode: "INV004",
-      productName: "Product D",
-      totalAmount: "$1200",
-      staffName: "Bob Brown",
-    },
-    {
-      no: 5,
-      invoiceCode: "INV005",
-      productName: "Product E",
-      totalAmount: "$1500",
-      staffName: "Emma Davis",
+      buyerPhone: '123-456-7894',
+      createdBy: 'Eve White',
+      productName: 'Product 5',
+      price: '$120',
+      ratio: '8%',
+      discount: '$20',
+      amount: '$120',
     },
   ];
 
   const columns = [
     {
-      title: "No",
-      dataIndex: "no",
-      render: (_text:string, _data:any, index:number) => <Title level={5}>{++index}</Title>,
-      width: "5%",
+      title: "Invoice ID",
+      dataIndex: "invoiceID",
+      key: "invoiceID",
     },
     {
-      title: "Invoice Code",
-      dataIndex: "invoiceCode",
+      title: "Invoice Date",
+      dataIndex: "invoiceDate",
+      key: "invoiceDate",
+    },
+    {
+      title: "Buyer Phone",
+      dataIndex: "buyerPhone",
+      key: "buyerPhone",
+    },
+    {
+      title: "Created By",
+      dataIndex: "createdBy",
+      key: "createdBy",
     },
     {
       title: "Product Name",
       dataIndex: "productName",
+      key: "productName",
     },
     {
-      title: "Total Amount",
-      dataIndex: "totalAmount",
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
     },
     {
-      title: "Staff Name",
-      dataIndex: "staffName",
+      title: "Price Ratio",
+      dataIndex: "ratio",
+      key: "ratio",
+    },
+    {
+      title: "Discount",
+      dataIndex: "discount",
+      key: "discount",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_text:any, record:any) => (
+        <Space size="middle">
+          <Button type="primary" onClick={() => { isopen(true); handleOpenModal(); }}>Pay</Button>
+        </Space>
+      ),
     },
   ];
-
-  const renderCards = () => {
-    return data.map(item => (
-      <Col key={item.id} xs={24} sm={12} md={8} lg={6}>
-        <Card>
-          <Meta
-            avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />}
-            title={item.invoice}
-            description={
-              <>
-                <p>{item.productName}</p>
-                <p>{item.gemstone}</p>
-                <p>{item.price}</p>
-              </>
-            }
-          />
-          <div className="mt-3">
-            <Button type="default" className="mr-2">See Later</Button>
-            <Button type="primary" onClick={() => { isopen(true); handleOpenModal() }}>Pay</Button>
-          </div>
-        </Card>
-      </Col>
-    ));
-  };
 
   return (
     <>
       <Card>
-        <Row className="mb-5">
-          <Space direction="vertical">
-            <Input.Search
-              placeholder="input search text"
-              allowClear
-              enterButton="Search"
-              size="large"
-            />
-          </Space>
-        </Row>
-        <Row gutter={[15, 12]} className="flex flex-grow space-x-7">
-          {renderCards()}
-        </Row>
-      </Card>
-
-      <Card
-        style={{ marginTop: "2rem" }}
-        title={<Title level={2}>Invoice Checking</Title>}
-      >
-        <Form>
-          <Row gutter={24} justify="space-between">
-            <Col span={20}>
-              <Row gutter={24}>
-                <Col span={8}>
-                  <Form.Item name="Search">
-                    <Input placeholder="Search by name" allowClear />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Row>
-                    <Col span={7}>
-                      <Form.Item name="search">
-                        <Button type="primary" htmlType="submit">
-                          Search
+      <Row gutter={24} justify="space-between">
+              <Col span={20}>
+                <Row gutter={24}>
+                  <Col span={8}>
+                    <Form.Item name="Search">
+                      <Input placeholder="Search by name" allowClear />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Row>
+                      <Col span={7}>
+                        <Form.Item name="search">
+                          <Button type="primary" htmlType="submit">
+                            Search
+                          </Button>
+                        </Form.Item>
+                      </Col>
+                      <Col span={7}>
+                        <Button type="primary">
+                          Reset
                         </Button>
-                      </Form.Item>
-                    </Col>
-                    <Col span={7}>
-                      <Button type="primary">
-                        Reset
-                      </Button>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Col>
-            <Col span={2}>
-              <Row>
-                <Col span={12}>
-                  <Button type="primary">New</Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+              </Col>
+             
+            </Row>
         <Table
-          rowKey="id"
-          size="small"
-          scroll={{ x: "max-content" }}
-          pagination={false}
+          dataSource={data}
           columns={columns}
-          dataSource={tableData}
+          rowKey="id"
+          
         />
       </Card>
       <ModalComponent
         visible={isModalVisible}
         onClose={handleCloseModal}
         invoiceData={invoiceData}
+        
       />
     </>
   );

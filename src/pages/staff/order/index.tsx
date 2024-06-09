@@ -75,6 +75,7 @@ export default function Order() {
         <Space size="middle" style={{ display: 'flex', justifyContent: 'center' }}>
           <Button type="primary" >Submit</Button>
           <Button type="primary" danger>Delete</Button>
+          {/* <Button type="primary" className="bg-green-700">Edit</Button> */}
         </Space>
       ),
     },
@@ -95,7 +96,7 @@ export default function Order() {
 
   return (
     <>
-      <Card title={<Title level={3}>Order Checking</Title>}>
+      <Card  style={{ marginTop: "2rem" }} title={<Title level={3}>Order Checking</Title>}>
         <Form form={form} onFinish={onFinishHandler}>
           <Row gutter={24} justify="space-between">
             <Col span={20}>

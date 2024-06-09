@@ -1,7 +1,8 @@
 import React from "react";
 import { Modal, Form, Input, Button, Typography } from "antd";
+import { PrinterOutlined } from '@ant-design/icons';
 import { Paypal } from "../_common/paypal";
-import payment from './../../assets/images/payment.svg'
+import payment from './../../assets/images/payment.svg';
 const { Title } = Typography;
 
 interface InvoiceData {
@@ -17,6 +18,11 @@ interface ModalComponentProps {
 }
 
 const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, invoiceData }) => {
+  const handlePrint = () => {
+    // Add print logic here
+    window.print();
+  };
+
   return (
     <Modal
       title={<Title className="text-center" level={3}>Pay with PayPal</Title>}
@@ -24,11 +30,27 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, invoi
       onCancel={onClose}
       footer={null}
     >
-      <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+      <div style={{ position: "relative", textAlign: "center", marginBottom: "1rem" }}>
         <img
           src={payment}
           alt="PayPal"
           style={{ width: "400px" }}
+        />
+        <Button
+          type="primary"
+          icon={<PrinterOutlined style={{ fontSize: '32px'}}/>}
+          onClick={handlePrint}
+          size="large"
+          style={{ 
+            position: "absolute", 
+            top: 10, 
+            right: 10,
+            height: "50px",
+            width: "50px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         />
       </div>
       <div>
@@ -39,10 +61,9 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, invoi
           <Form.Item name="voucher" label="Voucher Code">
             <Input placeholder="Enter voucher code" />
           </Form.Item>
-         
         </Form>
         <p>Last Total: 999</p>
-        <Paypal/>
+        <Paypal />
       </div>
     </Modal>
   );

@@ -1,6 +1,6 @@
 import { deleteJwelryApi, getJwelryApi } from "@/api/mock/jwellry";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Jwellery } from "../../../../types/jwelry";
+import { Jwellery, Product } from "../../../../types/jwelry";
 import {
   Row,
   Layout,
@@ -19,6 +19,7 @@ import Meta from "antd/es/card/Meta";
 import type { SearchProps } from "antd/es/input/Search";
 import { useState } from "react";
 import ModalGem from "@/layouts/products/Modal";
+import { useListProduct } from "@/api/staff/listProduct";
 
 export default function Products() {
   
@@ -34,7 +35,7 @@ export default function Products() {
     {}
   );
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const handleBox=(id:string)=>{
+  const handleBox=(id:number)=>{
    console.log(id);
   }
   const handleOk = () => {
@@ -42,7 +43,7 @@ export default function Products() {
     // console.log("Checked Items:", selectedProductIds);
     // Pass the checkedItems to another component or handle as needed
   };
-  const handleCardClick = (itemId: string) => {
+  const handleCardClick = (itemId: number) => {
     console.log(itemId);
     setCheckedItems({
       ...checkedItems,
@@ -77,10 +78,7 @@ export default function Products() {
     },
   ];
 
-  const { data } = useQuery({
-    queryKey: ["products"],
-    queryFn: async () => getJwelryApi(),
-  });
+  const { data, isLoading} = useListProduct();
 
   const queryClient = useQueryClient();
   const { mutate: handledeletePro } = useMutation({
@@ -97,7 +95,7 @@ export default function Products() {
     },
     onError: (error) => console.log(error),
   });
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     handledeletePro(id);
   };
   const handleDeleteProduct = (id: string) => {
@@ -246,7 +244,7 @@ export default function Products() {
                 </div>
               ) : (
                 <Row gutter={[0, 10]} className="rowgap-vbox">
-                  {data?.map((item: Jwellery, index: number) => (
+                  {data?.items.map((item: Product, index: number) => (
                     <Col
                       key={index}
                       xs={24}
@@ -265,7 +263,7 @@ export default function Products() {
                           cursor: "pointer",
                           backgroundColor:"pink"
                         }}
-                        onClick={() => handleCardClick(item.id)}
+                        onClick={() => handleCardClick(item.productId)}
                         cover={
                           <Image
                             width={"100%"}
@@ -278,7 +276,7 @@ export default function Products() {
                           className="pb-3 text-center"
                         />
                         <Checkbox
-                          checked={checkedItems[item.id] ||  false}
+                          checked={checkedItems[item.productId] ||  false}
                           style={{
                             position: "absolute",
                             top: "1px",
@@ -287,7 +285,7 @@ export default function Products() {
                             transform: "scale(1.5)",
 
                           }}
-                          onChange={()=>handleBox(item.id)}
+                          onChange={()=>handleBox(item.productId)}
                         />
                         <Button
                           type="primary"
@@ -295,7 +293,7 @@ export default function Products() {
                           shape="round"
                           size="large"
                           danger
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => handleDelete(item.productId)}
                         >
                           Delete
                         </Button>

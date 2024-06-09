@@ -1,6 +1,6 @@
-import { deleteJwelryApi, getJwelryApi } from "@/api/mock/jwellry";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Jwellery, Product } from "../../../../types/jwelry";
+import { deleteJwelryApi } from "@/api/mock/jwellry";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Product } from "../../../../types/jwelry";
 import {
   Row,
   Layout,
@@ -14,15 +14,17 @@ import {
   Modal,
   Typography,
   Select,
+  Form,
+  Pagination,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import type { SearchProps } from "antd/es/input/Search";
 import { useState } from "react";
-import ModalGem from "@/layouts/products/Modal";
 import { useListProduct } from "@/api/staff/listProduct";
+import { InputType } from "#/api";
+import Table, { ColumnsType } from "antd/es/table";
 
 export default function Products() {
-  
   const { Content } = Layout;
   const { Search } = Input;
   const [isSelect, setDelete] = useState(false);
@@ -34,27 +36,86 @@ export default function Products() {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     {}
   );
+  const [showTable, setShowTable] = useState(false);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const handleBox=(id:number)=>{
-   console.log(id);
-  }
+  const handleBox = (id: number) => {
+    console.log(id);
+  };
   const handleOk = () => {
     setInvoice(false);
+    
     // console.log("Checked Items:", selectedProductIds);
     // Pass the checkedItems to another component or handle as needed
   };
   const handleCardClick = (itemId: number) => {
     console.log(itemId);
+    setShowTable(true)
     setCheckedItems({
       ...checkedItems,
       [itemId]: !checkedItems[itemId], // Toggle the checked state
     });
-
+   if(checkedItems[itemId]===true){
+    setShowTable(false)
+   }
   };
   const handleSelectChange = () => {
     setShowTable(true);
-    
   };
+  const { Title } = Typography;
+  const [form] = Form.useForm();
+  const [listRelateParams, setListRelateParams] = useState<InputType>();
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [closeModal, setclosemodal] = useState(true);
+
+  const handleCheckboxChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    if (e.target.checked) {
+      setSelectedRows([...selectedRows, id]);
+    } else {
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
+    }
+  };
+  const handleRowClick = (record: any) => {
+    if (selectedRows.includes(record.id)) {
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== record.id));
+    } else {
+      setSelectedRows([...selectedRows, record.id]);
+    }
+  };
+  const columns: ColumnsType<any> = [
+    // {
+    //   title: "",
+    //   dataIndex: "id",
+    //   render: (_text, record) => (
+    //     <input
+    //       type="checkbox"
+    //       checked={selectedRows.includes(record.id)}
+    //       onChange={(e) => handleCheckboxChange(e, record.id)}
+    //     />
+    //   ),
+    // },
+    {
+      title: "No",
+      dataIndex: "no",
+      render: (_text, _data, index) => <Title level={5}>{++index}</Title>,
+      width: "5%",
+    },
+    {
+      title: "Name",
+      dataIndex: "gemName",
+    },
+    {
+      title: "Origin",
+      dataIndex: "origin",
+    },
+    { title: "Cara weight", dataIndex: "caraWeight" },
+    { title: "Color", dataIndex: "colour" },
+    { title: "Clarity", dataIndex: "clarity" },
+    { title: "Cut", dataIndex: "cut" },
+    // { title: "Price", dataIndex: "price" },
+  ];
   const products = [
     {
       tensanPham: "Nhẫn",
@@ -78,7 +139,7 @@ export default function Products() {
     },
   ];
 
-  const { data, isLoading} = useListProduct();
+  const { data, isLoading } = useListProduct();
 
   const queryClient = useQueryClient();
   const { mutate: handledeletePro } = useMutation({
@@ -96,12 +157,13 @@ export default function Products() {
     onError: (error) => console.log(error),
   });
   const handleDelete = (id: number) => {
-    handledeletePro(id);
+    setShowTable(true);
+    // handledeletePro(id);
   };
   const handleDeleteProduct = (id: string) => {
-   console.log(id);
+    console.log(id);
   };
-  const [showTable, setShowTable] = useState(false);
+
   return (
     <div
       className="layout-content "
@@ -123,60 +185,67 @@ export default function Products() {
             </Col>
             <Col span={24}>
               <Card>
-              <Content className="flex flex-col flex-grow">
-                <div className="h-[100%] mb-4 bg-gray-100 mr-2 ">
-                  <Row gutter={[0, 0]} className="rowgap-vbox">
-                    {products?.map((item, index: number) => (
-                      <Col
-                        key={index}
-                        xs={24}
-                        sm={24}
-                        md={12}
-                        lg={6}
-                        xl={6}
-                        className="mb-4 pl-9 pt-6"
-                      >
-                        <div>
-                          <Card
-                            bordered={false}
-                            className="criclebox"
-                            style={{ width: "200px",backgroundColor:"pink" }}
-                            cover={<Image width={"100%"} src={item.hinhAnh} />}
-                          >
-                            <Meta
-                              title={item.tensanPham}
-                              className="pb-3 text-center"
-                            />
-
-                            <Button
-                              type="primary"
-                              className="mr-1 ml-2"
-                              shape="round"
-                              size="small"
-                              onClick={() => {
-                                setInvoice(true);
-                                setShowTable(false);
+                <Content className="flex flex-col flex-grow">
+                  <div className="h-[100%] mb-4 bg-gray-100 mr-2 ">
+                    <Row gutter={[0, 0]} className="rowgap-vbox">
+                      {products?.map((item, index: number) => (
+                        <Col
+                          key={index}
+                          xs={24}
+                          sm={24}
+                          md={12}
+                          lg={6}
+                          xl={6}
+                          className="mb-4 pl-9 pt-6"
+                        >
+                          <div>
+                            <Card
+                              bordered={false}
+                              className="criclebox"
+                              style={{
+                                width: "200px",
+                                backgroundColor: "pink",
                               }}
+                              cover={
+                                <Image width={"100%"} src={item.hinhAnh} />
+                              }
                             >
-                              Select
-                            </Button>
-                            <Button
-                              type="primary"
-                              className="mr-1 mb-1"
-                              shape="round"
-                              size="small"
-                              danger
-                              onClick={() => handleDeleteProduct(item.tensanPham)}
-                            >
-                              Delete
-                            </Button>
-                          </Card>
-                        </div>
-                      </Col>
-                    ))}
-                  </Row>
-                </div>
-              </Content>
+                              <Meta
+                                title={item.tensanPham}
+                                className="pb-3 text-center"
+                              />
+
+                              <Button
+                                type="primary"
+                                className="mr-1 ml-2"
+                                shape="round"
+                                size="small"
+                                onClick={() => {
+                                  setInvoice(true);
+                                  setShowTable(false);
+                                }}
+                              >
+                                Select
+                              </Button>
+                              <Button
+                                type="primary"
+                                className="mr-1 mb-1"
+                                shape="round"
+                                size="small"
+                                danger
+                                onClick={() =>
+                                  handleDeleteProduct(item.tensanPham)
+                                }
+                              >
+                                Delete
+                              </Button>
+                            </Card>
+                          </div>
+                        </Col>
+                      ))}
+                    </Row>
+                  </div>
+                </Content>
               </Card>
             </Col>
           </Row>
@@ -184,7 +253,7 @@ export default function Products() {
       </Row>
 
       {/* modal update */}
-      
+
       <Modal
         title="Product"
         centered
@@ -205,19 +274,7 @@ export default function Products() {
                   { value: "platinum", label: "Platinum" },
                   { value: "silver", label: "Silver" },
                 ]}
-                onChange={()=>setShowTable(false)}
-              />
-              <Select
-                defaultValue="Gems"
-                style={{ width: 120, marginRight: "10px" }}
-                options={[
-                  { value: "beryl", label: "Beryl" },
-                  { value: "topaz", label: "Topaz" },
-                  { value: "tektite", label: "Tektite" },
-                  { value: "diamond", label: "Diamond" },
-                ]}
-                size="large"
-                onChange={handleSelectChange}
+                onChange={() => setShowTable(false)}
               />
             </Col>
             <Col span={12} style={{ textAlign: "right" }}>
@@ -235,78 +292,97 @@ export default function Products() {
             className="h-[100%] container mb-4 mt-4 bg-gray-100 mr-2 "
           >
             <Row gutter={[0, 10]} className="rowgap-vbox">
-              {showTable ? (
-                <div
-                  style={{ height: "500px", overflowY: "auto" }}
-                  className="h-[100%] container mb-4 mt-4 bg-gray-100 mr-2 "
-                >
-                  <ModalGem/>
-                </div>
-              ) : (
-                <Row gutter={[0, 10]} className="rowgap-vbox">
-                  {data?.items.map((item: Product, index: number) => (
-                    <Col
-                      key={index}
-                      xs={24}
-                      sm={24}
-                      md={12}
-                      lg={6}
-                      xl={6}
-                      className="mb-4 pl-5 pt-4"
+              <Row gutter={[0, 10]} className="rowgap-vbox">
+                {data?.items.map((item: Product, index: number) => (
+                  <Col
+                    key={index}
+                    xs={24}
+                    sm={24}
+                    md={12}
+                    lg={6}
+                    xl={6}
+                    className="mb-4 pl-5 pt-4"
+                  >
+                    <Card
+                      bordered={false}
+                      className="criclebox card"
+                      style={{
+                        width: "200px",
+                        position: "relative",
+                        cursor: "pointer",
+                        backgroundColor: "pink",
+                      }}
+                      onClick={() => handleCardClick(item.productId)}
+                      cover={
+                        <Image
+                          width={"100%"}
+                          src="https://www.ytuongviet.vn/wp-content/uploads/2021/10/0-y-nghia-cac-ky-hieu-tren-nhan-vang-moi-nhat.jpg.webp"
+                        />
+                      }
                     >
-                      <Card
-                        bordered={false}
-                        className="criclebox card"
+                      <Meta
+                        title={item.productName}
+                        className="pb-3 text-center"
+                      />
+                      <Checkbox
+                        checked={checkedItems[item.productId] || false}
                         style={{
-                          width: "200px",
-                          position: "relative",
-                          cursor: "pointer",
-                          backgroundColor:"pink"
+                          position: "absolute",
+                          top: "1px",
+                          right: "4px",
+                          zIndex: 1,
+                          transform: "scale(1.5)",
                         }}
-                        onClick={() => handleCardClick(item.productId)}
-                        cover={
-                          <Image
-                            width={"100%"}
-                            src="https://www.ytuongviet.vn/wp-content/uploads/2021/10/0-y-nghia-cac-ky-hieu-tren-nhan-vang-moi-nhat.jpg.webp"
-                          />
-                        }
+                        onChange={() => {
+                          handleBox(item.productId);
+                        }}
+                        onClick={()=>setShowTable(true)}
+                      />
+                      <Button
+                        type="primary"
+                        className=" mb-1 ml-7"
+                        shape="round"
+                        size="large"
+                        danger
+                        onClick={() => handleDelete(item.productId)}
                       >
-                        <Meta
-                          title={item.productName}
-                          className="pb-3 text-center"
+                        Delete
+                      </Button>
+                    </Card>
+                    <Modal
+                      title="Choose Gems"
+                      centered
+                      width={1000}
+                      open={showTable}
+                      onOk={()=>setShowTable(false)}
+                      onCancel={() => setShowTable(false)}
+                    >
+                      <Card className="h-full">
+                        <Table
+                          rowKey={index}
+                          size="small"
+                          scroll={{ x: "max-content" }}
+                          pagination={false}
+                          columns={columns}
+                          dataSource={item.gems}
+                          onRow={(record) => ({
+                            onClick: () => handleRowClick(record),
+                          })}
                         />
-                        <Checkbox
-                          checked={checkedItems[item.productId] ||  false}
-                          style={{
-                            position: "absolute",
-                            top: "1px",
-                            right: "4px",
-                            zIndex: 1,
-                            transform: "scale(1.5)",
-
-                          }}
-                          onChange={()=>handleBox(item.productId)}
+                        <Pagination
+                          showSizeChanger
+                          style={{ marginTop: "1rem" }}
                         />
-                        <Button
-                          type="primary"
-                          className=" mb-1 ml-7"
-                          shape="round"
-                          size="large"
-                          danger
-                          onClick={() => handleDelete(item.productId)}
-                        >
-                          Delete
-                        </Button>
                       </Card>
-                    </Col>
-                  ))}
-                </Row>
-              )}
+                    </Modal>
+                  </Col>
+                ))}
+              </Row>
             </Row>
           </div>
         </Row>
       </Modal>
-      {/* Invoice Modal        */}
+      {/* Gems Modal        */}
     </div>
   );
 }

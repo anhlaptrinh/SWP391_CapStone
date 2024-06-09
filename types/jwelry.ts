@@ -37,6 +37,7 @@ export interface Gem {
     colour:      string;
     clarity:     string;
     cut:         string;
+   
 }
 
 export interface Material {

@@ -14,12 +14,19 @@ import { useState } from "react";
 
 import { InputType } from "#/api";
 import { FormProduct } from "./product.create";
+import { useListProduct } from "@/api/manager/products";
+import { CircleLoading } from "@/components/loading";
+import { numberWithCommas } from "@/utils/string";
+import { ProductDetail } from "./product.detail";
 
 export default function ProductsList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
+  const { data, isLoading } = useListProduct();
   const [formProduct, setFormProduct] = useState<any>(false);
+  const [showDetail, setShowDetail] = useState<any>(false);
+  if (isLoading) return <CircleLoading />;
   const onOpenFormHandler = (record?: any) => {
     if (record) {
       setFormProduct(record);
@@ -30,6 +37,9 @@ export default function ProductsList() {
     const closeFormProduct = async () => {
       setFormProduct(false);
     };
+    const closeDetail = async () => {
+      setShowDetail(false);
+    };
   const columns: ColumnsType<any> = [
     {
       title: "No",
@@ -38,8 +48,8 @@ export default function ProductsList() {
       width: "5%",
     },
     {
-      title: "Images",
-      dataIndex: "avatarUrl",
+      title: "Featured Image",
+      dataIndex: "featuredImage",
       render: (text) => (
         <Image
           style={{ width: 100, height: 100, objectFit: "cover" }}
@@ -48,16 +58,22 @@ export default function ProductsList() {
       ),
     },
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Product Name",
+      dataIndex: "productName",
     },
     {
       title: "Category",
       dataIndex: "category",
     },
     { title: "Gender", dataIndex: "gender" },
-    { title: "material", dataIndex: "material" },
-    { title: "Gem", dataIndex: "gem" },
+    { title: "Colour", dataIndex: "colour" },
+    {
+      title: "Production Cost",
+      dataIndex: "productionCost",
+      render: (text) => <div>{numberWithCommas(text || 0)} VND</div>,
+    },
+    // { title: "material", dataIndex: "material" },
+    // { title: "Gem", dataIndex: "gem" },
   ];
 
   const resetHandler = () => {
@@ -73,6 +89,14 @@ export default function ProductsList() {
     setListRelateParams(values);
   };
 
+  // const onOpenDetail = (record?: any) => {
+  //   if (record) {
+  //     setClickOne(record);
+  //   } else {
+  //     setClickOne(undefined);
+  //   }
+  //   setShowInfo(true);
+  // };
   return (
     <Card>
       <Form form={form} onFinish={onFinishHandler}>
@@ -117,31 +141,29 @@ export default function ProductsList() {
         rowKey="id"
         size="small"
         scroll={{ x: "max-content" }}
-        pagination={false}
+        // pagination={false}
         columns={columns}
-        dataSource={[
-          {
-            avatarUrl:
-              "https://locphatjewelry.vn/backend/web/uploads/images/NHAN%20DINH%20HON/N1_0115.jpg",
-            name: "ring gold 24k",
-            category: "ring",
-            gender: "Male",
-            material: "Gold - 24k",
-            gem: "diamond",
-          },
-        ]}
-        // loading={isLoading}
+        dataSource={data?.items}
+        loading={isLoading}
+        onRow={(record) => {
+          return {
+            onClick: (event) => setShowDetail(record)
+          };
+        }}
       />
-      <Pagination
+      {/* <Pagination
         showSizeChanger
         onChange={onPageChange}
         // total={data?.totalPages}
         // showTotal={(total) => ` ${total} `}
         // current={data?.page}
         style={{ marginTop: "1rem" }}
-      />
+      /> */}
       {formProduct !== false && (
         <FormProduct formData={formProduct} onClose={closeFormProduct} />
+      )}
+      {showDetail !== false && (
+        <ProductDetail data={showDetail} onClose={closeDetail} />
       )}
     </Card>
   );

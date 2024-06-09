@@ -15,19 +15,19 @@ export interface ProductPayload {
 }
 export const useListProduct = (payload?: any) => {
     return useQuery(['listProduct'], () =>
-        apiClient.get({ url: '/product', params: { ProductId: payload } }),
+        apiClient.get({ url: '/products?page=1&pageSize=100', params: { ProductId: payload } }),
     );
 };
 export const useDetailProduct = (payload?: any) => {
     return useQuery(['detailProduct'], () =>
-        apiClient.get({ url: '/product', params: { ProductId: payload } }),
+        apiClient.get({ url: '/products', params: { ProductId: payload } }),
     );
 };
 export const useCreateProduct = (payload?: any) => {
     return useMutation(
         async (values: ProductPayload) =>
             apiClient.post({
-                url: `/product`,
+                url: `/products`,
                 params: payload,
                 data: values,
             }),
@@ -43,7 +43,7 @@ export const useUpdateProduct = (payload?: any) => {
     return useMutation(
         async (values: ProductPayload) =>
             apiClient.post({
-                url: `/product`,
+                url: `/products`,
                 params: payload,
                 data: values,
             }),
@@ -58,7 +58,7 @@ export const useUpdateProduct = (payload?: any) => {
 export const useDeleteProduct = () => {
     return useMutation(
         async (values: any) =>
-            apiClient.delete({ url: '/product', params: { ProductId: values }, }),
+            apiClient.delete({ url: '/products', params: { ProductId: values }, }),
         {
             onSuccess: () => {
                 message.success('Delete Product successfully');

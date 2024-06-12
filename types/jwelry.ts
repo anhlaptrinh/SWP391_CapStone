@@ -31,6 +31,7 @@ export interface Product {
 }
 
 export interface Gem {
+    gemId: number;
     gemName:     string;
     origin:      string;
     caratWeight: number;

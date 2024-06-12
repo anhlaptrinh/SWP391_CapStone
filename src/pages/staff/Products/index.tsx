@@ -1,6 +1,6 @@
 import { deleteJwelryApi } from "@/api/mock/jwellry";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Product } from "../../../../types/jwelry";
+import { Gem, Product } from "../../../../types/jwelry";
 import {
   Row,
   Layout,
@@ -77,43 +77,41 @@ export default function Products() {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
     }
   };
-  const handleRowClick = (record: any) => {
-    if (selectedRows.includes(record.id)) {
-      setSelectedRows(selectedRows.filter((rowId) => rowId !== record.id));
+  const handleRowClick = (record: number) => {
+    if (selectedRows.includes(record)) {
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== record));
     } else {
-      setSelectedRows([...selectedRows, record.id]);
+      setSelectedRows([...selectedRows, record]);
     }
   };
   const columns: ColumnsType<any> = [
-    // {
-    //   title: "",
-    //   dataIndex: "id",
-    //   render: (_text, record) => (
-    //     <input
-    //       type="checkbox"
-    //       checked={selectedRows.includes(record.id)}
-    //       onChange={(e) => handleCheckboxChange(e, record.id)}
-    //     />
-    //   ),
-    // },
     {
-      title: "No",
-      dataIndex: "no",
-      render: (_text, _data, index) => <Title level={5}>{++index}</Title>,
-      width: "5%",
+      title: "",
+      dataIndex: "gemId",
+      key: "gemId",
+      render: (_text, record:Gem) => (
+        <input
+          type="checkbox"
+          checked={selectedRows.includes(record.gemId)}
+          onChange={(e) => handleCheckboxChange(e, record.gemId)}
+        />
+      ),
     },
+    
     {
       title: "Name",
       dataIndex: "gemName",
+      key: "gemName",
     },
     {
       title: "Origin",
       dataIndex: "origin",
+      key: "origin",
     },
-    { title: "Cara weight", dataIndex: "caraWeight" },
-    { title: "Color", dataIndex: "colour" },
-    { title: "Clarity", dataIndex: "clarity" },
-    { title: "Cut", dataIndex: "cut" },
+    { title: "Cara weight",key: "caraWeight", dataIndex: "caraWeight" },
+    { title: "Color",key: "colour", dataIndex: "colour" },
+    { title: "Clarity",key: "clarity", dataIndex: "clarity" },
+    { title: "Cut",key: "cut", dataIndex: "cut" },
     // { title: "Price", dataIndex: "price" },
   ];
   const products = [
@@ -141,21 +139,7 @@ export default function Products() {
 
   const { data, isLoading } = useListProduct();
 
-  const queryClient = useQueryClient();
-  const { mutate: handledeletePro } = useMutation({
-    mutationFn: (id: any) => {
-      return deleteJwelryApi(id);
-    },
-    onSuccess: () => {
-      setDelete(true);
-      console.log("xóa thành công");
-      queryClient.refetchQueries({
-        queryKey: ["products"],
-        type: "active",
-      });
-    },
-    onError: (error) => console.log(error),
-  });
+ 
   const handleDelete = (id: number) => {
     setShowTable(true);
     // handledeletePro(id);
@@ -312,7 +296,7 @@ export default function Products() {
                         cursor: "pointer",
                         backgroundColor: "pink",
                       }}
-                      onClick={() => handleCardClick(item.productId)}
+                      onClick={() => {handleCardClick(item.productId);console.log(item.gems);}}
                       cover={
                         <Image
                           width={"100%"}
@@ -349,24 +333,25 @@ export default function Products() {
                         Delete
                       </Button>
                     </Card>
+                    
                     <Modal
                       title="Choose Gems"
                       centered
                       width={1000}
-                      open={showTable}
+                      open={showTable && checkedItems[item.productId]}
                       onOk={()=>setShowTable(false)}
                       onCancel={() => setShowTable(false)}
                     >
                       <Card className="h-full">
                         <Table
-                          rowKey={index}
+                          rowKey='gemId'
                           size="small"
                           scroll={{ x: "max-content" }}
                           pagination={false}
                           columns={columns}
                           dataSource={item.gems}
-                          onRow={(record) => ({
-                            onClick: () => handleRowClick(record),
+                          onRow={(record:Gem) => ({
+                            onClick: () => handleRowClick(record.gemId),
                           })}
                         />
                         <Pagination

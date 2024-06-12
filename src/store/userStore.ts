@@ -8,6 +8,8 @@ import { create } from 'zustand';
 import userService, { SignInReq } from '@/api/services/userService';
 import {
   ADMIN_PERMISSION,
+  MANAGERS_PERMISSION,
+  STAFF_PERMISSION,
 } from '@/router/constant';
 import { getItem, removeItem, setItem } from '@/utils/storage';
 
@@ -60,18 +62,36 @@ export const useSignIn = () => {
   const signIn = async (data: SignInReq) => {
     try {
       const res = await signInMutation.mutateAsync(data);
-      const { accessToken, refreshToken } = res;
-      setUserToken({ accessToken, refreshToken });
+      setUserToken({ accessToken: res.toString(), refreshToken :"" });
+      const decodetoken = jwtDecode<JwtDecode>(res as string);
       const user: UserInfo = {
-        email: "",
-        id: "",
+        email: decodetoken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+        id: decodetoken.Id,
         avatar: "",
-        username: "",
-        role: "",
+        username: data.username,
+        role: decodetoken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
       };
-      user.permissions = ADMIN_PERMISSION;
-      setUserInfo(user);
-      navigatge(HOMEPAGE, { replace: true });
+      if (
+        decodetoken[
+          'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+        ] === 'Administrator'
+      ) {
+        user.permissions = ADMIN_PERMISSION;
+        setUserInfo(user);
+        navigatge("/dashboard", { replace: true });
+      } else if (
+        decodetoken[
+          'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+        ] === 'Manager'
+      ) {
+        user.permissions = MANAGERS_PERMISSION;
+        setUserInfo(user);
+        navigatge("/manager/user", { replace: true });
+      } else {
+        user.permissions = STAFF_PERMISSION;
+        setUserInfo(user);
+        navigatge("/staff/order", { replace: true });
+      }
       notification.success({
         message: 'Login sucessfully',
         description: `Welcome back: ${data.username}`,

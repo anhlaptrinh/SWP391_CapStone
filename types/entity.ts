@@ -6,9 +6,9 @@ export interface UserToken {
 }
 
 export interface UserInfo {
-    id: string;
-    email: string;
-    username: string;
+    id?: string;
+    email?: string;
+    username?: string;
     password?: string;
     avatar?: string;
     role?: string;

@@ -24,12 +24,11 @@ export const useDetailUser = (payload?: any) => {
         apiClient.get({ url: '/users', params: { UserId: payload } }),
     );
 };
-export const useCreateUser = (payload?: any) => {
+export const useCreateUser = () => {
     return useMutation(
         async (values: UserPayload) =>
             apiClient.post({
                 url: `/users`,
-                params: payload,
                 data: values,
             }),
         {

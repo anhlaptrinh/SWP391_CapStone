@@ -11,7 +11,7 @@ export interface MaterialPayload {
 }
 export const useListMaterial = (payload?: any) => {
     return useQuery(['listMaterial'], () =>
-        apiClient.get({ url: '/materials', params: { MaterialId: payload } }),
+        apiClient.get({ url: '/materials?page=1&pageSize=100', params: { MaterialId: payload } }),
     );
 };
 export const useDetailMaterial = (payload?: any) => {

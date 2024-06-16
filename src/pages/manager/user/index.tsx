@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Button,
   Card,
   Col,
@@ -15,14 +14,16 @@ import { Link } from "react-router-dom";
 
 import { InputType } from "#/api";
 import { FormUser } from "./formUser";
+import { useListUser } from "@/api/manager/user";
+import { CircleLoading } from "@/components/loading";
 
 export default function ManagerUserList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const [formUser, setFormUser] = useState<any>(false);
-  // const { data, isLoading } = useListUser(listRelateParams);
-  // if (isLoading) return <CircleLoading />;
+  const { data, isLoading } = useListUser();
+  if (isLoading) return <CircleLoading />;
   const onOpenFormHandler = (record?: any) => {
     if (record) {
       setFormUser(record);
@@ -55,6 +56,10 @@ export default function ManagerUserList() {
     //   ),
     // },
     {
+      title: "User Name",
+      dataIndex: "userName",
+    },
+    {
       title: "Full Name",
       dataIndex: "fullName",
     },
@@ -79,7 +84,7 @@ export default function ManagerUserList() {
         </div>
       ),
     },
-    { title: "Status", dataIndex: "status" },
+    // { title: "Status", dataIndex: "status" },
   ];
 
   const resetHandler = () => {
@@ -139,20 +144,22 @@ export default function ManagerUserList() {
         rowKey="id"
         size="small"
         scroll={{ x: "max-content" }}
-        pagination={false}
+        // pagination={false}
         columns={columns}
-        dataSource={[{fullName: "pham huu phuc", phoneNumber: "09362136234", email: "phphuc@gmail.com", address: "fptu", status: "sussess"}]}
+        dataSource={data?.items}
         // loading={isLoading}
       />
-      <Pagination
+      {/* <Pagination
         showSizeChanger
         onChange={onPageChange}
         // total={data?.totalPages}
         // showTotal={(total) => ` ${total} `}
         // current={data?.page}
         style={{ marginTop: "1rem" }}
-      />
-      {formUser !== false && <FormUser formData={formUser} onClose={closeFormUser} />}
+      /> */}
+      {formUser !== false && (
+        <FormUser formData={formUser} onClose={closeFormUser} />
+      )}
     </Card>
   );
 }

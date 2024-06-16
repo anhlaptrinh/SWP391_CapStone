@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Button,
   Card,
   Col,
@@ -7,20 +6,29 @@ import {
   Image,
   Input,
   Pagination,
+  Popconfirm,
   Row,
   Typography,
 } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { useState } from "react";
-
 import { InputType } from "#/api";
 import { FormProduct } from "./product.create";
+import { useDeleteProduct, useListProduct } from "@/api/manager/products";
+import { CircleLoading } from "@/components/loading";
+import { numberWithCommas } from "@/utils/string";
+import { ProductDetail } from "./product.detail";
+import { IconButton, Iconify } from "@/components/icon";
 
 export default function ProductsList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
+  const { data, isLoading } = useListProduct();
+  const { mutateAsync: deleteMutate } = useDeleteProduct();
   const [formProduct, setFormProduct] = useState<any>(false);
+  const [showDetail, setShowDetail] = useState<any>(false);
+  if (isLoading) return <CircleLoading />;
   const onOpenFormHandler = (record?: any) => {
     if (record) {
       setFormProduct(record);
@@ -31,6 +39,9 @@ export default function ProductsList() {
     const closeFormProduct = async () => {
       setFormProduct(false);
     };
+    const closeDetail = async () => {
+      setShowDetail(false);
+    };
   const columns: ColumnsType<any> = [
     {
       title: "No",
@@ -39,26 +50,72 @@ export default function ProductsList() {
       width: "5%",
     },
     {
-      title: "Images",
-      dataIndex: "avatarUrl",
+      title: "Featured Image",
+      dataIndex: "featuredImage",
       render: (text) => (
-        <Image
-          style={{ width: 100, height: 100, objectFit: "cover" }}
-          src={text}
-        />
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <Image
+            style={{ width: 100, height: 100, objectFit: "cover" }}
+            src={text}
+          />
+        </div>
       ),
     },
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Product Name",
+      dataIndex: "productName",
     },
     {
       title: "Category",
       dataIndex: "category",
     },
     { title: "Gender", dataIndex: "gender" },
-    { title: "material", dataIndex: "material" },
-    { title: "Gem", dataIndex: "gem" },
+    { title: "Colour", dataIndex: "colour" },
+    {
+      title: "Production Cost",
+      dataIndex: "productionCost",
+      render: (text) => <div>{numberWithCommas(text || 0)} VND</div>,
+    },
+    {
+      title: "Action",
+      align: "center",
+      render: (_, record) => (
+        <div className="text-gray flex w-full items-center justify-center">
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenFormHandler(record);
+            }}
+          >
+            <Iconify icon="solar:pen-bold-duotone" size={18} />
+          </IconButton>
+          <Popconfirm
+            title="Delete the Product?"
+            okText="Yes"
+            cancelText="No"
+            placement="left"
+            onConfirm={(e : any) => { e.stopPropagation();
+            deleteMutate(record.productId)}}
+          >
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <Iconify
+                icon="mingcute:delete-2-fill"
+                size={18}
+                className="text-error"
+              />
+            </IconButton>
+          </Popconfirm>
+        </div>
+      ),
+    },
   ];
 
   const resetHandler = () => {
@@ -74,6 +131,14 @@ export default function ProductsList() {
     setListRelateParams(values);
   };
 
+  // const onOpenDetail = (record?: any) => {
+  //   if (record) {
+  //     setClickOne(record);
+  //   } else {
+  //     setClickOne(undefined);
+  //   }
+  //   setShowInfo(true);
+  // };
   return (
     <Card>
       <Form form={form} onFinish={onFinishHandler}>
@@ -118,31 +183,29 @@ export default function ProductsList() {
         rowKey="id"
         size="small"
         scroll={{ x: "max-content" }}
-        pagination={false}
+        // pagination={false}
         columns={columns}
-        dataSource={[
-          {
-            avatarUrl:
-              "https://locphatjewelry.vn/backend/web/uploads/images/NHAN%20DINH%20HON/N1_0115.jpg",
-            name: "ring gold 24k",
-            category: "ring",
-            gender: "Male",
-            material: "Gold - 24k",
-            gem: "diamond",
-          },
-        ]}
-        // loading={isLoading}
+        dataSource={data?.items}
+        loading={isLoading}
+        onRow={(record) => {
+          return {
+            onClick: (event) => setShowDetail(record)
+          };
+        }}
       />
-      <Pagination
+      {/* <Pagination
         showSizeChanger
         onChange={onPageChange}
         // total={data?.totalPages}
         // showTotal={(total) => ` ${total} `}
         // current={data?.page}
         style={{ marginTop: "1rem" }}
-      />
+      /> */}
       {formProduct !== false && (
         <FormProduct formData={formProduct} onClose={closeFormProduct} />
+      )}
+      {showDetail !== false && (
+        <ProductDetail data={showDetail} onClose={closeDetail} />
       )}
     </Card>
   );

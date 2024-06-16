@@ -42,11 +42,11 @@ function LoginForm() {
       <div className="mb-4 text-2xl font-bold xl:text-3xl text-center">
         Sign In
       </div>
-      <Button onClick={() => SignInMail()} disabled={loading} className="mt-6">
+      {/* <Button onClick={() => SignInMail()} disabled={loading} className="mt-6">
         <Iconify icon="logos:google-icon" size={18} />
         Login Google
       </Button>
-      <div className="my-4 text-l font-semibold text-center">OR</div>
+      <div className="my-4 text-l font-semibold text-center">OR</div> */}
       <Form
         name="login"
         size="large"

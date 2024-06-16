@@ -12,10 +12,13 @@ export interface GemPayload {
     color: string;
     clarity: string;
     cut: string;
+    gemPrice: object;
 }
-export const useListGem = (payload?: any) => {
+export const useListGem = () => {
     return useQuery(['listGem'], () =>
+
         apiClient.get({ url: '/gems', params: { gemId: payload }}),
+
     );
 };
 export const useDetailGem = (payload?: any) => {
@@ -43,7 +46,7 @@ export const useUpdateGem = (payload?: any) => {
     return useMutation(
         async (values: GemPayload) =>
             apiClient.post({
-                url: `/gem`,
+                url: `/gems`,
                 params: payload,
                 data: values,
             }),
@@ -58,7 +61,7 @@ export const useUpdateGem = (payload?: any) => {
 export const useDeleteGem = () => {
     return useMutation(
         async (values: any) =>
-            apiClient.delete({ url: '/gem', params: { gemId: values }, }),
+            apiClient.delete({ url: '/gems', params: { gemId: values }, }),
         {
             onSuccess: () => {
                 message.success('Delete gem successfully');

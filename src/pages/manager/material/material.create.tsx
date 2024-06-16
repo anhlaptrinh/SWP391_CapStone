@@ -1,3 +1,8 @@
+import {
+  MaterialPayload,
+  useCreateMaterial,
+  useUpdateMaterial,
+} from "@/api/manager/material";
 import { Button, Form, Input, Modal, message } from "antd";
 import { useState } from "react";
 
@@ -7,25 +12,31 @@ export type MaterialCreateFormProps = {
 };
 export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
   const [form] = Form.useForm();
-  //   const { mutateAsync: createMutate } = useCreateMaterial(stationId);
+  const { mutateAsync: createMutate } = useCreateMaterial();
+  const { mutateAsync: updateMutate } = useUpdateMaterial();
   const [loading, setLoading] = useState<boolean>(false);
 
   const submitHandle = async () => {
     setLoading(true);
-    // const values = await form.validateFields();
+    const values = await form.validateFields();
     try {
       if (formData) {
-        // const updateData: MaterialPayload = {
-        //   ...formData,
-        //   id: formData.id,
-        // };
-        // updateData.name = values.name;
-        // updateData.phone = values.phone;
-        // updateMutate(updateData);
+        const updateData: MaterialPayload = {
+          ...formData,
+          id: formData.id,
+        };
+        await updateMutate(updateData);
         setLoading(false);
       } else {
-        // const createData: MaterialPayload = { ...values };
-        // createMutate(createData);
+        const createData: MaterialPayload = {
+          ...values,
+          materialPrice: {
+            buyPrice: values.buyPrice,
+            sellPrice: values.sellPrice,
+            effDate: "2024-06-06T04:33:20.997Z",
+          },
+        };
+        await createMutate(createData);
         setLoading(false);
       }
       onClose();
@@ -64,19 +75,10 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
         layout="vertical"
       >
         <Form.Item
-          label="Name"
-          name="name"
+          label="Material Name"
+          name="materialName"
           required
-          rules={[{ required: true, message: "Please input name" }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          label="Weight"
-          name="weight"
-          required
-          rules={[{ required: true, message: "Please input weight" }]}
+          rules={[{ required: true, message: "Please input materialName" }]}
         >
           <Input />
         </Form.Item>

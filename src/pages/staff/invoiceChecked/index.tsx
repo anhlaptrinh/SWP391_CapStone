@@ -6,110 +6,124 @@ import {
     Row,
     Typography,
     Table,
-    Input
+    Input,
+    TableProps,
+    List,
+    Tag,
+    Pagination,
+    Popover
   } from "antd";
-  import { useState } from "react";
+  import {Invoice, Items} from '#/invoice'
   
+  import { useListInvoice } from "@/api/staff/listInvoice";
+import dayjs from "dayjs";
+import { useState } from "react";
+import { PAGE_SIZE } from "@/constants/page";
   export default function CheckedInvoice() {
+    const [currentPage,setCurrentPage]=useState(1);
     const { Title } = Typography;
-  
-    const tableData = [
-      {
-        id: 1,
-        invoiceID: "INV001",
-        invoiceDate: '2023-05-20',
-        
-        buyerPhone: '123-456-7890',
-        createdBy: 'Alice Smith',
-        productName: 'Product 1',
-        price: '$100',
-        total: '$120',
-        discount: '$20',
-        amount: '$100',
-      },
-      {
-        id: 2,
-        invoiceID: "INV002",
-        invoiceDate: '2023-05-21',
-        
-        buyerPhone: '123-456-7891',
-        createdBy: 'Bob Johnson',
-        productName: 'Product 2',
-        price: '$200',
-        total: '$220',
-        discount: '$20',
-        amount: '$200',
-      },
-      {
-        id: 3,
-        invoiceID: "INV003",
-        invoiceDate: '2023-05-22',
-        
-        buyerPhone: '123-456-7892',
-        createdBy: 'Charlie Brown',
-        productName: 'Product 3',
-        price: '$150',
-        total: '$170',
-        discount: '$20',
-        amount: '$150',
-      },
-      {
-        id: 4,
-        invoiceID: "INV004",
-        invoiceDate: '2023-05-23',
-        buyerPhone: '123-456-7893',
-        createdBy: 'David Smith',
-        productName: 'Product 4',
-        price: '$180',
-        total: '$200',
-        discount: '$20',
-        amount: '$180',
-      },
-      {
-        id: 5,
-        invoiceID: "INV005",
-        invoiceDate: '2023-05-24',
-  
-        buyerPhone: '123-456-7894',
-        createdBy: 'Eve White',
-        productName: 'Product 5',
-        price: '$120',
-        total: '$140',
-        discount: '$20',
-        amount: '$120',
-      },
-    ];
-  
-    const columns = [
+    const {data,isLoading}=useListInvoice(currentPage);
+    const [form] = Form.useForm();
+    const [openModal,setIsOpenModal]=useState(false);
+    const totalCount=data?.totalPages||0;
+    
+    const columns: TableProps<Invoice>['columns'] = [
       {
         title: "Invoice ID",
-        dataIndex: "invoiceID",
-        key: "invoiceID",
+        dataIndex: "invoiceId",
+        key: "invoiceId",
+        align: 'center'
       },
       {
-        title: "Invoice Date",
-        dataIndex: "invoiceDate",
-        key: "invoiceDate",
+        title: "Order Date",
+        dataIndex: "orderDate",
+        key: "orderDate",
+        render: (text) => dayjs(text).format('YYYY-MM-DD'),
       },
       {
-        title: "Buyer Phone",
-        dataIndex: "buyerPhone",
-        key: "buyerPhone",
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        align: 'center',
+        render: (_, { status }) => {
+          
+          let color = 'green'; // Default color
+    
+        // Apply custom logic to set color based on role
+        if (status === true) {
+          color = 'red';
+        } else if (status === false) {
+          color = 'blue';
+        } 
+        return (
+          <>
+            <Tag color={color}>{status? 'checked' : 'unchecked'}</Tag>
+
+          </>
+        );
+        },
       },
       {
-        title: "Created By",
-        dataIndex: "createdBy",
-        key: "createdBy",
+        title: "Invoice Type",
+        dataIndex: "invoiceType",
+        key: "invoiceType",
+        align: 'center',
+        render: (_, { invoiceType }) => {
+          
+          let color = 'green'; // Default color
+    
+          // Apply custom logic to set color based on role
+          if (invoiceType === true) {
+            color = 'green';
+          } else if (invoiceType === false) {
+            color = 'pink';
+          } 
+          return (
+            <>
+              <Tag color={color}>{invoiceType? 'SALE' : 'PURCHASE'}</Tag>
+  
+            </>
+          );
+        },
       },
       {
-        title: "Product Name",
-        dataIndex: "productName",
-        key: "productName",
+        title: "Customer",
+        dataIndex: "customerName",
+        key: "customerName",
       },
       {
-        title: "Price",
-        dataIndex: "price",
-        key: "price",
+        title: "Invoice Creator",
+        dataIndex: "userName",
+        key: "userName",
+      },
+      {
+        title: "Warranty",
+        dataIndex: "warranty",
+        key: "warranty",
+        align: 'center',
+      },
+      {
+        title: 'Items',
+        dataIndex: 'items',
+        key: 'items',
+        render: (_text: any, record: any) => {
+          const content = (
+            <List
+              dataSource={record.items}
+              renderItem={(item: Items) => (
+                <List.Item>
+                  <Tag color="pink">{item.productName}</Tag>
+                </List.Item>
+              )}
+            />
+          );
+    
+          return (
+            <Popover content={content} title="Items">
+              <Button type="link">View Items</Button>
+            </Popover>
+          );
+        },
       },
       {
         title: "Total",
@@ -117,20 +131,11 @@ import {
         key: "total",
       },
       {
-        title: "Discount",
-        dataIndex: "discount",
-        key: "discount",
-      },
-      {
-        title: "Amount",
-        dataIndex: "amount",
-        key: "amount",
-      },
-      {
         title: "Action",
         key: "action",
+        align: "center",
         render: (_text: any, record: any) => (
-          <Button type="primary" onClick={() => handleBuyback(record.invoiceCode)}>
+          <Button type="primary" onClick={() => handleBuyback(record.invoiceId)}>
             Buyback
           </Button>
         ),
@@ -141,57 +146,68 @@ import {
       // Implement buyback logic here
       console.log(`Buyback initiated for invoice: ${invoiceCode}`);
     };
+    const onFinishHandler = (values: any) => {
+      console.log(values);
+    };
+    const resetHandler = () => {
+      form.resetFields();
+    };
   
     return (
       <>
-        <Card
-          style={{ marginTop: "2rem" }}
-          title={<Title level={3}>Invoice Checking</Title>}
-        >
-          <Form>
-            <Row gutter={24} justify="space-between">
-              <Col span={20}>
-                <Row gutter={24}>
-                  <Col span={8}>
-                    <Form.Item name="Search">
-                      <Input placeholder="Search by name" allowClear />
-                    </Form.Item>
+        <div className="mt-3 text-sm">
+          <Form form={form} onFinish={onFinishHandler}>
+          <Row gutter={24}  justify="space-between">
+            <Col   xs={12} md={18} sm={14} lg={19} xl={20} xxl={18}>
+              <Row  gutter={[12,12]}>
+                <Col xs={24} md={21} sm={12}>
+                  <Row>
+                  <Col  xs={23} md={21} sm={24} lg={8}>
+                  <Form.Item name="Search">
+                    <Input placeholder="Search by name" allowClear />
+                  </Form.Item>
                   </Col>
-                  <Col span={8}>
-                    <Row>
-                      <Col span={7}>
-                        <Form.Item name="search">
-                          <Button type="primary" htmlType="submit">
-                            Search
-                          </Button>
-                        </Form.Item>
-                      </Col>
-                      <Col span={7}>
-                        <Button type="primary">
-                          Reset
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </Col>
-              <Col span={2}>
-                <Row>
-                  <Col span={12}>
-                    <Button type="primary">New</Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Form>
+                  
+                    <Col xs={24} md={3} sm={24} lg={16} >
+                      <Button  type="primary" onClick={resetHandler}>
+                        Reset
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={12} sm={10} md={6} lg={5} xl={4} xxl={6}>
+              <Row>
+                <Col xs={24} sm={12} lg={3}>
+                  <Button type="primary" onClick={()=>setIsOpenModal(true)}>Add new</Button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Form>
           <Table
-            rowKey="id"
-            size="small"
-            scroll={{ x: "max-content" }}
+            rowKey="invoiceId"
+            className="mt-3"
             columns={columns}
-            dataSource={tableData}
+            loading={isLoading}
+            pagination={false}
+            scroll={{ x: 'max-content' }}
+            dataSource={data?.items}
+            bordered
+            
           />
-        </Card>
+          <div className="flex float-end mt-4 pb-4">
+      <Pagination
+        defaultCurrent={currentPage} 
+        total={totalCount} 
+        pageSize={PAGE_SIZE}
+        onChange={(page) => {
+          setCurrentPage(page);
+        }}
+      />
+    </div>
+        </div>
       </>
     );
   }

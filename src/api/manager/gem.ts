@@ -15,19 +15,19 @@ export interface GemPayload {
 }
 export const useListGem = (payload?: any) => {
     return useQuery(['listGem'], () =>
-        apiClient.get({ url: '/gem', params: { gemId: payload }}),
+        apiClient.get({ url: '/gems', params: { gemId: payload }}),
     );
 };
 export const useDetailGem = (payload?: any) => {
     return useQuery(['detailGem'], () =>
-        apiClient.get({ url: '/gem', params: { gemId: payload }}),
+        apiClient.get({ url: '/gems', params: { gemId: payload }}),
     );
 };
 export const useCreateGem = (payload?: any) => {
     return useMutation(
         async (values: GemPayload) =>
             apiClient.post({
-                url: `/gem`,
+                url: `/gems`,
                 params: payload,
                 data: values,
             }),

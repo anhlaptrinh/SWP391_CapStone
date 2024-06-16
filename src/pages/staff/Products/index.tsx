@@ -1,6 +1,4 @@
-import { deleteJwelryApi } from "@/api/mock/jwellry";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Product } from "../../../../types/jwelry";
+import { Gem, Material, Product } from "../../../../types/jwelry";
 import {
   Row,
   Layout,
@@ -16,6 +14,10 @@ import {
   Select,
   Form,
   Pagination,
+  Popover,
+  Tag,
+  Tooltip,
+  Tabs,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import type { SearchProps } from "antd/es/input/Search";
@@ -43,20 +45,20 @@ export default function Products() {
   };
   const handleOk = () => {
     setInvoice(false);
-    
+
     // console.log("Checked Items:", selectedProductIds);
     // Pass the checkedItems to another component or handle as needed
   };
   const handleCardClick = (itemId: number) => {
     console.log(itemId);
-    setShowTable(true)
+    setShowTable(true);
     setCheckedItems({
       ...checkedItems,
       [itemId]: !checkedItems[itemId], // Toggle the checked state
     });
-   if(checkedItems[itemId]===true){
-    setShowTable(false)
-   }
+    if (checkedItems[itemId] === true) {
+      setShowTable(false);
+    }
   };
   const handleSelectChange = () => {
     setShowTable(true);
@@ -77,44 +79,114 @@ export default function Products() {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
     }
   };
-  const handleRowClick = (record: any) => {
-    if (selectedRows.includes(record.id)) {
-      setSelectedRows(selectedRows.filter((rowId) => rowId !== record.id));
+  const handleRowClick = (record: number) => {
+    if (selectedRows.includes(record)) {
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== record));
     } else {
-      setSelectedRows([...selectedRows, record.id]);
+      setSelectedRows([...selectedRows, record]);
     }
   };
   const columns: ColumnsType<any> = [
-    // {
-    //   title: "",
-    //   dataIndex: "id",
-    //   render: (_text, record) => (
-    //     <input
-    //       type="checkbox"
-    //       checked={selectedRows.includes(record.id)}
-    //       onChange={(e) => handleCheckboxChange(e, record.id)}
-    //     />
-    //   ),
-    // },
     {
-      title: "No",
-      dataIndex: "no",
-      render: (_text, _data, index) => <Title level={5}>{++index}</Title>,
-      width: "5%",
+      title: "",
+      dataIndex: "gemId",
+      key: "gemId",
+      render: (_text, record: Gem) => (
+        <input
+          type="checkbox"
+          checked={selectedRows.includes(record.gemId)}
+          onChange={(e) => handleCheckboxChange(e, record.gemId)}
+        />
+      ),
     },
+
     {
       title: "Name",
       dataIndex: "gemName",
+      key: "gemName",
     },
     {
       title: "Origin",
       dataIndex: "origin",
+      key: "origin",
     },
-    { title: "Cara weight", dataIndex: "caraWeight" },
-    { title: "Color", dataIndex: "colour" },
-    { title: "Clarity", dataIndex: "clarity" },
-    { title: "Cut", dataIndex: "cut" },
-    // { title: "Price", dataIndex: "price" },
+    { title: "Cara weight", key: "caratWeight", dataIndex: "caratWeight" },
+    { title: "Color", key: "colour", dataIndex: "colour" },
+    { title: "Clarity", key: "clarity", dataIndex: "clarity" },
+    { title: "Cut", key: "cut", dataIndex: "cut" },
+    {
+      title: "Gem Price",
+      dataIndex: "gemPrice",
+      key: "gems",
+      render: (_text: any, { gemPrice }) => {
+        const { caratWeightPrice, colourPrice, clarityPrice, cutPrice, total } =
+          gemPrice;
+        const content = (
+          <div>
+            <Tooltip title="Carat Weight Price">
+              <Tag color="pink">Carat Weight Price: {caratWeightPrice}</Tag>
+            </Tooltip>
+            <Tooltip title="Colour Price">
+              <Tag color="pink">Colour Price: {colourPrice}</Tag>
+            </Tooltip>
+            <Tooltip title="Clarity Price">
+              <Tag color="pink">Clarity Price: {clarityPrice}</Tag>
+            </Tooltip>
+            <Tooltip title="Cut Price">
+              <Tag color="pink">Cut Price: {cutPrice}</Tag>
+            </Tooltip>
+          </div>
+        );
+
+        return (
+          <Popover mouseEnterDelay={0.5} content={content} title="Gem Price">
+            <Button type="link">{gemPrice.total}</Button>
+          </Popover>
+        );
+      },
+    },
+  ];
+  const materialColumns :ColumnsType<any> = [
+    {
+      dataIndex: "materialId",
+      align:'center',
+      key: "materialId",
+      render: (_text:any, record: Material) => (
+        <input
+          type="checkbox"
+          checked={selectedRows.includes(record.materialId)}
+          onChange={(e) => handleCheckboxChange(e, record.materialId)}
+        />
+      ),
+    },
+    {
+      title: "Material Name",
+      dataIndex: "materialName",
+      key: "materialName",
+    },
+    {
+      title: "Material Price",
+      dataIndex: "materialPrice",
+      key: "materialPrice",
+      render: (_text:any, {materialPrice})=>{
+        const {buyPrice,sellPrice}=materialPrice
+        const content = (
+          <div>
+            <Tooltip title="Purchase Price">
+              <Tag color="purple">Purchase Price: {buyPrice}</Tag>
+            </Tooltip>
+            
+            
+          </div>
+        );
+
+        return (
+          <Popover mouseEnterDelay={0.5} content={content} title="Gold Price">
+            <Button type="link">Sale Price: {sellPrice} </Button>
+          </Popover>
+        );
+      }
+    },
   ];
   const products = [
     {
@@ -141,21 +213,6 @@ export default function Products() {
 
   const { data, isLoading } = useListProduct();
 
-  const queryClient = useQueryClient();
-  const { mutate: handledeletePro } = useMutation({
-    mutationFn: (id: any) => {
-      return deleteJwelryApi(id);
-    },
-    onSuccess: () => {
-      setDelete(true);
-      console.log("xóa thành công");
-      queryClient.refetchQueries({
-        queryKey: ["products"],
-        type: "active",
-      });
-    },
-    onError: (error) => console.log(error),
-  });
   const handleDelete = (id: number) => {
     setShowTable(true);
     // handledeletePro(id);
@@ -312,7 +369,10 @@ export default function Products() {
                         cursor: "pointer",
                         backgroundColor: "pink",
                       }}
-                      onClick={() => handleCardClick(item.productId)}
+                      onClick={() => {
+                        handleCardClick(item.productId);
+                        console.log(item.gems);
+                      }}
                       cover={
                         <Image
                           width={"100%"}
@@ -336,7 +396,7 @@ export default function Products() {
                         onChange={() => {
                           handleBox(item.productId);
                         }}
-                        onClick={()=>setShowTable(true)}
+                        onClick={() => setShowTable(true)}
                       />
                       <Button
                         type="primary"
@@ -349,30 +409,52 @@ export default function Products() {
                         Delete
                       </Button>
                     </Card>
+
                     <Modal
                       title="Choose Gems"
                       centered
                       width={1000}
-                      open={showTable}
-                      onOk={()=>setShowTable(false)}
+                      open={showTable && checkedItems[item.productId]}
+                      onOk={() => setShowTable(false)}
                       onCancel={() => setShowTable(false)}
                     >
                       <Card className="h-full">
-                        <Table
-                          rowKey={index}
-                          size="small"
-                          scroll={{ x: "max-content" }}
-                          pagination={false}
-                          columns={columns}
-                          dataSource={item.gems}
-                          onRow={(record) => ({
-                            onClick: () => handleRowClick(record),
-                          })}
-                        />
-                        <Pagination
-                          showSizeChanger
-                          style={{ marginTop: "1rem" }}
-                        />
+                        <Tabs defaultActiveKey="materials">
+                          <Tabs.TabPane tab="Materials" key="materials">
+                            <Table
+                              rowKey="materialId"
+                              size="small"
+                              scroll={{ x: "max-content" }}
+                              pagination={false}
+                              columns={materialColumns}
+                              dataSource={item.materials} // Dữ liệu vật liệu
+                              onRow={(record: Material) => ({
+                                onClick: () => handleRowClick(record.materialId),
+                              })}
+                            />
+                            <Pagination
+                              showSizeChanger
+                              style={{ marginTop: "1rem" }}
+                            />
+                          </Tabs.TabPane>
+                          <Tabs.TabPane tab="Gems" key="gems">
+                            <Table
+                              rowKey="gemId"
+                              size="small"
+                              scroll={{ x: "max-content" }}
+                              pagination={false}
+                              columns={columns}
+                              dataSource={item.gems}
+                              onRow={(record: Gem) => ({
+                                onClick: () => handleRowClick(record.gemId),
+                              })} // Dữ liệu đá quý
+                            />
+                            <Pagination
+                              showSizeChanger
+                              style={{ marginTop: "1rem" }}
+                            />
+                          </Tabs.TabPane>
+                        </Tabs>
                       </Card>
                     </Modal>
                   </Col>

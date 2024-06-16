@@ -9,8 +9,29 @@ import {
   Input,
   Table,
   Form,
+  TableProps,
+  Tag,
+  Popover,
 } from "antd";
 import { useState } from "react";
+export interface Order {
+  orderId: string;
+  orderType: string;
+  customerName: string;
+  userName: string;
+  warranty: string;
+  orderDate: string;
+  status: boolean;
+  orderDetail: OrderDetail[];
+  total: number;
+}
+
+export interface OrderDetail {
+  ProductName: string;
+  sellPrice: string;
+  buyPrice: string;
+  perDiscount?: string;
+}
 
 export default function InvoiceList() {
   const { Title } = Typography;
@@ -30,118 +51,76 @@ export default function InvoiceList() {
     setIsModalVisible(false);
   };
 
-  const data = [
+  const data:any[]= [
     {
-      id: 1,
-      invoiceID: "INV001",
-      invoiceDate: '2023-05-20',
-      
-      buyerPhone: '123-456-7890',
-      createdBy: 'Alice Smith',
-      productName: 'Product 1',
-      price: '$100',
-      ratio: '3%',
-      discount: '$20',
-      amount: '$100',
+      orderId: 'INV001',
+      orderType: 'Sale',
+      customerName: 'John Doe',
+      userName: 'Alice',
+      warranty: '1 year',
+      status: true,
+      orderDetail: [
+        { ProductName: 'Product A', sellPrice: 100 },
+        { ProductName: 'Product B', sellPrice: 150 },
+      ],
     },
-    {
-      id: 2,
-      invoiceID: "INV002",
-      invoiceDate: '2023-05-21',
-      
-      buyerPhone: '123-456-7891',
-      createdBy: 'Bob Johnson',
-      productName: 'Product 2',
-      price: '$200',
-      ratio: '4%',
-      discount: '$20',
-      amount: '$200',
-    },
-    {
-      id: 3,
-      invoiceID: "INV003",
-      invoiceDate: '2023-05-22',
-      
-      buyerPhone: '123-456-7892',
-      createdBy: 'Charlie Brown',
-      productName: 'Product 3',
-      price: '$150',
-      ratio: '6%',
-      discount: '$20',
-      amount: '$150',
-    },
-    {
-      id: 4,
-      invoiceID: "INV004",
-      invoiceDate: '2023-05-23',
-      buyerPhone: '123-456-7893',
-      createdBy: 'David Smith',
-      productName: 'Product 4',
-      price: '$180',
-      ratio: '7%',
-      discount: '$20',
-      amount: '$180',
-    },
-    {
-      id: 5,
-      invoiceID: "INV005",
-      invoiceDate: '2023-05-24',
-
-      buyerPhone: '123-456-7894',
-      createdBy: 'Eve White',
-      productName: 'Product 5',
-      price: '$120',
-      ratio: '8%',
-      discount: '$20',
-      amount: '$120',
-    },
+  
   ];
 
-  const columns = [
+  const columns: TableProps<Order>["columns"] = [
     {
       title: "Invoice ID",
-      dataIndex: "invoiceID",
-      key: "invoiceID",
+      dataIndex: "orderId",
     },
     {
-      title: "Invoice Date",
-      dataIndex: "invoiceDate",
-      key: "invoiceDate",
+      title: "Order Type",
+      align: "center",
+      dataIndex: "orderType",
+      key: "orderType",
     },
     {
-      title: "Buyer Phone",
-      dataIndex: "buyerPhone",
-      key: "buyerPhone",
+      title: "Customer",
+      align: "center",
+      dataIndex: "customerName",
+      key: "customerName",
     },
+    { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
     {
-      title: "Created By",
-      dataIndex: "createdBy",
-      key: "createdBy",
+      title: "Warranty",
+      align: "center",
+      dataIndex: "warranty",
+      key: "warranty",
     },
+    { title: "Status", align: "center", dataIndex: "status", key: "status", render: (status) => (
+      <Tag color={status ? 'green' : 'red'}>
+        {status ? 'Active' : 'Inactive'}
+      </Tag>
+    ), },
     {
-      title: "Product Name",
-      dataIndex: "productName",
-      key: "productName",
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Price Ratio",
-      dataIndex: "ratio",
-      key: "ratio",
-    },
-    {
-      title: "Discount",
-      dataIndex: "discount",
-      key: "discount",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
+      title: "Items",
+      align: "center",
+      dataIndex: "orderDetail",
+      key: "orderDetail",
+      render: (_, record) => (
+        <Popover
+          title="Order Detail"
+          content={
+            <ul>
+              {record.orderDetail.map((item, index) => (
+                <li key={index}>
+                  <Tag color="blue">{item.ProductName}</Tag>
+                  <span>({item.sellPrice})</span>
+                </li>
+              ))}
+            </ul>
+          }
+          trigger="hover"
+        >
+          <button style={{ border: 'none', background: 'none', cursor: 'pointer' }}>
+            Details
+          </button>
+        </Popover>
+      ),
     },
     {
       title: "Action",

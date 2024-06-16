@@ -31,15 +31,28 @@ export interface Product {
 }
 
 export interface Gem {
+    gemId:       number;
     gemName:     string;
     origin:      string;
     caratWeight: number;
     colour:      string;
     clarity:     string;
     cut:         string;
-   
+    gemPrice:    GemPrice;
 }
-
+export interface GemPrice {
+    caratWeightPrice: number;
+    colourPrice:      number;
+    clarityPrice:     number;
+    cutPrice:         number;
+    total:            number;
+}
 export interface Material {
-    materialName: string;
+    materialId:    number;
+    materialName:  string;
+    materialPrice: MaterialPrice;
+}
+export interface MaterialPrice {
+    buyPrice:  number;
+    sellPrice: number;
 }

@@ -18,17 +18,21 @@ export const useListProduct = (payload?: any) => {
         apiClient.get({ url: '/products?page=1&pageSize=100', params: { ProductId: payload } }),
     );
 };
+export const useListCategory = () => {
+    return useQuery(['listCategory'], () =>
+        apiClient.get({ url: '/categories'}),
+    );
+};
 export const useDetailProduct = (payload?: any) => {
     return useQuery(['detailProduct'], () =>
         apiClient.get({ url: '/products', params: { ProductId: payload } }),
     );
 };
-export const useCreateProduct = (payload?: any) => {
+export const useCreateProduct = () => {
     return useMutation(
-        async (values: ProductPayload) =>
+        async (values: any) =>
             apiClient.post({
                 url: `/products`,
-                params: payload,
                 data: values,
             }),
         {
@@ -39,12 +43,11 @@ export const useCreateProduct = (payload?: any) => {
         },
     );
 };
-export const useUpdateProduct = (payload?: any) => {
+export const useUpdateProduct = () => {
     return useMutation(
-        async (values: ProductPayload) =>
-            apiClient.post({
+        async (values: any) =>
+            apiClient.put({
                 url: `/products`,
-                params: payload,
                 data: values,
             }),
         {
@@ -58,12 +61,27 @@ export const useUpdateProduct = (payload?: any) => {
 export const useDeleteProduct = () => {
     return useMutation(
         async (values: any) =>
-            apiClient.delete({ url: '/products', params: { ProductId: values }, }),
+            apiClient.delete({ url: `/products/${values}` }),
         {
             onSuccess: () => {
                 message.success('Delete Product successfully');
                 queryClient.invalidateQueries(['listProduct']);
             },
         },
+    );
+};
+export const useListColour = () => {
+    return useQuery(['listColour'], () =>
+        apiClient.get({ url: '/colours'}),
+    );
+};
+export const useListGender = () => {
+    return useQuery(['listGender'], () =>
+        apiClient.get({ url: '/genders'}),
+    );
+};
+export const useListProducttype = () => {
+    return useQuery(['listProducttype'], () =>
+        apiClient.get({ url: '/producttypes' }),
     );
 };

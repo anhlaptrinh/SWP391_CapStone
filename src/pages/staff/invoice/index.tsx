@@ -145,20 +145,10 @@ export default function InvoiceList() {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Row>
-                      <Col span={7}>
-                        <Form.Item name="search">
-                          <Button type="primary" htmlType="submit">
-                            Search
-                          </Button>
-                        </Form.Item>
-                      </Col>
-                      <Col span={7}>
                         <Button type="primary">
                           Reset
                         </Button>
-                      </Col>
-                    </Row>
+
                   </Col>
                 </Row>
               </Col>

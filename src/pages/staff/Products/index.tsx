@@ -18,12 +18,13 @@ import {
   Tag,
   Tooltip,
   Tabs,
+  message,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import type { SearchProps } from "antd/es/input/Search";
 import { useState } from "react";
 import { useListProduct } from "@/api/staff/listProduct";
-import { InputType } from "#/api";
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import Table, { ColumnsType } from "antd/es/table";
 
 export default function Products() {
@@ -38,6 +39,9 @@ export default function Products() {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     {}
   );
+  const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null);
+const [selectedGemId, setSelectedGemId] = useState<number | null>(null);
+
   const [showTable, setShowTable] = useState(false);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const handleBox = (id: number) => {
@@ -45,7 +49,19 @@ export default function Products() {
   };
   const handleOk = () => {
     setInvoice(false);
-
+    if (selectedRows.filter((id) => selectedMaterialId === id).length > 1) {
+      message.error("Please select only one material.");
+      setShowTable(false);
+      return;
+    }
+  
+    // Kiểm tra nếu có nhiều hơn một checkbox được chọn trong tab "Gems"
+    if (selectedRows.filter((id) => selectedGemId === id).length > 1) {
+      message.error("Please select only one gem.");
+      setShowTable(false);
+      return;
+    }
+    
     // console.log("Checked Items:", selectedProductIds);
     // Pass the checkedItems to another component or handle as needed
   };
@@ -60,43 +76,39 @@ export default function Products() {
       setShowTable(false);
     }
   };
-  const handleSelectChange = () => {
-    setShowTable(true);
-  };
-  const { Title } = Typography;
-  const [form] = Form.useForm();
-  const [listRelateParams, setListRelateParams] = useState<InputType>();
+  
+  
+ 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [closeModal, setclosemodal] = useState(true);
-
-  const handleCheckboxChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    id: number
-  ) => {
-    if (e.target.checked) {
-      setSelectedRows([...selectedRows, id]);
-    } else {
-      setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
+  const handleCheckboxChange = (e: CheckboxChangeEvent, id: number, type: string) => {
+    if (type === 'material') {
+      if (e.target.checked) {
+        setSelectedMaterialId(id);
+      } else {
+        setSelectedMaterialId(null);
+      }
+    } else if (type === 'gem') {
+      if (e.target.checked) {
+        setSelectedGemId(id);
+      } else {
+        setSelectedGemId(null);
+      }
     }
   };
-  const handleRowClick = (record: number) => {
-    if (selectedRows.includes(record)) {
-      setSelectedRows(selectedRows.filter((rowId) => rowId !== record));
-    } else {
-      setSelectedRows([...selectedRows, record]);
-    }
-  };
+  
+  
   const columns: ColumnsType<any> = [
     {
       title: "",
       dataIndex: "gemId",
       key: "gemId",
+      align:'center',
       render: (_text, record: Gem) => (
-        <input
-          type="checkbox"
-          checked={selectedRows.includes(record.gemId)}
-          onChange={(e) => handleCheckboxChange(e, record.gemId)}
-        />
+        <Checkbox
+        style={{ zoom: 2, marginRight: '8px' }}
+        checked={selectedGemId === record.gemId}
+        onChange={(e) => handleCheckboxChange(e, record.gemId, 'gem')}
+      />
       ),
     },
 
@@ -152,10 +164,10 @@ export default function Products() {
       align:'center',
       key: "materialId",
       render: (_text:any, record: Material) => (
-        <input
-          type="checkbox"
-          checked={selectedRows.includes(record.materialId)}
-          onChange={(e) => handleCheckboxChange(e, record.materialId)}
+        <Checkbox
+          style={{ zoom: 2, marginRight: '8px' }}
+          checked={selectedMaterialId===record.materialId}
+          onChange={(e) => handleCheckboxChange(e, record.materialId,'material')}
         />
       ),
     },
@@ -371,17 +383,19 @@ export default function Products() {
                       }}
                       onClick={() => {
                         handleCardClick(item.productId);
-                        console.log(item.gems);
+            
                       }}
                       cover={
                         <Image
                           width={"100%"}
-                          src="https://www.ytuongviet.vn/wp-content/uploads/2021/10/0-y-nghia-cac-ky-hieu-tren-nhan-vang-moi-nhat.jpg.webp"
+                          src={item.featuredImage}
                         />
                       }
                     >
                       <Meta
-                        title={item.productName}
+                        title={ <Tooltip title={item.productName}>
+                        <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.productName}</div>
+                      </Tooltip>}
                         className="pb-3 text-center"
                       />
                       <Checkbox
@@ -415,12 +429,12 @@ export default function Products() {
                       centered
                       width={1000}
                       open={showTable && checkedItems[item.productId]}
-                      onOk={() => setShowTable(false)}
+                      onOk={() => {setShowTable(false)}}
                       onCancel={() => setShowTable(false)}
                     >
                       <Card className="h-full">
                         <Tabs defaultActiveKey="materials">
-                          <Tabs.TabPane tab="Materials" key="materials">
+                          <Tabs.TabPane tab="Types" key="materials">
                             <Table
                               rowKey="materialId"
                               size="small"
@@ -428,9 +442,8 @@ export default function Products() {
                               pagination={false}
                               columns={materialColumns}
                               dataSource={item.materials} // Dữ liệu vật liệu
-                              onRow={(record: Material) => ({
-                                onClick: () => handleRowClick(record.materialId),
-                              })}
+                              
+                              
                             />
                             <Pagination
                               showSizeChanger
@@ -445,9 +458,7 @@ export default function Products() {
                               pagination={false}
                               columns={columns}
                               dataSource={item.gems}
-                              onRow={(record: Gem) => ({
-                                onClick: () => handleRowClick(record.gemId),
-                              })} // Dữ liệu đá quý
+                              // Dữ liệu đá quý
                             />
                             <Pagination
                               showSizeChanger

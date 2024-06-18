@@ -33,6 +33,7 @@ export interface Product {
 export interface Gem {
     gemId:       number;
     gemName:     string;
+    featuredImage?:string;
     origin:      string;
     caratWeight: number;
     colour:      string;

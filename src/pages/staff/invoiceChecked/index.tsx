@@ -136,7 +136,7 @@ import { PAGE_SIZE } from "@/constants/page";
         align: "center",
         render: (_text: any, record: any) => (
           <Button type="primary" onClick={() => handleBuyback(record.invoiceId)}>
-            Buyback
+            Repurchase
           </Button>
         ),
       },

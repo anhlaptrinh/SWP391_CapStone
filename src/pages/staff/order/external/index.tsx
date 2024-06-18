@@ -38,7 +38,7 @@ export interface OrderDetail {
   buyPrice: string;
   perDiscount?: string;
 }
-export default function Order() {
+export default function ExternalOrder() {
   const currentDate = dayjs(new Date()).format('YYYY-MM-DD');
   const { control, handleSubmit, reset } = useForm<Order>({
     defaultValues: {
@@ -135,7 +135,7 @@ export default function Order() {
   return (
     <Card
       style={{ marginTop: "2rem" }}
-      title={<Title level={3}>Order Checking</Title>}
+      title={<Title level={3}>External Order Checking</Title>}
     >
       <div className="mt-3 text-sm">
         <Form form={form} onFinish={onFinishHandler}>

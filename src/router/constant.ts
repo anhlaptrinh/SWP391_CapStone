@@ -27,10 +27,40 @@ const STAFF_PRODUCT_PERMISSION : Permission={
         parentId: '9100714781927704',
         label: 'Products',
         name: 'Products',
-        type: PermissionType.MENU,
+        type: PermissionType.CATALOGUE,
         route: 'Products',
-        component: '/staff/Products/index.tsx',
         icon: 'ri:product-hunt-fill',
+        children:[{
+            id: '6426999229400870',
+            parentId: '8426999229400870',
+            label: 'Gems',
+            name: 'Gems',
+            type: PermissionType.MENU,
+            route: 'Gems',
+            icon: 'fa6-solid:gem',
+            component: '/staff/Products/Gems/index.tsx'
+        },
+        {
+            id: '6426999229400871',
+            parentId: '8426999229400870',
+            label: 'Gold',
+            name: 'Gold',
+            type: PermissionType.MENU,
+            route: 'Gold',
+            icon: 'ri-vip-crown-fill',
+             component: '/staff/Products/Gold/index.tsx'
+        },
+        {
+            id: '6426999229400872',
+            parentId: '8426999229400870',
+            label: 'Jwerlery',
+            name: 'Jwerlery',
+            type: PermissionType.MENU,
+            route: 'Jwerlery',
+            icon: 'ri-bard-fill',
+             component: '/staff/Products/Jwelery/index.tsx'
+        }
+    ]
     },
         {
         id: '8426999229400871',
@@ -57,10 +87,31 @@ const STAFF_PRODUCT_PERMISSION : Permission={
         label: 'Order',
         name: 'order',
         icon: 'ri-list-ordered',
-        type: PermissionType.MENU,
+        type: PermissionType.CATALOGUE,
         route: 'order',
-        order: 4,
-        component: '/staff/order/index.tsx'
+        order: 2,
+        children:[
+            {
+                id: '7426999229400873',
+                parentId: '8426999229400873',
+                label: 'Internal',
+                name: 'internal',
+                icon: 'ri-archive-fill',
+                type: PermissionType.MENU,
+                route: 'internal',
+                component: '/staff/order/internal/index.tsx'
+            },
+            {
+                id: '7426999229400874',
+                parentId: '8426999229400873',
+                label: 'External',
+                name: 'external',
+                icon: 'ri-archive-2-fill',
+                type: PermissionType.MENU,
+                route: 'external',
+                component: '/staff/order/external/index.tsx'
+            }
+        ],
     }, {
         id: '8426999229400874',
         parentId: '9100714781927704',

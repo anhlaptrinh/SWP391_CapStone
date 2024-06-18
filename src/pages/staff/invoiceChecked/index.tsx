@@ -11,7 +11,8 @@ import {
     List,
     Tag,
     Pagination,
-    Popover
+    Popover,
+    Space
   } from "antd";
   import {Invoice, Items} from '#/invoice'
   
@@ -19,6 +20,7 @@ import {
 import dayjs from "dayjs";
 import { useState } from "react";
 import { PAGE_SIZE } from "@/constants/page";
+import { SearchOutlined } from "@ant-design/icons";
   export default function CheckedInvoice() {
     const [currentPage,setCurrentPage]=useState(1);
     const { Title } = Typography;
@@ -152,38 +154,50 @@ import { PAGE_SIZE } from "@/constants/page";
     const resetHandler = () => {
       form.resetFields();
     };
+    
   
+    const onSearch = (value:any) => {
+      // Xử lý logic tìm kiếm tại đây
+      console.log(value);
+    };
     return (
       <>
         <div className="mt-3 text-sm">
           <Form form={form} onFinish={onFinishHandler}>
           <Row gutter={24}  justify="space-between">
-            <Col   xs={12} md={18} sm={14} lg={19} xl={20} xxl={18}>
-              <Row  gutter={[12,12]}>
-                <Col xs={24} md={21} sm={12}>
-                  <Row>
-                  <Col  xs={23} md={21} sm={24} lg={8}>
-                  <Form.Item name="Search">
-                    <Input placeholder="Search by name" allowClear />
-                  </Form.Item>
-                  </Col>
-                  
-                    <Col xs={24} md={3} sm={24} lg={16} >
-                      <Button  type="primary" onClick={resetHandler}>
-                        Reset
-                      </Button>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
+          <Col xs={24} md={24} sm={24} lg={24} xl={24} xxl={24}>
+      <Row gutter={[12, 12]}>
+        <Col xs={24} md={21} sm={12}>
+          <Row gutter={[12, 0]}>
+          <Col xs={24} md={21} sm={24} lg={8}>
+              <Input.Search
+                placeholder="Search by ID invoice..."
+                allowClear
+                enterButton={
+                  <Button type="primary" icon={<SearchOutlined />}  />
+                }
+                onSearch={onSearch}
+              />
             </Col>
-            <Col xs={12} sm={10} md={6} lg={5} xl={4} xxl={6}>
+            <Col xs={24} md={3} sm={24} lg={16} style={{ textAlign: 'right' }}>
+              <Space>
+                <Button type="primary" onClick={resetHandler}>
+                  Reset
+                </Button>
+                
+              </Space>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Col>
+            {/* <Col xs={12} sm={10} md={6} lg={5} xl={4} xxl={6}>
               <Row>
                 <Col xs={24} sm={12} lg={3}>
                   <Button type="primary" onClick={()=>setIsOpenModal(true)}>Add new</Button>
                 </Col>
               </Row>
-            </Col>
+            </Col> */}
           </Row>
         </Form>
           <Table

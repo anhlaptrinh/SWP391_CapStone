@@ -14,7 +14,7 @@ export interface GemPayload {
     cut: string;
     gemPrice: object;
 }
-export const useListGem = () => {
+export const useListGem = (payload?: any) => {
     return useQuery(['listGem'], () =>
 
         apiClient.get({ url: '/gems', params: { gemId: payload }}),

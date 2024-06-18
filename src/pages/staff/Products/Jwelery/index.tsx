@@ -1,5 +1,7 @@
 import { InputType } from "#/api";
+import { OrderDetail } from "#/invoice";
 import { Gem, Material, Product } from "#/jwelry";
+import { OrderPayload, useCreateOrder } from "@/api/staff/listInvoice";
 import { useListProduct } from "@/api/staff/listProduct";
 import { PAGE_SIZE } from "@/constants/page";
 import { ShoppingCartOutlined } from "@ant-design/icons";
@@ -20,8 +22,8 @@ import {
   Tag,
   Tooltip,
 } from "antd";
-import form from "antd/es/form";
-import React, { useState } from "react";
+
+import { useState } from "react";
 
 export default function Jwelery() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,8 +32,18 @@ export default function Jwelery() {
   const [showTable, setShowTable] = useState(false);
   const [Gemlist, setGemlist] = useState<Gem[]>([]);
   const [materiallist, setmateriallist] = useState<Material[]>([]);
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<OrderPayload[]>([]);
   const [form] = Form.useForm();
+  const [selectedGem, setSelectedGem] = useState<number | null>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
+  const [gemprice, setgemprice] = useState(0);
+  const [materialprice, setmaterialprice] = useState(0);
+  const [gemName, setgemname] = useState("");
+  const [materialName, setmaterialname] = useState("");
+  const [percentPriceRate, setperRate] = useState(0);
+  const [processingprice, setprocessingprice] = useState(0);
+  const [productname, setproductName] = useState("");
+  const { mutate: handlecreateOrder } = useCreateOrder();
   const columns: TableProps<Product>["columns"] = [
     {
       title: "ID",
@@ -77,11 +89,12 @@ export default function Jwelery() {
     {
       title: "Action",
       key: "action",
+      align: "center",
       dataIndex: "action",
       render: (_text: any, record) => (
         <Button
           type="primary"
-          onClick={() => handleTable(record.gems, record.materials)}
+          onClick={() => handleTable(record.gems, record.materials, record)}
         >
           Select
         </Button>
@@ -161,7 +174,15 @@ export default function Jwelery() {
       key: "action",
       dataIndex: "action",
       align: "center",
-      render: (_text: any, { gemId }) => <Button type="primary">Select</Button>,
+      render: (_text: any, gem) => (
+        <Button
+          disabled={selectedGem !== null && selectedGem !== gem.gemId}
+          onClick={() => handleGemSelect(gem)}
+          type="primary"
+        >
+          Select
+        </Button>
+      ),
     },
   ];
   const materialColumns: TableProps<Material>["columns"] = [
@@ -204,22 +225,124 @@ export default function Jwelery() {
       key: "action",
       align: "center",
       dataIndex: "action",
-      render: (_text: any, { materialId }) => (
-        <Button type="primary">Select</Button>
+      render: (_text: any, material) => (
+        <Button
+          type="primary"
+          disabled={
+            selectedMaterial !== null &&
+            selectedMaterial !== material.materialId
+          }
+          onClick={() => handleMaterialSelect(material)}
+        >
+          Select
+        </Button>
       ),
     },
   ];
-  const handleAddToCart = (item: any) => {
-    setCartItems((prevItems) => [...prevItems, item]);
+  const handleGemSelect = (gem: Gem) => {
+    setSelectedGem(gem.gemId);
+    setgemname(gem.gemName);
+    setgemprice(gem.gemPrice.total);
   };
-  const handleTable = (gems: Gem[], material: Material[]) => {
+  const handleMaterialSelect = (material: Material) => {
+    setSelectedMaterial(material.materialId);
+    setmaterialprice(material.materialPrice.sellPrice);
+    setmaterialname(material.materialName);
+  };
+  const handleAddToCart = (
+    productname: string,
+    percentPriceRate: number,
+    productionCost: number
+  ) => {
+    const orderDetail = {
+      productName: `<div>Jewelry: ${productname}</div><div>Gem: ${gemName}</div><div>Material: ${materialName}</div>`,
+      purchaseTotal: Number(
+        gemprice + materialprice + percentPriceRate + productionCost
+      ),
+    };
+
+    const product: OrderPayload = {
+      customerName: "okla",
+      userName: "sdjsnd",
+      warranty: "this is waranty",
+      orderDetails: [orderDetail], // Đảm bảo đây là một mảng chứa orderDetail
+    };
+    setCartItems((prevItems) => [...prevItems, product]);
+    setShowTable(false);
+  };
+  const handleTable = (gems: Gem[], material: Material[], product: Product) => {
+    setproductName(product.productName);
+    setperRate(product.percentPriceRate);
+    setprocessingprice(product.productionCost);
     setGemlist(gems);
     setmateriallist(material);
+    setSelectedGem(null);
+    setSelectedMaterial(null);
     setShowTable(true);
   };
   const onFinishHandler = (values: InputType) => {
     console.log(values);
   };
+
+  const cartContent = (
+    <div>
+      <Table
+        rowKey={(record) => record.orderDetails[0].productName}
+        dataSource={cartItems}
+        bordered
+        columns={[
+          {
+            title: "Order Detail",
+            dataIndex: "orderDetails",
+            align: "center",
+            key: "orderDetail-productName",
+            render: (orderDetails: OrderDetail[]) => {
+              if (orderDetails && orderDetails.length > 0) {
+                const productName = orderDetails[0]?.productName;
+                return (
+                  <span
+                    dangerouslySetInnerHTML={{ __html: productName || "" }}
+                  />
+                );
+              }
+              return null;
+            },
+          },
+          {
+            title: "Purchase",
+            dataIndex: "orderDetails",
+            key: "orderDetail-purchaseTotal",
+            render: (orderDetails: OrderDetail[]) => {
+              if (orderDetails && orderDetails.length > 0) {
+                const purchaseTotal = orderDetails[0]?.purchaseTotal;
+                return <span>{purchaseTotal}</span>;
+              }
+              return null;
+            },
+          },
+          {
+            title: "Action",
+            key: "action",
+            align: "center",
+            render: (_text, item) => (
+              <Button
+                type="link"
+                onClick={() => {
+                  setCartItems((prevItems) =>
+                    prevItems.filter((cartItem) => cartItem !== item)
+                  );
+                }}
+              >
+                Remove
+              </Button>
+            ),
+          },
+        ]}
+        pagination={false}
+        size="small"
+      />
+    </div>
+  );
   return (
     <div>
       <Form form={form} onFinish={onFinishHandler}>
@@ -240,19 +363,31 @@ export default function Jwelery() {
           <Col xs={12} sm={10} md={6} lg={5} xl={4} xxl={6}>
             <Row>
               <Col xs={24} sm={12} lg={3}>
-                <Button type="default">
-                  <Badge count={cartItems.length}>
-                    <ShoppingCartOutlined className=" pr-2" />
-                  </Badge>
-                  <span>Cart</span>
-                </Button>
+                <Popover
+                  content={cartContent}
+                  trigger="hover"
+                  placement="bottomRight"
+                >
+                  <Button
+                    type="default"
+                    style={{ display: "flex", alignItems: "center" }}
+                    onClick={() => handlecreateOrder(cartItems)}
+                  >
+                    <ShoppingCartOutlined style={{ marginRight: 8 }} />
+                    <span style={{ marginRight: 8 }}>Select Order</span>
+                    <Badge
+                      count={cartItems.length}
+                      style={{ backgroundColor: "#52c41a" }}
+                    />
+                  </Button>
+                </Popover>
               </Col>
             </Row>
           </Col>
         </Row>
       </Form>
       <Table
-        rowKey="invoiceId"
+        rowKey="productId"
         className="mt-3"
         columns={columns}
         loading={isLoading}
@@ -274,8 +409,10 @@ export default function Jwelery() {
         centered
         width={1000}
         open={showTable}
+        onOk={() =>
+          handleAddToCart(productname, percentPriceRate, processingprice)
+        }
         onCancel={() => setShowTable(false)}
-        footer={null}
       >
         <Card className="h-full">
           <Tabs defaultActiveKey="materials">

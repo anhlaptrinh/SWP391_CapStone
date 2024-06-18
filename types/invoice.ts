@@ -25,4 +25,21 @@ export interface Items {
     productName:  string;
     productPrice: number;
 }
+export interface Order {
+    orderId:      number;
+    invoiceType:  string;
+    customerName: string;
+    userName:     string;
+    warranty:     string;
+    orderDate:    Date;
+    status:       boolean;
+    total:        number;
+    orderDetails: OrderDetail[];
+}
+
+export interface OrderDetail {
+    productName:   string;
+    purchaseTotal: number;
+    perDiscount:   number;
+}
 

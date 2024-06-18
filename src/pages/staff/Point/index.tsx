@@ -70,7 +70,7 @@ export default function DiscountPoint() {
       dataIndex: "name",
     },
     {
-      title: "Số Điện thoại",
+      title: "Phone Number",
       dataIndex: "sdt",
     },
     {

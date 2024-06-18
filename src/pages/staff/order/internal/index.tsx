@@ -2,63 +2,28 @@ import {
     Button,
     Card,
     Col,
-    DatePicker,
     Form,
     Input,
-    Modal,
+    List,
     Pagination,
+    Popover,
     Row,
     Space,
-    Switch,
+    Tag,
     Typography,
   } from "antd";
-  import Table, { ColumnsType, TableProps } from "antd/es/table";
+  import Table, { TableProps } from "antd/es/table";
   import { useState } from "react";
-  import { useForm, Controller, useFieldArray } from "react-hook-form";
   import { InputType } from "#/api";
   import { PAGE_SIZE } from "@/constants/page";
-  import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-  import dayjs from "dayjs";
+  import { Order, OrderDetail } from "#/invoice";
+import { useListOrder } from "@/api/staff/listInvoice";
   
-  export interface Order {
-    orderId: string;
-    orderType: string;
-    customerName: string;
-    userName: string;
-    warranty: string;
-    orderDate: string;
-    status: boolean;
-    orderDetail: OrderDetail[];
-    total: number;
-  }
   
-  export interface OrderDetail {
-    ProductName: string;
-    sellPrice: string;
-    buyPrice: string;
-    perDiscount?: string;
-  }
   export default function InternalOrder() {
-    const currentDate = dayjs(new Date()).format('YYYY-MM-DD');
-    const { control, handleSubmit, reset } = useForm<Order>({
-      defaultValues: {
-        orderId: "",
-        orderType: "Purchase",  // Set default order type to "Purchase"
-        customerName: "",
-        userName: "",
-        warranty: "",
-        orderDate: currentDate,
-        status: false,
-        orderDetail: [],
-        total: 0,
-      },
-    });
-    const { fields, append, remove } = useFieldArray({
-      control,
-      name: "orderDetail",
-    });
+    
     // Dữ liệu cho bảng Order Checking
-    const data: any[] = [];
+    const {data}=useListOrder();
   
     // Các cột cho bảng Order Checking
     const columns: TableProps<Order>["columns"] = [
@@ -67,10 +32,14 @@ import {
         dataIndex: "orderId",
       },
       {
-        title: "Order Type",
-        align: "center",
-        dataIndex: "orderType",
-        key: "orderType",
+        title: 'Order Type',
+        align: 'center',
+        dataIndex: 'invoiceType',
+        key: 'invoiceType',
+        render: (invoiceType: string) => {
+          const color = invoiceType === 'Sale' ? 'blue' : 'red';
+          return <Tag color={color}>{invoiceType}</Tag>;
+        },
       },
       {
         title: "Customer",
@@ -85,12 +54,39 @@ import {
         dataIndex: "warranty",
         key: "warranty",
       },
-      { title: "Status", align: "center", dataIndex: "status", key: "status" },
+      { title: "Status", align: "center", dataIndex: "status", key: "status",render: (status: boolean) => {
+        if (status) {
+          return <Tag color="yellow">In Progress</Tag>;
+        } else {
+          return <Tag color="green">Complete</Tag>;
+        }
+      }, },
       {
         title: "Items Order",
         align: "center",
-        dataIndex: "orderDetail",
-        key: "orderDetail",
+        dataIndex: "orderDetails",
+        key: "orderDetails",
+        render: (_text: any, record: any) => {
+          const content = (
+            <List
+              dataSource={record.orderDetails}
+              renderItem={(item: OrderDetail) => (
+                <List.Item>
+                  <Tag bordered={false} color="pink"> <span
+                    dangerouslySetInnerHTML={{ __html: item.productName || "" }}
+                  /></Tag>
+                  <Tag color="blue">Total: {item.purchaseTotal}$</Tag>
+                </List.Item>
+              )}
+            />
+          );
+    
+          return (
+            <Popover content={content} title="Items">
+              <Button type="link">View Items</Button>
+            </Popover>
+          );
+        },
       },
   
       {
@@ -115,7 +111,6 @@ import {
     const { Title } = Typography;
   
     const [form] = Form.useForm();
-    const [openModal, setIsOpenModal] = useState(false);
     const resetHandler = () => {
       form.resetFields();
     };
@@ -123,15 +118,7 @@ import {
     const onFinishHandler = (values: InputType) => {
       console.log(values);
     };
-    const handleOk = (data: Order) => {
-      console.log("Form Data:", data);
-      setIsOpenModal(false);
-      reset();  // Reset form after submission
-    };
-    const handleCancel = () => {
-      setIsOpenModal(false);
-      reset();  // Reset form when modal is closed
-    };
+   
     return (
       <Card
         style={{ marginTop: "2rem" }}
@@ -180,103 +167,7 @@ import {
             />
           </div>
         </div>
-        <Modal
-          title="Purchase Order Form"
-          open={openModal}
-          onOk={handleSubmit(handleOk)}
-          onCancel={handleCancel}
-          okText="Submit"
-        >
-           <Form layout="vertical">
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item label="Customer Name">
-                  <Controller
-                    name="customerName"
-                    control={control}
-                    render={({ field }) => <Input {...field} />}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="User Name">
-                  <Controller
-                    name="userName"
-                    control={control}
-                    render={({ field }) => <Input  {...field} />}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col span={24}>
-                <Form.Item label="Order Details">
-                  {fields.map((item, index) => (
-                    <Row gutter={16} key={item.id}>
-                      <Col span={6}>
-                        <Form.Item>
-                          <Controller
-                            name={`orderDetail.${index}.ProductName`}
-                            control={control}
-                            render={({ field }) => <Input placeholder="Product Name" {...field} />}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={6}>
-                        <Form.Item>
-                          <Controller
-                            name={`orderDetail.${index}.sellPrice`}
-                            control={control}
-                            render={({ field }) => <Input  placeholder="Sell Price" {...field} />}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={6}>
-                        <Form.Item>
-                          <Controller
-                            name={`orderDetail.${index}.buyPrice`}
-                            control={control}
-                            render={({ field }) => <Input  placeholder="Buy Price" {...field} />}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item>
-                          <Controller
-                            name={`orderDetail.${index}.perDiscount`}
-                            control={control}
-                            render={({ field }) => <Input  placeholder="Discount" {...field} />}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={2}>
-                        <Button type="dashed" onClick={() => remove(index)} icon={<MinusCircleOutlined />} />
-                      </Col>
-                    </Row>
-                  ))}
-                  <Button
-                    type="dashed"
-                    onClick={() => append({ ProductName: "", sellPrice: "", buyPrice: "", perDiscount: "" })}
-                    icon={<PlusOutlined />}
-                  >
-                    Add Purchase Order Detail
-                  </Button>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item label="Total">
-                  <Controller
-                    name="total"
-                    control={control}
-                    render={({ field }) => <Input type="number" {...field} />}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-        </Modal>
+        
       </Card>
     );
   }

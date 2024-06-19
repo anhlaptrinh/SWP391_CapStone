@@ -23,7 +23,7 @@ import { useListOrder } from "@/api/staff/listInvoice";
   export default function InternalOrder() {
     
     // Dữ liệu cho bảng Order Checking
-    const {data}=useListOrder();
+    const {data,isLoading}=useListOrder();
   
     // Các cột cho bảng Order Checking
     const columns: TableProps<Order>["columns"] = [
@@ -152,6 +152,7 @@ import { useListOrder } from "@/api/staff/listInvoice";
             rowKey="orderId"
             className="mt-3"
             columns={columns}
+            loading={isLoading}
             pagination={false}
             scroll={{ x: "max-content" }}
             dataSource={data}

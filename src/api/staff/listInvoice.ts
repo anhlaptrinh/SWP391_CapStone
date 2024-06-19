@@ -3,6 +3,7 @@ import apiClient from "../apiClient"
 import { InvoicePagination } from "#/invoice"
 import { PAGE_SIZE } from "@/constants/page"
 import { message } from "antd";
+import { queryClient } from "@/http/tanstack/react-query";
 
 export type OrderPayload = {
     customerName?: string;
@@ -10,7 +11,7 @@ export type OrderPayload = {
     warranty?: string;
     orderDetails: [{
       productName: string;
-      purchaseTotal: number;
+      total: number;
       perDiscount?: number;
     }];
   };
@@ -43,6 +44,8 @@ export const useCreateOrder = (): UseMutationResult<void, Error, OrderPayload[]>
       onSuccess: () => {
         // Xử lý khi thành công
         message.success('Order(s) successfully created.');
+        queryClient.fetchQuery(["listOrder"]);
+        
         // Ví dụ: Clear cartItems sau khi đơn hàng được gửi thành công
          // Đặt hàm setCartItems ở đây nếu setCartItems là state của Jwelery component
       },

@@ -92,8 +92,8 @@ export default function InvoiceList() {
       key: "warranty",
     },
     { title: "Status", align: "center", dataIndex: "status", key: "status", render: (status) => (
-      <Tag color={status ? 'green' : 'red'}>
-        {status ? 'Active' : 'Inactive'}
+      <Tag color={status ? 'yellow' : 'red'}>
+        {status ? 'Inprogress' : 'Inactive'}
       </Tag>
     ), },
     {

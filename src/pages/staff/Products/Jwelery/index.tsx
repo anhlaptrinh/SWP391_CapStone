@@ -21,14 +21,16 @@ import {
   Tabs,
   Tag,
   Tooltip,
+  message,
 } from "antd";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Jwelery() {
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading } = useListProduct(currentPage);
-  const totalCount = data?.totalPages || 0;
+  const totalCount = data?.totalRecords || 0;
   const [showTable, setShowTable] = useState(false);
   const [Gemlist, setGemlist] = useState<Gem[]>([]);
   const [materiallist, setmateriallist] = useState<Material[]>([]);
@@ -44,6 +46,12 @@ export default function Jwelery() {
   const [processingprice, setprocessingprice] = useState(0);
   const [productname, setproductName] = useState("");
   const { mutate: handlecreateOrder } = useCreateOrder();
+  const [weight,setweight]=useState(0);
+  const [showRemoveAll, setShowRemoveAll] = useState(false);
+  useEffect(() => {
+    setShowRemoveAll(cartItems.length > 0);
+  }, [cartItems]);
+  
   const columns: TableProps<Product>["columns"] = [
     {
       title: "ID",
@@ -63,6 +71,14 @@ export default function Jwelery() {
       title: "Product Name",
       dataIndex: "productName",
       key: "productId",
+    },
+    {
+      title: "Weight",
+      dataIndex: "weight",
+      key: "weight",
+      render:(_:any,{weight})=>{
+        return <p>{weight}g</p>
+      }
     },
     {
       title: "Category",
@@ -94,7 +110,7 @@ export default function Jwelery() {
       render: (_text: any, record) => (
         <Button
           type="primary"
-          onClick={() => handleTable(record.gems, record.materials, record)}
+          onClick={() => handleTable(record.gems, record.materials, record,record.weight)}
         >
           Select
         </Button>
@@ -244,6 +260,17 @@ export default function Jwelery() {
     setgemname(gem.gemName);
     setgemprice(gem.gemPrice.total);
   };
+  const handleSendOrder=(cartitem:any)=>{
+    if (cartitem.length === 0) {
+      message.error("Your Order is empty") // Hiển thị thông báo khi không có sản phẩm trong giỏ hàng
+      return; // Chặn việc gửi lên API khi không có sản phẩm trong giỏ hàng
+    }
+    handlecreateOrder(cartitem);
+    
+  }
+  const getOrderDetailsCount = () => {
+    return cartItems.reduce((count, item) => count + item.orderDetails.length, 0);
+  };
   const handleMaterialSelect = (material: Material) => {
     setSelectedMaterial(material.materialId);
     setmaterialprice(material.materialPrice.sellPrice);
@@ -254,24 +281,38 @@ export default function Jwelery() {
     percentPriceRate: number,
     productionCost: number
   ) => {
+    const userString = localStorage.getItem('user')||"";
+    const user = JSON.parse(userString)||null;
     const orderDetail = {
       productName: `<div>Jewelry: ${productname}</div><div>Gem: ${gemName}</div><div>Material: ${materialName}</div>`,
-      purchaseTotal: Number(
-        gemprice + materialprice + percentPriceRate + productionCost
+      total: Number(
+        gemprice + (materialprice*weight) + percentPriceRate + productionCost
       ),
     };
-
-    const product: OrderPayload = {
-      customerName: "okla",
-      userName: "sdjsnd",
-      warranty: "this is waranty",
-      orderDetails: [orderDetail], // Đảm bảo đây là một mảng chứa orderDetail
-    };
-    setCartItems((prevItems) => [...prevItems, product]);
+  
+    setCartItems((prevItems) => {
+      // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng hay chưa
+      if (prevItems.length > 0) {
+        const updatedItems = [...prevItems];
+        updatedItems[0].orderDetails.push(orderDetail);
+        return updatedItems;
+      } else {
+        // Nếu giỏ hàng trống, tạo mới một sản phẩm với orderDetails
+        const newProduct: OrderPayload = {
+          customerName: "okla",
+          userName: user.username,
+          warranty: "this is waranty",
+          orderDetails: [orderDetail],
+        };
+        return [newProduct];
+      }
+    });
+  
     setShowTable(false);
   };
-  const handleTable = (gems: Gem[], material: Material[], product: Product) => {
+  const handleTable = (gems: Gem[], material: Material[], product: Product, conweight:number) => {
     setproductName(product.productName);
+    setweight(conweight)
     setperRate(product.percentPriceRate);
     setprocessingprice(product.productionCost);
     setGemlist(gems);
@@ -287,35 +328,49 @@ export default function Jwelery() {
   const cartContent = (
     <div>
       <Table
-        rowKey={(record) => record.orderDetails[0].productName}
+        rowKey={(record) => record.orderDetails.length} // Đảm bảo trả về giá trị hợp lệ
         dataSource={cartItems}
         bordered
         columns={[
           {
-            title: "Order Detail",
+            title: "Product Details",
             dataIndex: "orderDetails",
             align: "center",
             key: "orderDetail-productName",
             render: (orderDetails: OrderDetail[]) => {
               if (orderDetails && orderDetails.length > 0) {
-                const productName = orderDetails[0]?.productName;
-                return (
-                  <span
-                    dangerouslySetInnerHTML={{ __html: productName || "" }}
-                  />
-                );
+                return orderDetails.map((detail, index) => (
+                  <div key={index} style={{ marginBottom: "10px" }}>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: detail.productName || "",
+                      }}
+                    />
+                    <div>Price: {detail.total}$</div>
+                    <Button
+                      type="link"
+                      onClick={() => handleRemoveDetail(detail)}
+                      style={{ color: "red", marginTop: "5px" }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ));
               }
               return null;
             },
           },
           {
-            title: "Purchase",
+            title: "Total Purchase",
             dataIndex: "orderDetails",
-            key: "orderDetail-purchaseTotal",
+            key: "orderDetail-total",
             render: (orderDetails: OrderDetail[]) => {
               if (orderDetails && orderDetails.length > 0) {
-                const purchaseTotal = orderDetails[0]?.purchaseTotal;
-                return <span>{purchaseTotal}</span>;
+                const totalPurchase = orderDetails.reduce(
+                  (totalprice, detail) => totalprice + detail.total,
+                  0
+                );
+                return <span>{totalPurchase}$</span>;
               }
               return null;
             },
@@ -327,13 +382,10 @@ export default function Jwelery() {
             render: (_text, item) => (
               <Button
                 type="link"
-                onClick={() => {
-                  setCartItems((prevItems) =>
-                    prevItems.filter((cartItem) => cartItem !== item)
-                  );
-                }}
+                onClick={() => handleRemoveItem(item)}
+                style={{ display: showRemoveAll ? "inline-block" : "none" }}
               >
-                Remove
+                Remove All
               </Button>
             ),
           },
@@ -343,6 +395,25 @@ export default function Jwelery() {
       />
     </div>
   );
+
+// Hàm để xóa chi tiết sản phẩm
+const handleRemoveDetail = (detail: OrderDetail) => {
+  setCartItems((prevItems:any[]) =>
+    prevItems.map(item => ({
+      ...item,
+      orderDetails: item.orderDetails.filter((d:any) => d !== detail),
+    }))
+  );
+};
+
+// Hàm để xóa toàn bộ sản phẩm
+const handleRemoveItem = (item: OrderPayload) => {
+  setCartItems((prevItems) =>
+    prevItems.filter(cartItem => cartItem !== item)
+  );
+};
+
+  
   return (
     <div>
       <Form form={form} onFinish={onFinishHandler}>
@@ -371,12 +442,12 @@ export default function Jwelery() {
                   <Button
                     type="default"
                     style={{ display: "flex", alignItems: "center" }}
-                    onClick={() => handlecreateOrder(cartItems)}
+                    onClick={() => handleSendOrder(cartItems)}
                   >
                     <ShoppingCartOutlined style={{ marginRight: 8 }} />
                     <span style={{ marginRight: 8 }}>Select Order</span>
                     <Badge
-                      count={cartItems.length}
+                      count={getOrderDetailsCount()}
                       style={{ backgroundColor: "#52c41a" }}
                     />
                   </Button>
@@ -388,7 +459,7 @@ export default function Jwelery() {
       </Form>
       <Table
         rowKey="productId"
-        className="mt-3"
+        className="mt-2"
         columns={columns}
         loading={isLoading}
         pagination={false}
@@ -398,7 +469,9 @@ export default function Jwelery() {
       />
       <Pagination
         defaultCurrent={currentPage}
+        className="mt-3"
         total={totalCount}
+        
         pageSize={PAGE_SIZE}
         onChange={(page) => {
           setCurrentPage(page);
@@ -437,7 +510,14 @@ export default function Jwelery() {
                 dataSource={Gemlist}
                 // Dữ liệu đá quý
               />
-              <Pagination showSizeChanger style={{ marginTop: "1rem" }} />
+              <Pagination 
+                defaultCurrent={currentPage}
+                total={totalCount}
+                pageSize={PAGE_SIZE}
+                onChange={(page) => {
+                  setCurrentPage(page);
+                }}
+              />
             </Tabs.TabPane>
           </Tabs>
         </Card>

@@ -18,6 +18,7 @@ export interface Pagination {
 export interface Product {
     productId:        number;
     productName:      string;
+    weight: number;
     percentPriceRate: number;
     productionCost:   number;
     status:           boolean;

@@ -21,9 +21,28 @@ import { useListOrder } from "@/api/staff/listInvoice";
   
   
   export default function InternalOrder() {
+    const formatCurrency = (amount: number) => {
+      const options = {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0, // Đặt số chữ số thập phân tối thiểu
+        maximumFractionDigits: 0, // Đặt số chữ số thập phân tối đa
+      };
+    
+      const formattedAmount = new Intl.NumberFormat('en-US', options).format(amount);
+    
+      // Remove decimal part if it is ",00"
+      if (formattedAmount.endsWith(",00")) {
+        return formattedAmount.slice(0, -3);
+      }
+    
+      return formattedAmount;
+    };
+    
+    
     
     // Dữ liệu cho bảng Order Checking
-    const {data}=useListOrder();
+    const {data,isLoading}=useListOrder();
   
     // Các cột cho bảng Order Checking
     const columns: TableProps<Order>["columns"] = [
@@ -54,11 +73,11 @@ import { useListOrder } from "@/api/staff/listInvoice";
         dataIndex: "warranty",
         key: "warranty",
       },
-      { title: "Status", align: "center", dataIndex: "status", key: "status",render: (status: boolean) => {
-        if (status) {
-          return <Tag color="yellow">In Progress</Tag>;
+      { title: "Status", align: "center", dataIndex: "orderStatus", key: "orderStatus",render: (status: string) => {
+        if (status==="Pending") {
+          return <Tag color="yellow">Pending</Tag>;
         } else {
-          return <Tag color="green">Complete</Tag>;
+          return <Tag color="green">In Progress</Tag>;
         }
       }, },
       {
@@ -75,7 +94,7 @@ import { useListOrder } from "@/api/staff/listInvoice";
                   <Tag bordered={false} color="pink"> <span
                     dangerouslySetInnerHTML={{ __html: item.productName || "" }}
                   /></Tag>
-                  <Tag color="blue">Total: {item.purchaseTotal}$</Tag>
+                  <Tag color="blue">Total: {formatCurrency(item.total)}</Tag>
                 </List.Item>
               )}
             />
@@ -152,6 +171,7 @@ import { useListOrder } from "@/api/staff/listInvoice";
             rowKey="orderId"
             className="mt-3"
             columns={columns}
+            loading={isLoading}
             pagination={false}
             scroll={{ x: "max-content" }}
             dataSource={data}

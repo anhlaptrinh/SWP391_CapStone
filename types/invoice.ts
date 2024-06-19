@@ -32,14 +32,13 @@ export interface Order {
     userName:     string;
     warranty:     string;
     orderDate:    Date;
-    status:       boolean;
-    total:        number;
+    orderStatus:       string;
     orderDetails: OrderDetail[];
 }
 
 export interface OrderDetail {
     productName:   string;
-    purchaseTotal: number;
+    total: number;
     perDiscount:   number;
 }
 

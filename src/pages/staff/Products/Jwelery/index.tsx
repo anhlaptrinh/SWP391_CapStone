@@ -25,11 +25,12 @@ import {
 } from "antd";
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Jwelery() {
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading } = useListProduct(currentPage);
-  const totalCount = data?.totalPages || 0;
+  const totalCount = data?.totalRecords || 0;
   const [showTable, setShowTable] = useState(false);
   const [Gemlist, setGemlist] = useState<Gem[]>([]);
   const [materiallist, setmateriallist] = useState<Material[]>([]);
@@ -45,6 +46,7 @@ export default function Jwelery() {
   const [processingprice, setprocessingprice] = useState(0);
   const [productname, setproductName] = useState("");
   const { mutate: handlecreateOrder } = useCreateOrder();
+  const [weight,setweight]=useState(0);
   const [showRemoveAll, setShowRemoveAll] = useState(false);
   useEffect(() => {
     setShowRemoveAll(cartItems.length > 0);
@@ -69,6 +71,14 @@ export default function Jwelery() {
       title: "Product Name",
       dataIndex: "productName",
       key: "productId",
+    },
+    {
+      title: "Weight",
+      dataIndex: "weight",
+      key: "weight",
+      render:(_:any,{weight})=>{
+        return <p>{weight}g</p>
+      }
     },
     {
       title: "Category",
@@ -100,7 +110,7 @@ export default function Jwelery() {
       render: (_text: any, record) => (
         <Button
           type="primary"
-          onClick={() => handleTable(record.gems, record.materials, record)}
+          onClick={() => handleTable(record.gems, record.materials, record,record.weight)}
         >
           Select
         </Button>
@@ -255,7 +265,8 @@ export default function Jwelery() {
       message.error("Your Order is empty") // Hiển thị thông báo khi không có sản phẩm trong giỏ hàng
       return; // Chặn việc gửi lên API khi không có sản phẩm trong giỏ hàng
     }
-    handlecreateOrder(cartitem)
+    handlecreateOrder(cartitem);
+    
   }
   const getOrderDetailsCount = () => {
     return cartItems.reduce((count, item) => count + item.orderDetails.length, 0);
@@ -270,10 +281,12 @@ export default function Jwelery() {
     percentPriceRate: number,
     productionCost: number
   ) => {
+    const userString = localStorage.getItem('user')||"";
+    const user = JSON.parse(userString)||null;
     const orderDetail = {
       productName: `<div>Jewelry: ${productname}</div><div>Gem: ${gemName}</div><div>Material: ${materialName}</div>`,
-      purchaseTotal: Number(
-        gemprice + materialprice + percentPriceRate + productionCost
+      total: Number(
+        gemprice + (materialprice*weight) + percentPriceRate + productionCost
       ),
     };
   
@@ -287,7 +300,7 @@ export default function Jwelery() {
         // Nếu giỏ hàng trống, tạo mới một sản phẩm với orderDetails
         const newProduct: OrderPayload = {
           customerName: "okla",
-          userName: "sdjsnd",
+          userName: user.username,
           warranty: "this is waranty",
           orderDetails: [orderDetail],
         };
@@ -297,8 +310,9 @@ export default function Jwelery() {
   
     setShowTable(false);
   };
-  const handleTable = (gems: Gem[], material: Material[], product: Product) => {
+  const handleTable = (gems: Gem[], material: Material[], product: Product, conweight:number) => {
     setproductName(product.productName);
+    setweight(conweight)
     setperRate(product.percentPriceRate);
     setprocessingprice(product.productionCost);
     setGemlist(gems);
@@ -332,7 +346,7 @@ export default function Jwelery() {
                         __html: detail.productName || "",
                       }}
                     />
-                    <div>Price: {detail.purchaseTotal}$</div>
+                    <div>Price: {detail.total}$</div>
                     <Button
                       type="link"
                       onClick={() => handleRemoveDetail(detail)}
@@ -349,11 +363,11 @@ export default function Jwelery() {
           {
             title: "Total Purchase",
             dataIndex: "orderDetails",
-            key: "orderDetail-purchaseTotal",
+            key: "orderDetail-total",
             render: (orderDetails: OrderDetail[]) => {
               if (orderDetails && orderDetails.length > 0) {
                 const totalPurchase = orderDetails.reduce(
-                  (total, detail) => total + detail.purchaseTotal,
+                  (totalprice, detail) => totalprice + detail.total,
                   0
                 );
                 return <span>{totalPurchase}$</span>;
@@ -368,7 +382,7 @@ export default function Jwelery() {
             render: (_text, item) => (
               <Button
                 type="link"
-                onClick={() => setCartItems([])}
+                onClick={() => handleRemoveItem(item)}
                 style={{ display: showRemoveAll ? "inline-block" : "none" }}
               >
                 Remove All

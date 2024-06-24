@@ -25,11 +25,11 @@ const STAFF_PRODUCT_PERMISSION : Permission={
         {
         id: '8426999229400870',
         parentId: '9100714781927704',
-        label: 'Products',
-        name: 'Products',
+        label: 'Order',
+        name: 'Order',
         type: PermissionType.CATALOGUE,
-        route: 'Products',
-        icon: 'ri:product-hunt-fill',
+        route: 'Order',
+        icon: 'ri-list-ordered',
         children:[{
             id: '6426999229400870',
             parentId: '8426999229400870',
@@ -81,38 +81,7 @@ const STAFF_PRODUCT_PERMISSION : Permission={
         route: 'point',
         component: '/staff/Point/index.tsx'
     },
-    {
-        id: '8426999229400873',
-        parentId: '9100714781927704',
-        label: 'Order',
-        name: 'order',
-        icon: 'ri-list-ordered',
-        type: PermissionType.CATALOGUE,
-        route: 'order',
-        order: 2,
-        children:[
-            {
-                id: '7426999229400873',
-                parentId: '8426999229400873',
-                label: 'Internal',
-                name: 'internal',
-                icon: 'ri-archive-fill',
-                type: PermissionType.MENU,
-                route: 'internal',
-                component: '/staff/order/internal/index.tsx'
-            },
-            {
-                id: '7426999229400874',
-                parentId: '8426999229400873',
-                label: 'External',
-                name: 'external',
-                icon: 'ri-archive-2-fill',
-                type: PermissionType.MENU,
-                route: 'external',
-                component: '/staff/order/external/index.tsx'
-            }
-        ],
-    }, {
+     {
         id: '8426999229400874',
         parentId: '9100714781927704',
         label: 'Checking',

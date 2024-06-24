@@ -208,6 +208,7 @@ import { SearchOutlined } from "@ant-design/icons";
             pagination={false}
             scroll={{ x: 'max-content' }}
             dataSource={data?.items}
+            size="large"
             bordered
             
           />

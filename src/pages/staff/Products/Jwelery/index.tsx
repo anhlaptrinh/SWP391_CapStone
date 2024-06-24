@@ -4,6 +4,7 @@ import { Gem, Material, Product } from "#/jwelry";
 import { OrderPayload, useCreateOrder } from "@/api/staff/listInvoice";
 import { useListProduct } from "@/api/staff/listProduct";
 import { PAGE_SIZE } from "@/constants/page";
+import { useOrderStore } from "@/store/order";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import {
   Badge,
@@ -25,16 +26,15 @@ import {
 } from "antd";
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function Jwelery() {
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading } = useListProduct(currentPage);
-  const totalCount = data?.totalRecords || 0;
+  const totalCount = data?.totalPages || 0;
   const [showTable, setShowTable] = useState(false);
   const [Gemlist, setGemlist] = useState<Gem[]>([]);
   const [materiallist, setmateriallist] = useState<Material[]>([]);
-  const [cartItems, setCartItems] = useState<OrderPayload[]>([]);
+ // const [cartItems, setCartItems] = useState<OrderPayload[]>([]);
   const [form] = Form.useForm();
   const [selectedGem, setSelectedGem] = useState<number | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
@@ -48,6 +48,15 @@ export default function Jwelery() {
   const { mutate: handlecreateOrder } = useCreateOrder();
   const [weight,setweight]=useState(0);
   const [showRemoveAll, setShowRemoveAll] = useState(false);
+  const [openModal, setIsOpenModal] = useState(false);
+  const {
+    cartItems,
+    setCartItems,
+    addCartItem,
+    removeCartItem,
+    removeCartDetail,
+    clearCart,
+  } = useOrderStore();
   useEffect(() => {
     setShowRemoveAll(cartItems.length > 0);
   }, [cartItems]);
@@ -262,10 +271,11 @@ export default function Jwelery() {
   };
   const handleSendOrder=(cartitem:any)=>{
     if (cartitem.length === 0) {
-      message.error("Your Order is empty") // Hiển thị thông báo khi không có sản phẩm trong giỏ hàng
-      return; // Chặn việc gửi lên API khi không có sản phẩm trong giỏ hàng
+      message.error("Your Order is empty");
+      return;
     }
     handlecreateOrder(cartitem);
+    clearCart();
     
   }
   const getOrderDetailsCount = () => {
@@ -281,33 +291,14 @@ export default function Jwelery() {
     percentPriceRate: number,
     productionCost: number
   ) => {
-    const userString = localStorage.getItem('user')||"";
-    const user = JSON.parse(userString)||null;
-    const orderDetail = {
+  
+    const orderDetail: OrderDetail = {
       productName: `<div>Jewelry: ${productname}</div><div>Gem: ${gemName}</div><div>Material: ${materialName}</div>`,
-      total: Number(
-        gemprice + (materialprice*weight) + percentPriceRate + productionCost
-      ),
+      total: Number(gemprice + (materialprice * weight) + percentPriceRate + productionCost),
+      perDiscount: 0, // or any default value
     };
   
-    setCartItems((prevItems) => {
-      // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng hay chưa
-      if (prevItems.length > 0) {
-        const updatedItems = [...prevItems];
-        updatedItems[0].orderDetails.push(orderDetail);
-        return updatedItems;
-      } else {
-        // Nếu giỏ hàng trống, tạo mới một sản phẩm với orderDetails
-        const newProduct: OrderPayload = {
-          customerName: "okla",
-          userName: user.username,
-          warranty: "this is waranty",
-          orderDetails: [orderDetail],
-        };
-        return [newProduct];
-      }
-    });
-  
+    addCartItem(orderDetail); // Use the zustand action to add the item to the cart
     setShowTable(false);
   };
   const handleTable = (gems: Gem[], material: Material[], product: Product, conweight:number) => {
@@ -328,7 +319,7 @@ export default function Jwelery() {
   const cartContent = (
     <div>
       <Table
-        rowKey={(record) => record.orderDetails.length} // Đảm bảo trả về giá trị hợp lệ
+        rowKey={(record) => record.orderDetails.length}
         dataSource={cartItems}
         bordered
         columns={[
@@ -349,7 +340,7 @@ export default function Jwelery() {
                     <div>Price: {detail.total}$</div>
                     <Button
                       type="link"
-                      onClick={() => handleRemoveDetail(detail)}
+                      onClick={() => removeCartDetail(detail)}
                       style={{ color: "red", marginTop: "5px" }}
                     >
                       Remove
@@ -382,7 +373,7 @@ export default function Jwelery() {
             render: (_text, item) => (
               <Button
                 type="link"
-                onClick={() => handleRemoveItem(item)}
+                onClick={() => removeCartItem(item)}
                 style={{ display: showRemoveAll ? "inline-block" : "none" }}
               >
                 Remove All
@@ -395,23 +386,9 @@ export default function Jwelery() {
       />
     </div>
   );
+  
 
-// Hàm để xóa chi tiết sản phẩm
-const handleRemoveDetail = (detail: OrderDetail) => {
-  setCartItems((prevItems:any[]) =>
-    prevItems.map(item => ({
-      ...item,
-      orderDetails: item.orderDetails.filter((d:any) => d !== detail),
-    }))
-  );
-};
 
-// Hàm để xóa toàn bộ sản phẩm
-const handleRemoveItem = (item: OrderPayload) => {
-  setCartItems((prevItems) =>
-    prevItems.filter(cartItem => cartItem !== item)
-  );
-};
 
   
   return (
@@ -421,11 +398,16 @@ const handleRemoveItem = (item: OrderPayload) => {
           <Col xs={12} md={18} sm={14} lg={19} xl={20} xxl={18}>
             <Row gutter={[12, 12]}>
               <Col xs={24} md={21} sm={12}>
-                <Row>
+                <Row gutter={[12, 12]}>
                   <Col>
                     <Form.Item name="Search">
                       <Input placeholder="Search by id" allowClear />
                     </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={12} lg={12}>
+                    <Button type="primary" onClick={() => setIsOpenModal(true)}>
+                      Create Purchase Order
+                    </Button>
                   </Col>
                 </Row>
               </Col>
@@ -433,7 +415,7 @@ const handleRemoveItem = (item: OrderPayload) => {
           </Col>
           <Col xs={12} sm={10} md={6} lg={5} xl={4} xxl={6}>
             <Row>
-              <Col xs={24} sm={12} lg={3}>
+              <Col xs={24} sm={12} lg={24}>
                 <Popover
                   content={cartContent}
                   trigger="hover"
@@ -471,7 +453,6 @@ const handleRemoveItem = (item: OrderPayload) => {
         defaultCurrent={currentPage}
         className="mt-3"
         total={totalCount}
-        
         pageSize={PAGE_SIZE}
         onChange={(page) => {
           setCurrentPage(page);
@@ -510,7 +491,7 @@ const handleRemoveItem = (item: OrderPayload) => {
                 dataSource={Gemlist}
                 // Dữ liệu đá quý
               />
-              <Pagination 
+              <Pagination
                 defaultCurrent={currentPage}
                 total={totalCount}
                 pageSize={PAGE_SIZE}

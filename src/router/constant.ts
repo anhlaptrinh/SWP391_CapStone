@@ -126,6 +126,61 @@ const STAFF_PRODUCT_PERMISSION : Permission={
 ]
 }
 
+const MANAGER_USER_PERMISSION: Permission = {
+    id: '9100714781927704',
+    parentId: '',
+    label: 'User',
+    name: 'user',
+    type: PermissionType.MENU,
+    route: 'user',
+    order: 2,
+    component: '/manager/user/index.tsx',
+    icon: 'mdi:user',
+};
+const MANAGER_PRODUCT_PERMISSION: Permission = {
+    id: '9100714781927705',
+    parentId: '',
+    label: 'Products',
+    name: 'products',
+    type: PermissionType.MENU,
+    route: 'products',
+    order: 3,
+    component: '/manager/products/index.tsx',
+    icon: 'ri:product-hunt-fill',
+};
+const MANAGER_VOUCHER_PERMISSION: Permission = {
+    id: '9100714781927706',
+    parentId: '',
+    label: 'Voucher',
+    name: 'voucher',
+    type: PermissionType.MENU,
+    route: 'voucher',
+    order: 4,
+    component: '/manager/voucher/index.tsx',
+    icon: 'mdi:voucher',
+};
+const MANAGER_GEM_PERMISSION: Permission = {
+    id: '9100714781927707',
+    parentId: '',
+    label: 'Gems',
+    name: 'Gems',
+    icon: 'fa6-solid:gem',
+    type: PermissionType.MENU,
+    route: 'gems',
+    order: 5,
+    component: '/manager/gem/index.tsx'
+};
+const MANAGER_MATERIAL_PERMISSION: Permission = {
+    id: '9100714781927708',
+    parentId: '',
+    label: 'Materials',
+    name: 'Materials',
+    icon: 'academicons:open-materials',
+    type: PermissionType.MENU,
+    route: 'materials',
+    order: 6,
+    component: '/manager/material/index.tsx'
+};
 const MANAGER_PERMISSION: Permission = {
     id: '9100714781927705',
     parentId: '',
@@ -198,7 +253,12 @@ export const ADMIN_PERMISSION = [
 ];
 export const MANAGERS_PERMISSION = [
     ADMIN_DASHBOARD_PERMISSION,
-    MANAGER_PERMISSION,
+    // MANAGER_PERMISSION,
+    MANAGER_USER_PERMISSION,
+    MANAGER_PRODUCT_PERMISSION,
+    MANAGER_VOUCHER_PERMISSION,
+    MANAGER_GEM_PERMISSION,
+    MANAGER_MATERIAL_PERMISSION,
 ];
 export const STAFF_PERMISSION = [
     ADMIN_DASHBOARD_PERMISSION,

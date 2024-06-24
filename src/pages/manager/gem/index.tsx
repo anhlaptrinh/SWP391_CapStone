@@ -3,6 +3,7 @@ import {
   Card,
   Col,
   Form,
+  Image,
   Input,
   Pagination,
   Popconfirm,
@@ -42,6 +43,22 @@ export default function GemList() {
       dataIndex: "no",
       render: (_text, _data, index) => <Title level={5}>{++index}</Title>,
       width: "5%",
+    },
+    {
+      title: "Featured Image",
+      dataIndex: "featuredImage",
+      render: (text) => (
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <Image
+            style={{ width: 100, height: 100, objectFit: "cover" }}
+            src={text}
+          />
+        </div>
+      ),
     },
     {
       title: "Gem Name",

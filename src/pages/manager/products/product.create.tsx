@@ -155,7 +155,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
         </Form.Item>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Form.Item
-            label="producttypes"
+            label="product types"
             name="productTypeId"
             required
             rules={[{ required: true, message: "Please input producttypes" }]}
@@ -170,7 +170,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             />
           </Form.Item>
           <Form.Item
-            label="dataColour"
+            label="data Colour"
             name="colourId"
             required
             rules={[{ required: true, message: "Please input Colour" }]}

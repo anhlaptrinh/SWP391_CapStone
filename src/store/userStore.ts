@@ -86,7 +86,7 @@ export const useSignIn = () => {
       ) {
         user.permissions = MANAGERS_PERMISSION;
         setUserInfo(user);
-        navigatge("/manager/user", { replace: true });
+        navigatge("/dashboard", { replace: true });
       } else {
         user.permissions = STAFF_PERMISSION;
         setUserInfo(user);

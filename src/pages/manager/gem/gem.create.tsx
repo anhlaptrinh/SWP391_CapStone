@@ -1,5 +1,20 @@
 import { GemPayload, useCreateGem, useUpdateGem } from "@/api/manager/gem";
-import { Button, Form, Input, Modal, message } from "antd";
+import {
+  beforeUpload,
+  fakeUpload,
+  normFile,
+  uploadFileToFirebase,
+} from "@/utils/file";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  message,
+  Upload,
+  UploadFile,
+  UploadProps,
+} from "antd";
 import { useState } from "react";
 
 export type GemCreateFormProps = {
@@ -11,7 +26,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
   const { mutateAsync: createMutate } = useCreateGem();
   const { mutateAsync: updateMutate } = useUpdateGem();
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
   const submitHandle = async () => {
     const values = await form.validateFields();
     try {
@@ -20,18 +35,35 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         const updateData: GemPayload = {
           ...formData,
           id: formData.id,
+          gemPrice: {
+            caratWeightPrice: values.caratWeightPrice || formData.gemPrice.caratWeightPrice,
+            clarityPrice: values.clarityPrice || formData.gemPrice.clarityPrice,
+            colourPrice: values.colourPrice || formData.gemPrice.colourPrice,
+            cutPrice: values.cutPrice || formData.gemPrice.cutPrice,
+            total: 0,
+          },
         };
+        if (values.featuredImage) {
+          const updateImageUrl: string = await uploadFileToFirebase(
+            values?.featuredImage[0]
+          );
+          updateData.featuredImage = updateImageUrl;
+        }
         await updateMutate(updateData);
         setLoading(false);
       } else {
+        const updateImageUrl: string = await uploadFileToFirebase(
+          values?.featuredImage[0]
+        );
         const createData: GemPayload = {
           ...values,
+          featuredImage: updateImageUrl,
           gemPrice: {
             caratWeightPrice: values.caratWeightPrice,
             clarityPrice: values.clarityPrice,
             colourPrice: values.colourPrice,
             cutPrice: values.cutPrice,
-            effDate: "2024-06-06T04:33:20.997Z",
+            total: 0,
           },
         };
         await createMutate(createData);
@@ -44,7 +76,9 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
       setLoading(false);
     }
   };
-
+ const onImageChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+   setFileList(newFileList);
+ };
   return (
     <Modal
       title={formData?.id ? "Edit Gem" : "Create Gem"}
@@ -98,10 +132,10 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Color"
-            name="color"
+            label="colour"
+            name="colour"
             required
-            rules={[{ required: true, message: "Please input color" }]}
+            rules={[{ required: true, message: "Please input colour" }]}
           >
             <Input />
           </Form.Item>
@@ -156,6 +190,24 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             <Input />
           </Form.Item>
         </div>
+        <Form.Item
+          label="Package Images"
+          name="featuredImage"
+          getValueFromEvent={normFile}
+        >
+          <Upload
+            name="featuredImage"
+            maxCount={4}
+            className="UploadImage"
+            listType="picture-card"
+            fileList={fileList}
+            beforeUpload={beforeUpload}
+            customRequest={fakeUpload}
+            onChange={onImageChange}
+          >
+            {fileList.length < 4 && "+ Upload"}
+          </Upload>
+        </Form.Item>
       </Form>
     </Modal>
   );

@@ -7,6 +7,7 @@ import apiClient from '../apiClient';
 export interface GemPayload {
     id: number;
     name: string;
+    featuredImage: string;
     origin: string;
     caraWeight: string;
     color: string;

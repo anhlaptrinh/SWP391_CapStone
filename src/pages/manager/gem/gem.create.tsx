@@ -35,7 +35,20 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         const updateData: GemPayload = {
           ...formData,
           id: formData.id,
+          gemPrice: {
+            caratWeightPrice: values.caratWeightPrice || formData.gemPrice.caratWeightPrice,
+            clarityPrice: values.clarityPrice || formData.gemPrice.clarityPrice,
+            colourPrice: values.colourPrice || formData.gemPrice.colourPrice,
+            cutPrice: values.cutPrice || formData.gemPrice.cutPrice,
+            total: 0,
+          },
         };
+        if (values.featuredImage) {
+          const updateImageUrl: string = await uploadFileToFirebase(
+            values?.featuredImage[0]
+          );
+          updateData.featuredImage = updateImageUrl;
+        }
         await updateMutate(updateData);
         setLoading(false);
       } else {

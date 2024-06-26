@@ -1,15 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../apiClient";
-import { PAGE_SIZE } from "@/constants/page";
 
-export const useListProduct = (currentPage:number) => {
+export const useListJwelery = (payload?:any) => {
     return useQuery(['listProduct'], () =>
-        apiClient.get({ url: `/products?page=${currentPage}&pageSize=${PAGE_SIZE}`}),
+        apiClient.get({ url: `/products/jewelries?page=1&pageSize=100`,params:{productId:payload}}),
     );
 };
 
-export const useListGemProduct=(currentPage:number)=>{
-    return useQuery(['gem-product'], () =>
-        apiClient.get({ url: `/gems?page=${currentPage}&pageSize=${PAGE_SIZE}`}),
+export const useListGems=(payload?:any)=>{
+    return useQuery(['listGems'], () =>
+        apiClient.get({ url: `/gems?page=1&pageSize=100`,params:{gemId:payload}}),
     );
 }
+
+export const uselistGold=(payload?:any) => {
+    return useQuery(['list-gold'], () =>
+        apiClient.get({ url: `/products/materials?page=1&pageSize=100`,params:{materialId:payload}}),
+    );
+}
+
+
+
+

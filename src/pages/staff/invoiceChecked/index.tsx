@@ -21,13 +21,13 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { PAGE_SIZE } from "@/constants/page";
 import { SearchOutlined } from "@ant-design/icons";
+import { CircleLoading } from "@/components/loading";
   export default function CheckedInvoice() {
-    const [currentPage,setCurrentPage]=useState(1);
     const { Title } = Typography;
-    const {data,isLoading}=useListInvoice(currentPage);
+    const {data,isLoading}=useListInvoice();
     const [form] = Form.useForm();
-    const [openModal,setIsOpenModal]=useState(false);
-    const totalCount=data?.totalPages||0;
+    
+   
     
     const columns: TableProps<Invoice>['columns'] = [
       {
@@ -42,52 +42,52 @@ import { SearchOutlined } from "@ant-design/icons";
         key: "orderDate",
         render: (text) => dayjs(text).format('YYYY-MM-DD'),
       },
-      {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        align: 'center',
-        render: (_, { status }) => {
+      // {
+      //   title: "Status",
+      //   dataIndex: "status",
+      //   key: "status",
+      //   align: 'center',
+      //   render: (_, { status }) => {
           
-          let color = 'green'; // Default color
+      //     let color = 'green'; // Default color
     
-        // Apply custom logic to set color based on role
-        if (status === true) {
-          color = 'red';
-        } else if (status === false) {
-          color = 'blue';
-        } 
-        return (
-          <>
-            <Tag color={color}>{status? 'checked' : 'unchecked'}</Tag>
+      //   // Apply custom logic to set color based on role
+      //   if (status === true) {
+      //     color = 'red';
+      //   } else if (status === false) {
+      //     color = 'blue';
+      //   } 
+      //   return (
+      //     <>
+      //       <Tag color={color}>{status? 'checked' : 'unchecked'}</Tag>
 
-          </>
-        );
-        },
-      },
-      {
-        title: "Invoice Type",
-        dataIndex: "invoiceType",
-        key: "invoiceType",
-        align: 'center',
-        render: (_, { invoiceType }) => {
+      //     </>
+      //   );
+      //   },
+      // },
+      // {
+      //   title: "Invoice Type",
+      //   dataIndex: "invoiceType",
+      //   key: "invoiceType",
+      //   align: 'center',
+      //   render: (_, { invoiceType }) => {
           
-          let color = 'green'; // Default color
+      //     let color = 'green'; // Default color
     
-          // Apply custom logic to set color based on role
-          if (invoiceType === true) {
-            color = 'green';
-          } else if (invoiceType === false) {
-            color = 'pink';
-          } 
-          return (
-            <>
-              <Tag color={color}>{invoiceType? 'SALE' : 'PURCHASE'}</Tag>
+      //     // Apply custom logic to set color based on role
+      //     if (invoiceType === true) {
+      //       color = 'green';
+      //     } else if (invoiceType === false) {
+      //       color = 'pink';
+      //     } 
+      //     return (
+      //       <>
+      //         <Tag color={color}>{invoiceType? 'SALE' : 'PURCHASE'}</Tag>
   
-            </>
-          );
-        },
-      },
+      //       </>
+      //     );
+      //   },
+      // },
       {
         title: "Customer",
         dataIndex: "customerName",
@@ -213,14 +213,14 @@ import { SearchOutlined } from "@ant-design/icons";
             
           />
           <div className="flex float-end mt-4 pb-4">
-      <Pagination
+      {/* <Pagination
         defaultCurrent={currentPage} 
         total={totalCount} 
         pageSize={PAGE_SIZE}
         onChange={(page) => {
           setCurrentPage(page);
         }}
-      />
+      /> */}
     </div>
         </div>
       </>

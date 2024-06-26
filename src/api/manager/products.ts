@@ -15,7 +15,7 @@ export interface ProductPayload {
 }
 export const useListProduct = (payload?: any) => {
     return useQuery(['listProduct'], () =>
-        apiClient.get({ url: '/products?page=1&pageSize=100', params: { ProductId: payload } }),
+        apiClient.get({ url: '/products/jewelries?page=1&pageSize=100', params: { ProductId: payload } }),
     );
 };
 export const useListCategory = () => {

@@ -13,11 +13,26 @@ export type OrderPayload = {
       perDiscount?: number;
     }];
   };
-export const useListInvoice=(payload?:any)=>{
-    return useQuery(['listInvoice', ],()=>
-        apiClient.get({url: '/invoices?page=1&pageSize=100', params: {invoiceId:payload}}) 
+export const useListInvoice=(invoiceStatus: string, payload?: any)=>{
+    return useQuery(['listInvoice',invoiceStatus ],()=>
+        apiClient.get({url: '/invoices',params: {
+          invoiceStatus,
+          page: 1,
+          pageSize: 100,
+          invoiceId: payload
+        }}) 
     )
 }
+// export const useListProcessingInvoice=(payload?:any)=>{
+//   return useQuery(['listInvoice', ],()=>
+//       apiClient.get({url: '/invoices?invoiceStatus=Processing&page=1&pageSize=100', params: {invoiceId:payload}}) 
+//   )
+// }
+// export const useListDeliveredInvoice=(payload?:any)=>{
+//   return useQuery(['listInvoice', ],()=>
+//       apiClient.get({url: '/invoices?invoiceStatus=Delivered&page=1&pageSize=100', params: {invoiceId:payload}}) 
+//   )
+// }
 
 
 
@@ -41,14 +56,43 @@ export const useCreateInvoice = () => {
     return useMutation(
         async (values: any) =>
             apiClient.post({
-                url: `/products`,
+                url: `/invoices`,
                 data: values,
             }),
         {
             onSuccess: () => {
-                message.success('Create Product successfully');
+                queryClient.fetchQuery(['listInvoice'])
+                message.success('Create Invoice successfully');
                 queryClient.invalidateQueries(['listProduct']);
             },
         },
     );
+};
+
+export const useCancelInvoice = () => {
+  return useMutation(
+      async (values: any) =>
+          apiClient.delete({ url: `/invoices/${values}` }),
+      {
+          onSuccess: () => {
+              queryClient.fetchQuery(['listInvoice'])
+              message.success('Cancel Invoice successfully');
+              queryClient.invalidateQueries(['listProduct']);
+          },
+      },
+  );
+};
+
+export const useChangeInvoice = (invoiceStatus:any) => {
+  return useMutation(
+      async (values: any) =>
+          apiClient.put({ url: `/invoices/${values}/change` }),
+      {
+          onSuccess: () => {
+              queryClient.fetchQuery(['listInvoice',{invoiceStatus}])
+              message.success('Update Invoice successfully');
+              queryClient.invalidateQueries(['listProduct']);
+          },
+      },
+  );
 };

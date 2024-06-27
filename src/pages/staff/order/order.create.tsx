@@ -1,7 +1,7 @@
 import { useCreateInvoice, useUpdateInvoice } from "@/api/staff/listInvoice";
 import { useListGems, useListJwelery, uselistGold } from "@/api/staff/listProduct";
 import { Button, Form, Input, Modal, Select, message } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type OrderCreateFormProps={
     formData?:any;
@@ -36,23 +36,50 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
         dataGold.items[i].label=`GO${dataGold.items[i].productId}`;
       }
     }
+    useEffect(() => {
+      if (formData) {
+        const { invoiceDetailsJewelry, invoiceDetailsGems, invoiceDetailsGold } = formData;
+        const convertedJewelry = invoiceDetailsJewelry?.map((item: any) => item.productId);
+        const convertedGems = invoiceDetailsGems?.map((item: any) => item.gemId);
+        const convertedGold = invoiceDetailsGold?.map((item: any) => item.productId);
+  
+        form.setFieldsValue({
+          invoiceDetailsJewelry: convertedJewelry,
+          invoiceDetailsGems: convertedGems,
+          invoiceDetailsGold: convertedGold,
+          ...formData, // Set other form fields from formData
+        });
+      }
+    }, [formData, form, dataJewelry, dataGems, dataGold]);
+  
     const submitHandle= async ()=>{
       const values=await form.validateFields();
       try{
         setloading(true);
+        const invoiceDetails = [];
+        if (values.invoiceDetailsJewelry) {
+          invoiceDetails.push(...values.invoiceDetailsJewelry);
+        }
+        if (values.invoiceDetailsGems) {
+          invoiceDetails.push(...values.invoiceDetailsGems);
+        }
+        if (values.invoiceDetailsGold) {
+          invoiceDetails.push(...values.invoiceDetailsGold);
+        }
+        // console.log("invoiceDetails:", invoiceDetails);
         if(formData){
           const updateData:any={
             ...formData,
-            id: formData.invoiceId,
+            invoiceId: formData.invoiceId,
           }
-          updateInvoice(updateData);
+          await updateInvoice(updateData);
           setloading(false);
         }else{
           const createData:any={
             ...values,
-
+            invoiceDetails,
           };
-          createInvoice(createData);
+          await createInvoice(createData);
           setloading(false);
           
         }
@@ -112,12 +139,10 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
 
                 </Form.Item>
                 <Form.Item
-                  label="User Id"
-                  name='userId'
-                  required
-                  rules={[{required: true, message: "Please input User ID"}]}
+                  label="Discount"
+                  name='perDiscount'
                 >
-                  <Input/>
+                  <Input addonAfter="%"/>
                 </Form.Item>
                 <Form.Item
                   label="Warranty Id"
@@ -129,9 +154,11 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
                 </Form.Item>
                 <Form.Item
                   label="Jwelery Id"
-                  name={['invoiceDetails',0]}
+                  name="invoiceDetailsJewelry"
                 >
                   <Select
+                    mode="multiple"
+                    
                     showSearch
                     placeholder='Select Jwelery Id'
                     optionFilterProp="children"
@@ -142,9 +169,10 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
                 </Form.Item>
                 <Form.Item
                   label="Gems Id"
-                  name={['invoiceDetails',1]}
+                  name="invoiceDetailsGems"
                 >
                   <Select
+                    mode="multiple"
                     showSearch
                     placeholder='Select Gems Id'
                     optionFilterProp="children"
@@ -155,9 +183,10 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
                 </Form.Item>
                 <Form.Item
                   label="Gold Id"
-                  name={['invoiceDetails',2]}
+                  name="invoiceDetailsGold"
                 >
                   <Select
+                    mode="multiple"
                     showSearch
                     placeholder='Select Gold Id'
                     optionFilterProp="children"

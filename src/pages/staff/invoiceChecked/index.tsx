@@ -1,229 +1,217 @@
-import {
-    Button,
-    Card,
-    Col,
-    Form,
-    Row,
-    Typography,
-    Table,
-    Input,
-    TableProps,
-    List,
-    Tag,
-    Pagination,
-    Popover,
-    Space
-  } from "antd";
-  import {Invoice, Items} from '#/invoice'
-  
-  import { useListInvoice } from "@/api/staff/listInvoice";
-import dayjs from "dayjs";
-import { useState } from "react";
-import { PAGE_SIZE } from "@/constants/page";
-import { SearchOutlined } from "@ant-design/icons";
-import { CircleLoading } from "@/components/loading";
-  export default function CheckedInvoice() {
-    const { Title } = Typography;
-    const {data,isLoading}=useListInvoice();
-    const [form] = Form.useForm();
-    
-   
-    
-    const columns: TableProps<Invoice>['columns'] = [
-      {
-        title: "Invoice ID",
-        dataIndex: "invoiceId",
-        key: "invoiceId",
-        align: 'center'
-      },
-      {
-        title: "Order Date",
-        dataIndex: "orderDate",
-        key: "orderDate",
-        render: (text) => dayjs(text).format('YYYY-MM-DD'),
-      },
-      // {
-      //   title: "Status",
-      //   dataIndex: "status",
-      //   key: "status",
-      //   align: 'center',
-      //   render: (_, { status }) => {
-          
-      //     let color = 'green'; // Default color
-    
-      //   // Apply custom logic to set color based on role
-      //   if (status === true) {
-      //     color = 'red';
-      //   } else if (status === false) {
-      //     color = 'blue';
-      //   } 
-      //   return (
-      //     <>
-      //       <Tag color={color}>{status? 'checked' : 'unchecked'}</Tag>
+import { useChangeInvoice, useListInvoice } from '@/api/staff/listInvoice';
+import { IconButton, Iconify } from '@/components/icon';
+import { CircleLoading } from '@/components/loading';
+import { Table, Popover, Tag, Popconfirm, Tabs, Button, Col, Form, Input, Row } from 'antd';
+import form from 'antd/es/form';
+import { ColumnsType } from 'antd/es/table';
+import { useState } from 'react';
 
-      //     </>
-      //   );
-      //   },
-      // },
-      // {
-      //   title: "Invoice Type",
-      //   dataIndex: "invoiceType",
-      //   key: "invoiceType",
-      //   align: 'center',
-      //   render: (_, { invoiceType }) => {
-          
-      //     let color = 'green'; // Default color
+export default function InvoiceChecked() {
+  const data:any=[];
+  const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending')
+  const {data: invoiceProcessing,isLoading: isLoadingProcessing}= useListInvoice('Processing')
+  const { data: deliveredInvoices, isLoading: isLoadingDelivered } = useListInvoice('Delivered');
+  const [status,setStatus]=useState<any>("Pending")
+  const {mutateAsync: statusInvoice}=useChangeInvoice(status);
+  const { TabPane } = Tabs;
+
+  if (isLoadingPending) return <CircleLoading />;
+  if (isLoadingProcessing) return <CircleLoading />;
+  if (isLoadingDelivered) return <CircleLoading />;
+
+
+
+  const columns: ColumnsType<any> = [
+    {
+      title: "ID",
+      dataIndex: "invoiceId",
+      key: 'invoiceId',
+      width: '5%'
+    },
     
-      //     // Apply custom logic to set color based on role
-      //     if (invoiceType === true) {
-      //       color = 'green';
-      //     } else if (invoiceType === false) {
-      //       color = 'pink';
-      //     } 
-      //     return (
-      //       <>
-      //         <Tag color={color}>{invoiceType? 'SALE' : 'PURCHASE'}</Tag>
-  
-      //       </>
-      //     );
-      //   },
-      // },
-      {
-        title: "Customer",
-        dataIndex: "customerName",
-        key: "customerName",
-      },
-      {
-        title: "Invoice Creator",
-        dataIndex: "userName",
-        key: "userName",
-      },
-      {
-        title: "Warranty",
-        dataIndex: "warranty",
-        key: "warranty",
-        align: 'center',
-      },
-      {
-        title: 'Items',
-        dataIndex: 'items',
-        key: 'items',
-        render: (_text: any, record: any) => {
-          const content = (
-            <List
-              dataSource={record.items}
-              renderItem={(item: Items) => (
-                <List.Item>
-                  <Tag color="pink">{item.productName}</Tag>
-                </List.Item>
-              )}
-            />
-          );
-    
-          return (
-            <Popover content={content} title="Items">
-              <Button type="link">View Items</Button>
-            </Popover>
-          );
-        },
-      },
-      {
-        title: "Total",
-        dataIndex: "total",
-        key: "total",
-      },
-      {
-        title: "Action",
-        key: "action",
-        align: "center",
-        render: (_text: any, record: any) => (
-          <Button type="primary" onClick={() => handleBuyback(record.invoiceId)}>
-            Repurchase
-          </Button>
-        ),
-      },
-    ];
-  
-    const handleBuyback = (invoiceCode: string) => {
-      // Implement buyback logic here
-      console.log(`Buyback initiated for invoice: ${invoiceCode}`);
-    };
-    const onFinishHandler = (values: any) => {
-      console.log(values);
-    };
-    const resetHandler = () => {
-      form.resetFields();
-    };
-    
-  
-    const onSearch = (value:any) => {
-      // Xử lý logic tìm kiếm tại đây
-      console.log(value);
-    };
-    return (
-      <>
-        <div className="mt-3 text-sm">
-          <Form form={form} onFinish={onFinishHandler}>
-          <Row gutter={24}  justify="space-between">
-          <Col xs={24} md={24} sm={24} lg={24} xl={24} xxl={24}>
-      <Row gutter={[12, 12]}>
-        <Col xs={24} md={21} sm={12}>
-          <Row gutter={[12, 0]}>
-          <Col xs={24} md={21} sm={24} lg={8}>
-              <Input.Search
-                placeholder="Search by ID invoice..."
-                allowClear
-                enterButton={
-                  <Button type="primary" icon={<SearchOutlined />}  />
-                }
-                onSearch={onSearch}
+    { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
+    {
+      title: "Warranty",
+      align: "center",
+      dataIndex: "warranty",
+      key: "warranty",
+    },
+
+    {
+      title: "Items Order",
+      align: "center",
+      dataIndex: "items",
+      key: "items",
+      render: (items) => {
+        const popoverContent = (
+          <Table
+            dataSource={items.map((item:any, index:number) => ({ ...item, key: index }))}
+            columns={[
+              { title: 'ID', dataIndex: 'productId', key: 'productId' },
+              { title: 'Name', dataIndex: 'productName', key: 'productName' },
+              { 
+                title: 'Price', 
+                dataIndex: 'productPrice', 
+                key: 'productPrice', 
+                render: (text) => `${new Intl.NumberFormat('en-US').format(text)} VND`
+              }
+            ]}
+            pagination={false}
+            size="small"
+            bordered
+          />
+        );
+        return (
+          <Popover content={popoverContent} title="Item Details" trigger="hover">
+            <a>View Items</a>
+          </Popover>
+        );
+      }
+    },
+    {
+      title: "Price",
+      align: "center",
+      dataIndex: "total",
+      key: "total",
+      render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
+    },
+    {
+      title: "Promotion",
+      align: "center",
+      dataIndex: "perDiscount",
+      key: "perDiscount",
+      render: (text) => <Tag color="red">{text}%</Tag>
+    },
+    {
+      title: "Type",
+      align: "center",
+      dataIndex: "invoiceType",
+      key: "invoiceType",
+      render: (text) => <Tag color="green">{text}</Tag>
+    },
+
+    {
+      title: "Amount",
+      align: "center",
+      dataIndex: "totalWithDiscount",
+      key: "totalWithDiscount",
+      render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
+    },
+    {
+      title: "Order Status",
+      align: "center",
+      dataIndex: "invoiceStatus",
+      key: "invoiceStatus",
+      render: (status) => {
+        let color;
+        switch(status) {
+          case 'Delivered':
+            color = 'green';
+            break;
+          case 'Pending':
+            color = 'gold';
+            break;
+          case 'Processing':
+            color = 'magenta';
+            break;
+          default:
+            color = 'blue';
+        }
+        return <Tag color={color}>{status}</Tag>;
+      }
+    },
+
+    {
+      title: "Action",
+      dataIndex: "actions",
+      align: "center",
+      render: (_, record) => (
+        <div className="text-gray flex w-full items-center justify-center">
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              setStatus(record.invoiceStatus)
+              statusInvoice(record.invoiceId)
+            }}
+          >
+            <Iconify icon="mdi:credit-card-outline" size={18} />
+          </IconButton>
+          {/* <Popconfirm
+            title="Delete the Product?"
+            okText="Yes"
+            cancelText="No"
+            placement="left"
+            onConfirm={(e : any) => { e.stopPropagation();
+            }}
+          >
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <Iconify
+                icon="mingcute:delete-2-fill"
+                size={18}
+                className="text-error"
               />
-            </Col>
-            <Col xs={24} md={3} sm={24} lg={16} style={{ textAlign: 'right' }}>
-              <Space>
-                <Button type="primary" onClick={resetHandler}>
-                  Reset
-                </Button>
-                
-              </Space>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </Col>
-            {/* <Col xs={12} sm={10} md={6} lg={5} xl={4} xxl={6}>
-              <Row>
-                <Col xs={24} sm={12} lg={3}>
-                  <Button type="primary" onClick={()=>setIsOpenModal(true)}>Add new</Button>
+            </IconButton>
+          </Popconfirm> */}
+        </div>
+      ),
+    },
+  ];
+  const [form]=Form.useForm();
+  const onFinishHandler=(values:any)=>{
+    console.log(values);
+  }
+  return (
+    <div className="mt-3 text-sm">
+    <Form form={form} onFinish={onFinishHandler}>
+          <Row gutter={24} justify="space-between">
+            <Col span={24}>
+              <Row gutter={12}>
+                <Col span={6}>
+                  <Form.Item name="Search">
+                    <Input placeholder="Search by ID" allowClear />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Button type="primary" >
+                    Reset
+                  </Button>
                 </Col>
               </Row>
-            </Col> */}
+            </Col>
+            
           </Row>
         </Form>
-          <Table
-            rowKey="invoiceId"
-            className="mt-3"
-            columns={columns}
-            loading={isLoading}
-            pagination={false}
-            scroll={{ x: 'max-content' }}
-            dataSource={data?.items}
-            size="large"
-            bordered
-            
-          />
-          <div className="flex float-end mt-4 pb-4">
-      {/* <Pagination
-        defaultCurrent={currentPage} 
-        total={totalCount} 
-        pageSize={PAGE_SIZE}
-        onChange={(page) => {
-          setCurrentPage(page);
-        }}
-      /> */}
+    <Tabs defaultActiveKey="1" className="mt-3" >
+      <TabPane tab="Sales Invoice" key="1">
+            <Table
+              rowKey="invoiceId"
+              columns={columns}
+              pagination={false}
+              scroll={{ x: "max-content" }}
+              dataSource={deliveredInvoices.items}
+              size="large"
+              bordered
+            />
+      </TabPane>
+      <TabPane tab="Purchase Invoice" key="2">
+        
+            <Table
+              rowKey="invoiceId"
+              columns={columns}
+              pagination={false}
+              scroll={{ x: "max-content" }}
+              dataSource={data}
+              size="large"
+              bordered
+            />
+      </TabPane>
+    </Tabs>
     </div>
-        </div>
-      </>
-    );
-  }
-  
+  )
+}
+

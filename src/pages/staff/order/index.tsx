@@ -4,19 +4,15 @@ import {
   Col,
   Form,
   Input,
-  Pagination,
   Popconfirm,
+  Popover,
   Row,
-  Space,
+  Tag,
   Typography,
 } from "antd";
-import Table, { TableProps } from "antd/es/table";
+import Table, { ColumnsType } from "antd/es/table";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { InputType } from "#/api";
-import { PAGE_SIZE } from "@/constants/page";
-import dayjs from "dayjs";
-import { Invoice } from "#/invoice";
 import { CircleLoading } from "@/components/loading";
 import { useListInvoice } from "@/api/staff/listInvoice";
 import { IconButton, Iconify } from "@/components/icon";
@@ -29,29 +25,23 @@ export default function OrderList() {
  
   // Dữ liệu cho bảng Order Checking
   
- const datasut:any=[]
   // Các cột cho bảng Order Checking
   
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const { Title } = Typography;
-
+  const {data: dataInvoice,isLoading}=useListInvoice('Pending')
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const [openModal, setIsOpenModal] = useState(false);
-  const {data,isLoading}=useListInvoice();
+
   const [formOrder,setFormOrder]=useState<any>(false);
     if (isLoading) return <CircleLoading />;
-  const columns: TableProps<Invoice>["columns"] = [
+  const columns: ColumnsType<any> = [
     {
-      title: "Order ID",
+      title: "ID",
       dataIndex: "invoiceId",
       key: 'invoiceId',
-    },
-    {
-      title: "Order Type",
-      align: "center",
-      dataIndex: "invoiceType",
-      key: "invoiceType",
+      width: '5%'
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
@@ -67,30 +57,75 @@ export default function OrderList() {
       align: "center",
       dataIndex: "items",
       key: "items",
+      render: (items) => {
+        const popoverContent = (
+          <Table
+            dataSource={items.map((item:any, index:number) => ({ ...item, key: index }))}
+            columns={[
+              { title: 'ID', dataIndex: 'productId', key: 'productId' },
+              { title: 'Name', dataIndex: 'productName', key: 'productName' },
+              { 
+                title: 'Price', 
+                dataIndex: 'productPrice', 
+                key: 'productPrice', 
+                render: (text) => `${new Intl.NumberFormat('en-US').format(text)} VND`
+              }
+            ]}
+            pagination={false}
+            size="small"
+            bordered
+          />
+        );
+        return (
+          <Popover content={popoverContent} title="Item Details" trigger="hover">
+            <a>View Items</a>
+          </Popover>
+        );
+      }
     },
     {
       title: "Price",
       align: "center",
       dataIndex: "total",
       key: "total",
+      render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
     },
     {
       title: "Promotion",
       align: "center",
       dataIndex: "perDiscount",
       key: "perDiscount",
+      render: (text) => <Tag color="red">{text}%</Tag>
     },
     {
       title: "Amount",
       align: "center",
       dataIndex: "totalWithDiscount",
       key: "totalWithDiscount",
+      render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
     },
     {
       title: "Order Status",
       align: "center",
       dataIndex: "invoiceStatus",
       key: "invoiceStatus",
+      render: (status) => {
+        let color;
+        switch(status) {
+          case 'Delivered':
+            color = 'green';
+            break;
+          case 'Pending':
+            color = 'gold';
+            break;
+          case 'Processing':
+            color = 'magenta';
+            break;
+          default:
+            color = 'blue';
+        }
+        return <Tag color={color}>{status}</Tag>;
+      }
     },
 
     {
@@ -194,16 +229,16 @@ export default function OrderList() {
           </Row>
         </Form>
         <Table
-          rowKey="orderId"
+          rowKey="invoiceId"
           className="mt-3"
           columns={columns}
-          pagination={false}
+          // pagination={false}
           scroll={{ x: "max-content" }}
-          dataSource={datasut}
+          dataSource={dataInvoice?.items}
           size="large"
           bordered
         />
-        <div className="flex float-end mt-4 pb-4">
+        {/* <div className="flex float-end mt-4 pb-4">
           <Pagination
             defaultCurrent={currentPage}
             pageSize={PAGE_SIZE}
@@ -211,7 +246,7 @@ export default function OrderList() {
               setCurrentPage(page);
             }}
           />
-        </div>
+        </div> */}
       </div>
       {formOrder!==false &&(
         <OrderForm formData={formOrder} onclose={closeFormOrder}/>

@@ -22,8 +22,12 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
     try {
       if (formData) {
         const updateData: MaterialPayload = {
-          ...formData,
-          id: formData.id,
+          materialId: formData.materialId,
+          materialName: formData.materialName || values.materialName,
+          materialPrice: {
+            buyPrice: formData.buyPrice || values.buyPrice,
+            sellPrice: formData.sellPrice || values.sellPrice,
+          },
         };
         await updateMutate(updateData);
         setLoading(false);
@@ -33,7 +37,6 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
           materialPrice: {
             buyPrice: values.buyPrice,
             sellPrice: values.sellPrice,
-            effDate: "2024-06-06T04:33:20.997Z",
           },
         };
         await createMutate(createData);
@@ -49,7 +52,7 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
 
   return (
     <Modal
-      title={formData?.id ? "Edit Material" : "Create Material"}
+      title={formData?.materialId ? "Edit Material" : "Create Material"}
       open
       onOk={submitHandle}
       onCancel={() => onClose()}

@@ -18,6 +18,7 @@ import { FormGem } from "./gem.create";
 import { useListGem, useDeleteGem } from "@/api/manager/gem";
 import { CircleLoading } from "@/components/loading";
 import { IconButton, Iconify } from "@/components/icon";
+import { transformObject } from "@/utils/string";
 
 export default function GemList() {
   const { Title } = Typography;
@@ -86,7 +87,7 @@ export default function GemList() {
             cancelText="No"
             placement="left"
             onConfirm={() => {
-              submitHandleDelete(record.id.toString());
+              submitHandleDelete(record.gemId.toString());
             }}
           >
             <IconButton>
@@ -115,7 +116,7 @@ export default function GemList() {
     setListRelateParams(values);
   };
   const submitHandleDelete = (record?: any) => {
-    if (record?.id) {
+    if (record) {
       deleteMutate(record);
     }
   };
@@ -177,7 +178,10 @@ export default function GemList() {
         style={{ marginTop: "1rem" }}
       /> */}
       {formGem !== false && (
-        <FormGem formData={formGem} onClose={closeFormGem} />
+        <FormGem
+          formData={transformObject(formGem, "gemPrice")}
+          onClose={closeFormGem}
+        />
       )}
     </Card>
   );

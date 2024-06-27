@@ -5,12 +5,12 @@ import { queryClient } from '@/http/tanstack/react-query';
 import apiClient from '../apiClient';
 
 export interface GemPayload {
-    id: number;
-    name: string;
+    gemId: string;
+    gemName: string;
     featuredImage: string;
     origin: string;
-    caraWeight: string;
-    color: string;
+    caratWeight: string;
+    colour: string;
     clarity: string;
     cut: string;
     gemPrice: object;

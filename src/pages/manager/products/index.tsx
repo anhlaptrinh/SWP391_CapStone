@@ -93,7 +93,7 @@ export default function ProductsList() {
           >
             <Iconify icon="solar:pen-bold-duotone" size={18} />
           </IconButton>
-          <Popconfirm
+          {/* <Popconfirm
             title="Delete the Product?"
             okText="Yes"
             cancelText="No"
@@ -112,7 +112,7 @@ export default function ProductsList() {
                 className="text-error"
               />
             </IconButton>
-          </Popconfirm>
+          </Popconfirm> */}
         </div>
       ),
     },

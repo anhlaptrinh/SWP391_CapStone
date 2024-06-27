@@ -33,10 +33,17 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
       setLoading(true);
       if (formData) {
         const updateData: GemPayload = {
-          ...formData,
-          id: formData.id,
+          gemId: formData.gemId,
+          gemName: values.gemName || formData.gemName,
+          featuredImage: values.featuredImage || formData.featuredImage,
+          origin: values.origin || formData.origin,
+          caratWeight: values.caratWeight || formData.caratWeight,
+          colour: values.colour || formData.colour,
+          clarity: values.clarity || formData.clarity,
+          cut: values.cut || formData.cut,
           gemPrice: {
-            caratWeightPrice: values.caratWeightPrice || formData.gemPrice.caratWeightPrice,
+            caratWeightPrice:
+              values.caratWeightPrice || formData.gemPrice.caratWeightPrice,
             clarityPrice: values.clarityPrice || formData.gemPrice.clarityPrice,
             colourPrice: values.colourPrice || formData.gemPrice.colourPrice,
             cutPrice: values.cutPrice || formData.gemPrice.cutPrice,
@@ -81,7 +88,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
  };
   return (
     <Modal
-      title={formData?.id ? "Edit Gem" : "Create Gem"}
+      title={formData?.gemId ? "Edit Gem" : "Create Gem"}
       open
       onOk={submitHandle}
       onCancel={() => onClose()}

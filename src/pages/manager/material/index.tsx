@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   Pagination,
+  Popconfirm,
   Row,
   Typography,
 } from "antd";
@@ -13,9 +14,10 @@ import { useState } from "react";
 
 import { InputType } from "#/api";
 import { FormMaterial } from "./material.create";
-import { useListMaterial } from "@/api/manager/material";
+import { useDeleteMaterial, useListMaterial } from "@/api/manager/material";
 import { CircleLoading } from "@/components/loading";
-import { numberWithCommas } from "@/utils/string";
+import { numberWithCommas, transformObject } from "@/utils/string";
+import { IconButton, Iconify } from "@/components/icon";
 
 export default function MaterialList() {
   const { Title } = Typography;
@@ -23,6 +25,7 @@ export default function MaterialList() {
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const [formMaterial, setFormMaterial] = useState<any>(false);
   const { data, isLoading } = useListMaterial();
+  const { mutateAsync: deleteMutate } = useDeleteMaterial();
   if (isLoading) return <CircleLoading />;
   const onOpenFormHandler = (record?: any) => {
     if (record) {
@@ -34,6 +37,11 @@ export default function MaterialList() {
   const closeFormMaterial = async () => {
     setFormMaterial(false);
   };
+    const submitHandleDelete = (record?: any) => {
+      if (record) {
+        deleteMutate(record);
+      }
+    };
   const columns: ColumnsType<any> = [
     {
       title: "No",
@@ -57,6 +65,34 @@ export default function MaterialList() {
       dataIndex: "materialPrice",
       render: (_, record) => (
         <div>{numberWithCommas(record.materialPrice?.sellPrice || 0)} VND</div>
+      ),
+    },
+    {
+      title: "Action",
+      align: "center",
+      render: (_, record) => (
+        <div className="text-gray flex w-full items-center justify-center">
+          <IconButton onClick={() => onOpenFormHandler(record)}>
+            <Iconify icon="solar:pen-bold-duotone" size={18} />
+          </IconButton>
+          <Popconfirm
+            title="Delete the material"
+            okText="Yes"
+            cancelText="No"
+            placement="left"
+            onConfirm={() => {
+              submitHandleDelete(record.materialId.toString());
+            }}
+          >
+            <IconButton>
+              <Iconify
+                icon="mingcute:delete-2-fill"
+                size={18}
+                className="text-error"
+              />
+            </IconButton>
+          </Popconfirm>
+        </div>
       ),
     },
   ];
@@ -132,7 +168,13 @@ export default function MaterialList() {
         style={{ marginTop: "1rem" }}
       /> */}
       {formMaterial !== false && (
-        <FormMaterial formData={formMaterial} onClose={closeFormMaterial} />
+        <FormMaterial
+          formData={transformObject(
+            formMaterial,
+            "materialPrice"
+          )}
+          onClose={closeFormMaterial}
+        />
       )}
     </Card>
   );

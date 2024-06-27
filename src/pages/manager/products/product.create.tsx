@@ -120,7 +120,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
   return (
     <Modal
-      title={formData?.id ? "Edit Product" : "Create Product"}
+      title={formData?.productId ? "Edit Product" : "Create Product"}
       open
       onOk={submitHandle}
       onCancel={() => onClose()}

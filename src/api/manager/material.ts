@@ -5,7 +5,7 @@ import { queryClient } from '@/http/tanstack/react-query';
 import apiClient from '../apiClient';
 
 export interface MaterialPayload {
-    id: number;
+    materialId: string;
     materialName: string;
     materialPrice: object;
 }
@@ -38,7 +38,7 @@ export const useCreateMaterial = (payload?: any) => {
 export const useUpdateMaterial = (payload?: any) => {
     return useMutation(
         async (values: MaterialPayload) =>
-            apiClient.post({
+            apiClient.put({
                 url: `/materials`,
                 params: payload,
                 data: values,

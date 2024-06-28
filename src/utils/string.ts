@@ -29,3 +29,4 @@ export const transformObject = <T extends string, U extends Record<string, any>>
 
   return result as TransformedObject<T, U>;
 };
+

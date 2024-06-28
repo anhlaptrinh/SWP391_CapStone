@@ -46,6 +46,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "react-helmet-async": "^2.0.5",
+    "react-highlight-words": "^0.20.0",
     "react-hook-form": "^7.52.0",
     "react-router-dom": "^6.21.0",
     "react-use": "^17.4.0",

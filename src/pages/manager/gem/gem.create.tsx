@@ -15,18 +15,34 @@ import {
   UploadFile,
   UploadProps,
 } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export type GemCreateFormProps = {
   formData?: any;
   onClose: () => void;
 };
+
 export function FormGem({ formData, onClose }: GemCreateFormProps) {
   const [form] = Form.useForm();
   const { mutateAsync: createMutate } = useCreateGem();
   const { mutateAsync: updateMutate } = useUpdateGem();
   const [loading, setLoading] = useState<boolean>(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  useEffect(() => {
+    if (formData?.featuredImage) {
+      const initialFileList = [
+        {
+          uid: "-1",
+          name: "featuredImage.jpg",
+          status: "done",
+          url: formData.featuredImage,
+        },
+      ];
+      setFileList(initialFileList);
+    }
+  }, [formData]);
+
   const submitHandle = async () => {
     const values = await form.validateFields();
     try {
@@ -83,15 +99,19 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
       setLoading(false);
     }
   };
- const onImageChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
-   setFileList(newFileList);
- };
+
+  const onImageChange: UploadProps["onChange"] = ({
+    fileList: newFileList,
+  }) => {
+    setFileList(newFileList);
+  };
+
   return (
     <Modal
       title={formData?.gemId ? "Edit Gem" : "Create Gem"}
       open
       onOk={submitHandle}
-      onCancel={() => onClose()}
+      onCancel={onClose}
       footer={[
         <Button key="back" onClick={onClose}>
           Cancel
@@ -106,13 +126,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         </Button>,
       ]}
     >
-      <Form
-        initialValues={formData}
-        form={form}
-        // labelCol={{ span: 4 }}
-        // wrapperCol={{ span: 18 }}
-        layout="vertical"
-      >
+      <Form initialValues={formData} form={form} layout="vertical">
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Form.Item
             label="Gem Name"
@@ -204,7 +218,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         >
           <Upload
             name="featuredImage"
-            maxCount={4}
+            maxCount={1}
             className="UploadImage"
             listType="picture-card"
             fileList={fileList}
@@ -212,7 +226,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             customRequest={fakeUpload}
             onChange={onImageChange}
           >
-            {fileList.length < 4 && "+ Upload"}
+            {fileList.length < 1 && "+ Upload"}
           </Upload>
         </Form.Item>
       </Form>

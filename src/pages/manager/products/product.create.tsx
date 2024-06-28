@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -9,25 +10,32 @@ import {
   UploadProps,
   Select,
 } from "antd";
-import { useState } from "react";
 import {
   beforeUpload,
   fakeUpload,
   normFile,
   uploadFileToFirebase,
-  // uploadFileToFirebase,
 } from "@/utils/file";
 import { useListGem } from "@/api/manager/gem";
 import { useListMaterial } from "@/api/manager/material";
-import { useCreateProduct, useListCategory, useListColour, useListGender, useListProducttype, useUpdateProduct } from "@/api/manager/products";
-export type ProductCreateFormProps = {
+import {
+  useCreateProduct,
+  useListCategory,
+  useListColour,
+  useListGender,
+  useListProducttype,
+  useUpdateProduct,
+} from "@/api/manager/products";
+
+type ProductCreateFormProps = {
   formData?: any;
   onClose: () => void;
 };
+
 export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
   const [form] = Form.useForm();
-    const { mutateAsync: createMutate } = useCreateProduct();
-    const { mutateAsync: updateMutate } = useUpdateProduct();
+  const { mutateAsync: createMutate } = useCreateProduct();
+  const { mutateAsync: updateMutate } = useUpdateProduct();
   const { data: dataProducttype } = useListProducttype();
   const { data: dataColour } = useListColour();
   const { data: dataGender } = useListGender();
@@ -36,50 +44,73 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
   const { data: dataCategory } = useListCategory();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-    if (dataProducttype?.length > 0) {
-      for (let i = 0; i < dataProducttype.length; i++) {
-        dataProducttype[i].value = dataProducttype[i].id;
-        dataProducttype[i].label = dataProducttype[i].name;
-      }
+
+  useEffect(() => {
+    if (formData?.featuredImage) {
+      const initialFileList = [
+        {
+          uid: "-1",
+          name: "featuredImage.jpg",
+          status: "done",
+          url: formData.featuredImage,
+        },
+      ];
+      setFileList(initialFileList);
     }
-    if (dataCategory?.length > 0) {
-      for (let i = 0; i < dataCategory.length; i++) {
-        dataCategory[i].value = dataCategory[i].categoryId;
-        dataCategory[i].label = dataCategory[i].categoryName;
-      }
-    }
-    if (dataColour?.length > 0) {
-      for (let i = 0; i < dataColour.length; i++) {
-        dataColour[i].value = dataColour[i].colourId;
-        dataColour[i].label = dataColour[i].colourName;
-      }
-    }
-    if (dataGender?.length > 0) {
-      for (let i = 0; i < dataGender.length; i++) {
-        dataGender[i].value = dataGender[i].genderId;
-        dataGender[i].label = dataGender[i].genderName
-      }
-    }
-    if (dataGem?.items.length > 0) {
-      for (let i = 0; i < dataGem?.items.length; i++) {
-        dataGem.items[i].value = dataGem?.items[i].gemId;
-        dataGem.items[i].label = dataGem?.items[i].gemName;
-      }
-    }
-    if (dataMaterial?.items.length > 0) {
-      for (let i = 0; i < dataMaterial?.items.length; i++) {
-        dataMaterial.items[i].value = dataMaterial?.items[i].materialId;
-        dataMaterial.items[i].label = dataMaterial?.items[i].materialName;
-      }
-    }
+  }, [formData]);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      ...formData,
+      productTypeId: dataProducttype.find(
+        (g) => g.name === formData?.productType
+      ).id,
+      colourId: dataColour.find((g) => g.colourName === formData?.colour)
+        .colourId,
+      genderId: dataGender.find((g) => g.genderName === formData?.gender)
+        .genderId,
+      categoryId: dataCategory.find(
+        (g) => g.categoryName === formData?.category
+      ).categoryId,
+      gems: formData?.gems.map((gem: any) => gem.gemId),
+      materials: formData?.materials.map(
+        (material: any) => material.materialId
+      ),
+    });
+  }, [form, formData]);
+
+  const prepareSelectOptions = (
+    data: any[],
+    idField: string,
+    nameField: string
+  ) => {
+    if (!data) return [];
+    return data.map((item) => ({
+      value: item[idField],
+      label: item[nameField],
+    }));
+  };
+
   const submitHandle = async () => {
     const values = await form.validateFields();
     try {
       setLoading(true);
       if (formData) {
         const updateData: any = {
-          ...formData,
-          id: formData.id,
+          productId: formData.productId,
+          productName: values.productName || formData.productName,
+          percentPriceRate:
+            values.percentPriceRate || formData.percentPriceRate,
+          productionCost: values.productionCost || formData.productionCost,
+          status: true,
+          featuredImage: formData.featuredImage,
+          weight: values.weight || formData.weight,
+          categoryId: values.categoryId || formData.category,
+          productTypeId: values.productTypeId || formData.productType,
+          genderId: values.genderId || formData.gender,
+          colourId: values.colourId || formData.colour,
+          gems: [1],
+          materials: [1],
         };
         if (values.featuredImage) {
           const updateImageUrl: string = await uploadFileToFirebase(
@@ -87,43 +118,44 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
           );
           updateData.featuredImage = updateImageUrl;
         }
-        updateMutate(updateData);
-        setLoading(false);
+        await updateMutate(updateData);
       } else {
         const updateImageUrl: string = await uploadFileToFirebase(
           values?.featuredImage[0]
         );
         const createData: any = {
           ...values,
-          colourId:4,
           featuredImage: updateImageUrl,
         };
-        createMutate(createData);
-        setLoading(false);
+        await createMutate(createData);
       }
+      setLoading(false);
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       message.error(error.message || error);
       console.log(error);
       setLoading(false);
     }
   };
+
   const onImageChange: UploadProps["onChange"] = ({
     fileList: newFileList,
   }) => {
     setFileList(newFileList);
   };
+
   const onChange = (_value: string) => {};
   const filterOption = (
     input: string,
     option?: { label: string; value: string }
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
   return (
     <Modal
       title={formData?.productId ? "Edit Product" : "Create Product"}
       open
       onOk={submitHandle}
-      onCancel={() => onClose()}
+      onCancel={onClose}
       footer={[
         <Button key="back" onClick={onClose}>
           Cancel
@@ -138,13 +170,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
         </Button>,
       ]}
     >
-      <Form
-        initialValues={formData}
-        form={form}
-        // labelCol={{ span: 4 }}
-        // wrapperCol={{ span: 18 }}
-        layout="vertical"
-      >
+      <Form form={form} initialValues={formData} layout="vertical">
         <Form.Item
           label="Product Name"
           name="productName"
@@ -155,33 +181,37 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
         </Form.Item>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Form.Item
-            label="product types"
+            label="Product Type"
             name="productTypeId"
             required
-            rules={[{ required: true, message: "Please input producttypes" }]}
+            rules={[{ required: true, message: "Please input product type" }]}
           >
             <Select
               showSearch
-              placeholder="Select a producttypes"
+              placeholder="Select a product type"
               optionFilterProp="children"
               onChange={onChange}
               filterOption={filterOption}
-              options={dataProducttype}
+              options={prepareSelectOptions(dataProducttype, "id", "name")}
             />
           </Form.Item>
           <Form.Item
-            label="data Colour"
+            label="Colour"
             name="colourId"
             required
-            rules={[{ required: true, message: "Please input Colour" }]}
+            rules={[{ required: true, message: "Please input colour" }]}
           >
             <Select
               showSearch
-              placeholder="Select a Colour"
+              placeholder="Select a colour"
               optionFilterProp="children"
               onChange={onChange}
               filterOption={filterOption}
-              options={dataColour}
+              options={prepareSelectOptions(
+                dataColour,
+                "colourId",
+                "colourName"
+              )}
             />
           </Form.Item>
           <Form.Item
@@ -199,10 +229,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             name="productionCost"
             required
             rules={[
-              {
-                required: true,
-                message: "Please input Production Cost",
-              },
+              { required: true, message: "Please input Production Cost" },
             ]}
           >
             <Input />
@@ -219,7 +246,11 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               optionFilterProp="children"
               onChange={onChange}
               filterOption={filterOption}
-              options={dataCategory || []}
+              options={prepareSelectOptions(
+                dataCategory,
+                "categoryId",
+                "categoryName"
+              )}
             />
           </Form.Item>
           <Form.Item
@@ -234,7 +265,11 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               optionFilterProp="children"
               onChange={onChange}
               filterOption={filterOption}
-              options={dataGender}
+              options={prepareSelectOptions(
+                dataGender,
+                "genderId",
+                "genderName"
+              )}
             />
           </Form.Item>
           <Form.Item
@@ -246,11 +281,15 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             <Select
               mode="multiple"
               showSearch
-              placeholder="Select a gem"
+              placeholder="Select a material"
               optionFilterProp="children"
               onChange={onChange}
               filterOption={filterOption}
-              options={dataMaterial?.items}
+              options={prepareSelectOptions(
+                dataMaterial?.items,
+                "materialId",
+                "materialName"
+              )}
             />
           </Form.Item>
           <Form.Item
@@ -266,18 +305,18 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               optionFilterProp="children"
               onChange={onChange}
               filterOption={filterOption}
-              options={dataGem?.items}
+              options={prepareSelectOptions(dataGem?.items, "gemId", "gemName")}
             />
           </Form.Item>
         </div>
         <Form.Item
-          label="Package Images"
+          label="Featured Image"
           name="featuredImage"
           getValueFromEvent={normFile}
         >
           <Upload
             name="featuredImage"
-            maxCount={4}
+            maxCount={1}
             className="UploadImage"
             listType="picture-card"
             fileList={fileList}
@@ -285,7 +324,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             customRequest={fakeUpload}
             onChange={onImageChange}
           >
-            {fileList.length < 4 && "+ Upload"}
+            {fileList.length < 1 && "+ Upload"}
           </Upload>
         </Form.Item>
       </Form>

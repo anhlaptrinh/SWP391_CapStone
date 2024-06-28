@@ -46,7 +46,7 @@ export const useCreateGem = (payload?: any) => {
 export const useUpdateGem = (payload?: any) => {
     return useMutation(
         async (values: GemPayload) =>
-            apiClient.post({
+            apiClient.put({
                 url: `/gems`,
                 params: payload,
                 data: values,

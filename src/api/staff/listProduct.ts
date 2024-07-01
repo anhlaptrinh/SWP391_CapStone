@@ -12,6 +12,11 @@ export const useListGems=(payload?:any)=>{
         apiClient.get({ url: `/gems?page=1&pageSize=100`,params:{gemId:payload}}),
     );
 }
+export const useListGemsById=(payload?:any)=>{
+    return useQuery(['listGemsById'], () =>
+        apiClient.get({ url: `/gems/${payload}`}),
+);
+}
 
 export const uselistGold=(payload?:any) => {
     return useQuery(['list-gold'], () =>

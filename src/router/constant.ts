@@ -124,7 +124,7 @@ const STAFF_CHECKING_PERMISSION: Permission={
     name: 'checking',
     icon: 'ri-survey-fill',
     type: PermissionType.MENU,
-    route: 'checking',
+    route: 'check',
     order: 3,
     component: '/staff/invoiceChecked/index.tsx'
 }

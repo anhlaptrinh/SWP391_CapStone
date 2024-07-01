@@ -1,179 +1,104 @@
-import { InputType } from "#/api";
 import { Gem } from "#/jwelry";
-import { useListGemProduct } from "@/api/staff/listProduct";
-import { PAGE_SIZE } from "@/constants/page";
-import { ShoppingCartOutlined } from "@ant-design/icons";
-import { Tooltip, Tag, Popover, Button, Pagination, Badge, Col, Form, Input, Row, message } from "antd";
-
-import Table, { ColumnsType, TableProps } from "antd/es/table";
+import { CircleLoading } from "@/components/loading";
+import { Row, Col, Card, Button,Image, Typography, Divider, Pagination, Tooltip } from "antd";
 import { useState } from "react";
-import { OrderDetail } from "../../invoice";
-import { OrderPayload } from "@/api/staff/listInvoice";
+import Gemsdetails from "./gems.details";
+import { useOrderStore } from "@/store/order";
+import { useListGems } from "@/api/staff/listProduct";
+
+
+const { Text } = Typography;
 
 export default function Gems() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const {data,isLoading}=useListGemProduct(currentPage);
-  const totalCount=data?.totalPages ||0;
-  const [form] = Form.useForm();
-  const [cartItems, setCartItems] = useState<OrderPayload[]>([]);
-  const columns: TableProps<Gem>['columns'] = [
-    {
-      title: "ID",
-      dataIndex: "gemId",
-      key: "gemId",
-    },
-    {
-      title: "Image",
-      dataIndex: "featuredImage",
-      key: "featuredImage",
-      render: (_text:any,{featuredImage})=>{
-        return <img src={featuredImage} width={50} height={50} />
-      }
-    },
-
-    {
-      title: "Name",
-      dataIndex: "gemName",
-      key: "gemName",
-    },
-    {
-      title: "Origin",
-      dataIndex: "origin",
-      key: "origin",
-    },
-    { title: "Cara weight", align: 'center', key: "caratWeight", dataIndex: "caratWeight" },
-    { title: "Color", key: "colour", dataIndex: "colour" },
-    { title: "Clarity", key: "clarity", dataIndex: "clarity" },
-    { title: "Cut", key: "cut", dataIndex: "cut" },
-    {
-      title: "Gem Price",
-      dataIndex: "gemPrice",
-      key: "gems",
-      render: (_text: any, { gemPrice }) => {
-        const { caratWeightPrice, colourPrice, clarityPrice, cutPrice, total } =
-          gemPrice;
-        const content = (
-          <div>
-            <Tooltip title="Carat Weight Price">
-              <Tag color="pink">Carat Weight Price: {caratWeightPrice}</Tag>
-            </Tooltip>
-            <Tooltip title="Colour Price">
-              <Tag color="pink">Colour Price: {colourPrice}</Tag>
-            </Tooltip>
-            <Tooltip title="Clarity Price">
-              <Tag color="pink">Clarity Price: {clarityPrice}</Tag>
-            </Tooltip>
-            <Tooltip title="Cut Price">
-              <Tag color="pink">Cut Price: {cutPrice}</Tag>
-            </Tooltip>
-          </div>
-        );
-
-        return (
-          <Popover mouseEnterDelay={0.5} content={content} title="Gem Price">
-            <Button type="link">{gemPrice.total}$</Button>
-          </Popover>
-        );
-      },
-    },
-    { title: "Action", key: "action", dataIndex: "action",
-      render: (_text: any, {gemId}) => (
-        <Button type="primary" onClick={() => handlegemSelect(gemId)}>
-          Select
-        </Button>
-      ),
-     },
-  ];
-  const onFinishHandler = (values: InputType) => {
-    console.log(values);
+  const { data, isLoading, error } = useListGems();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 6; // Số lượng sản phẩm trên mỗi trang
+  const [showDetail,setShowDetail]=useState<any>(false);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentItems = data?.items?.slice(startIndex, endIndex);
+  const addCartItem = useOrderStore((state) => state.addCartItem);
+  if (isLoading) return <CircleLoading />;
+  if (error) return <div>Error loading gems data.</div>;
+  // Tính toán chỉ mục sản phẩm trên trang hiện tại
+ 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
-  const cartContent = (<div>hello</div>)
-  const handleRemoveDetail = (detail: OrderDetail) => {
-    setCartItems((prevItems:any[]) =>
-      prevItems.map(item => ({
-        ...item,
-        orderDetails: item.orderDetails.filter((d:any) => d !== detail),
-      }))
-    );
-  };const handleSendOrder=(cartitem:any)=>{
-    if (cartitem.length === 0) {
-      message.error("Your Order is empty") // Hiển thị thông báo khi không có sản phẩm trong giỏ hàng
-      return; // Chặn việc gửi lên API khi không có sản phẩm trong giỏ hàng
-    }
-   
-    
+  const handleAddToCart = (gem: Gem) => {
+    addCartItem({
+      id: gem.gemId,
+      name: gem.gemName,
+      image: gem.featuredImage,
+      quantity: 1, // Default quantity
+      price: gem.price,
+    });
+  };
+  const handleCloseDetail=()=>{
+    setShowDetail(false);
   }
-  const getOrderDetailsCount = () => {
-    return cartItems.reduce((count, item) => count + item.orderDetails.length, 0);
-  };
   return (
     <div>
-      <Form form={form} onFinish={onFinishHandler}>
-        <Row gutter={24} justify="space-between">
-          <Col xs={12} md={18} sm={14} lg={19} xl={20} xxl={18}>
-            <Row gutter={[12, 12]}>
-              <Col xs={24} md={21} sm={12}>
-                <Row gutter={[12, 12]}>
-                  <Col>
-                    <Form.Item name="Search">
-                      <Input placeholder="Search by id" allowClear />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} sm={12} lg={12}>
-                    <Button type="primary">Create Purchase Order</Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Col>
-          <Col xs={12} sm={10} md={6} lg={5} xl={4} xxl={6}>
-            <Row>
-              <Col xs={24} sm={12} lg={3}>
-                <Popover
-                  content={cartContent}
-                  trigger="hover"
-                  placement="bottomRight"
+      <Row gutter={[16, 16]}>
+        {currentItems?.map((gem: Gem) => (
+          <Col xs={24} sm={12} lg={8} key={gem.gemId}>
+            <Card
+              hoverable
+              className="shadow-lg rounded-lg overflow-hidden h-30"
+            >
+          <Card className="flex  items-center overflow-hidden shadow-lg justify-center h-20">
+            <Image
+                src={gem.featuredImage}
+                alt={gem.gemName}
+                className="w-full h-full object-cover "
+                
+              />
+            </Card>
+              <Divider />
+              <Card.Meta
+              className="text-center"
+              title={<Tooltip>{gem.gemName}</Tooltip>}
+              description={
+                <Text strong style={{ color: 'green' }}>
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  }).format(gem?.price)}
+                </Text>
+              }
+            />
+              <div className="mt-3 flex justify-around">
+                <Button
+                  size="small"
+                  type="primary"
+                  onClick={() => setShowDetail(gem)}
                 >
-                  <Button
-                    type="default"
-                    style={{ display: "flex", alignItems: "center" }}
-                    onClick={() => handleSendOrder(cartItems)}
-                  >
-                    <ShoppingCartOutlined style={{ marginRight: 8 }} />
-                    <span style={{ marginRight: 8 }}>Select Order</span>
-                    <Badge
-                      count={getOrderDetailsCount()}
-                      style={{ backgroundColor: "#52c41a" }}
-                    />
-                  </Button>
-                </Popover>
-              </Col>
-            </Row>
+                  Details
+                </Button>
+                <Button
+                  size="small"
+                  type="default"
+                  onClick={() => handleAddToCart(gem)}
+                >
+                  Select
+                </Button>
+              </div>
+            </Card>
           </Col>
-        </Row>
-      </Form>
-      <Table
-        rowKey="invoiceId"
-        className="mt-3"
-        columns={columns}
-        loading={isLoading}
-        pagination={false}
-        scroll={{ x: "max-content" }}
-        dataSource={data?.items}
-        bordered
-      />
-      <Pagination
-        defaultCurrent={currentPage}
-        total={totalCount}
-        pageSize={PAGE_SIZE}
-        onChange={(page) => {
-          setCurrentPage(page);
-        }}
-      />
+        ))}
+      </Row>
+      <div className="mt-4 flex justify-center">
+        <Pagination
+          current={currentPage}
+          total={data?.items?.length}
+          pageSize={pageSize}
+          onChange={(page)=>handlePageChange(page)}
+          showSizeChanger={false}
+        />
+      </div>
+      {showDetail!==false &&(
+        <Gemsdetails data={showDetail} onClose={handleCloseDetail}/>
+      )}
     </div>
   );
 }
-function handlegemSelect(invoiceId: any): void {
-  throw new Error("Function not implemented.");
-}
-

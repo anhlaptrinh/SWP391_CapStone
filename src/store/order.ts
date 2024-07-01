@@ -1,20 +1,19 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { OrderDetail } from '#/invoice';
 
 interface CartItem {
-  customerName: string;
-  userName: string;
-  warranty: string;
-  orderDetails: OrderDetail[];
+  id: number;
+  name: string;
+  price: number;
+  image?: string | undefined;
+  quantity: number;
 }
 
 interface OrderStore {
   cartItems: CartItem[];
   setCartItems: (items: CartItem[]) => void;
-  addCartItem: (newItem: OrderDetail) => void;
+  addCartItem: (newItem: CartItem) => void;
   removeCartItem: (itemToRemove: CartItem) => void;
-  removeCartDetail: (detailToRemove: OrderDetail) => void;
   clearCart: () => void;
 }
 
@@ -23,34 +22,23 @@ export const useOrderStore = create<OrderStore>()(
     (set) => ({
       cartItems: [],
       setCartItems: (items: CartItem[]) => set({ cartItems: items }),
-      addCartItem: (orderDetail: OrderDetail) => set((state) => {
-        const updatedCartItems = [...state.cartItems];
-        if (updatedCartItems.length > 0) {
-          updatedCartItems[0].orderDetails.push(orderDetail);
-        } else {
-          updatedCartItems.push({
-            customerName: "okla",
-            userName: "someUser", // Update with actual user data
-            warranty: "this is warranty",
-            orderDetails: [orderDetail],
-          });
-        }
+      addCartItem: (newItem: CartItem) => set((state) => {
+        const existingItem = state.cartItems.find(item => item.id === newItem.id);
+        const updatedCartItems = existingItem
+          ? state.cartItems.map(item =>
+              item.id === newItem.id ? { ...item, quantity: item.quantity + 1 } : item
+            )
+          : [...state.cartItems, { ...newItem, quantity: 1 }];
         return { cartItems: updatedCartItems };
       }),
       removeCartItem: (itemToRemove: CartItem) => set((state) => ({
-        cartItems: state.cartItems.filter(item => item !== itemToRemove)
-      })),
-      removeCartDetail: (detailToRemove: OrderDetail) => set((state) => ({
-        cartItems: state.cartItems.map(item => ({
-          ...item,
-          orderDetails: item.orderDetails.filter(detail => detail !== detailToRemove)
-        }))
+        cartItems: state.cartItems.filter(item => item.id !== itemToRemove.id)
       })),
       clearCart: () => set({ cartItems: [] }),
     }),
     {
-      name: 'cart-storage', // name of the item in the storage
-      getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
+      name: 'cart-storage',
+      getStorage: () => localStorage,
     }
   )
 );

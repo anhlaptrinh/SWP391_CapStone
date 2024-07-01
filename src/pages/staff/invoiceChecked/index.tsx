@@ -1,22 +1,18 @@
 import { useChangeInvoice, useListInvoice } from '@/api/staff/listInvoice';
 import { IconButton, Iconify } from '@/components/icon';
 import { CircleLoading } from '@/components/loading';
-import { Table, Popover, Tag, Popconfirm, Tabs, Button, Col, Form, Input, Row } from 'antd';
-import form from 'antd/es/form';
+import { Table, Popover, Tag,  Tabs, Button, Col, Form, Input, Row } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
 
 export default function InvoiceChecked() {
   const data:any=[];
-  const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending')
-  const {data: invoiceProcessing,isLoading: isLoadingProcessing}= useListInvoice('Processing')
   const { data: deliveredInvoices, isLoading: isLoadingDelivered } = useListInvoice('Delivered');
   const [status,setStatus]=useState<any>("Pending")
   const {mutateAsync: statusInvoice}=useChangeInvoice(status);
   const { TabPane } = Tabs;
+  const [form]=Form.useForm();
 
-  if (isLoadingPending) return <CircleLoading />;
-  if (isLoadingProcessing) return <CircleLoading />;
   if (isLoadingDelivered) return <CircleLoading />;
 
 
@@ -160,7 +156,7 @@ export default function InvoiceChecked() {
       ),
     },
   ];
-  const [form]=Form.useForm();
+  
   const onFinishHandler=(values:any)=>{
     console.log(values);
   }

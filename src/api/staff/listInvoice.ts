@@ -61,9 +61,8 @@ export const useCreateInvoice = () => {
             }),
         {
             onSuccess: () => {
-                queryClient.fetchQuery(['listInvoice'])
                 message.success('Create Invoice successfully');
-                queryClient.invalidateQueries(['listProduct']);
+                queryClient.invalidateQueries(['listInvoice']);
             },
         },
     );
@@ -77,7 +76,7 @@ export const useCancelInvoice = () => {
           onSuccess: () => {
               queryClient.fetchQuery(['listInvoice'])
               message.success('Cancel Invoice successfully');
-              queryClient.invalidateQueries(['listProduct']);
+              queryClient.invalidateQueries(['listInvoice']);
           },
       },
   );

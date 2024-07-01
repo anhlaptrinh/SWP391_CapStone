@@ -1,7 +1,5 @@
 import { UseMutationResult, useMutation, useQuery } from "@tanstack/react-query"
 import apiClient from "../apiClient"
-import { InvoicePagination } from "#/invoice"
-import { PAGE_SIZE } from "@/constants/page"
 import { message } from "antd";
 import { queryClient } from "@/http/tanstack/react-query";
 
@@ -15,43 +13,85 @@ export type OrderPayload = {
       perDiscount?: number;
     }];
   };
-export const useListInvoice=(currentPage:number)=>{
-    return useQuery(['listInvoice', {currentPage}],()=>
-        apiClient.get<InvoicePagination>({url: `/invoices?page=${currentPage}&pageSize=${PAGE_SIZE}`}) 
+export const useListInvoice=(invoiceStatus: string, payload?: any)=>{
+    return useQuery(['listInvoice',invoiceStatus ],()=>
+        apiClient.get({url: '/invoices',params: {
+          invoiceStatus,
+          page: 1,
+          pageSize: 100,
+          invoiceId: payload
+        }}) 
+    )
+}
+// export const useListProcessingInvoice=(payload?:any)=>{
+//   return useQuery(['listInvoice', ],()=>
+//       apiClient.get({url: '/invoices?invoiceStatus=Processing&page=1&pageSize=100', params: {invoiceId:payload}}) 
+//   )
+// }
+// export const useListDeliveredInvoice=(payload?:any)=>{
+//   return useQuery(['listInvoice', ],()=>
+//       apiClient.get({url: '/invoices?invoiceStatus=Delivered&page=1&pageSize=100', params: {invoiceId:payload}}) 
+//   )
+// }
+
+
+
+  export const useUpdateInvoice=()=>{
+    return useMutation(
+        async (values: any) =>
+            apiClient.put({
+                url: `/invoices`,
+                data: values,
+            }),
+        {
+            onSuccess: () => {
+                message.success('Update Invoice successfully');
+                queryClient.invalidateQueries(['listInvoice']);
+            },
+        },
     )
 }
 
-export const useListOrder=()=>{
-    return useQuery(['listOrder'],()=>
-        apiClient.get({url: `/orders`})
-    )
-}
+export const useCreateInvoice = () => {
+    return useMutation(
+        async (values: any) =>
+            apiClient.post({
+                url: `/invoices`,
+                data: values,
+            }),
+        {
+            onSuccess: () => {
+                message.success('Create Invoice successfully');
+                queryClient.invalidateQueries(['listInvoice']);
+            },
+        },
+    );
+};
 
-export const useCreateOrder = (): UseMutationResult<void, Error, OrderPayload[]> => {
-    return useMutation<void, Error, OrderPayload[]>({
-      mutationFn: async (payload: OrderPayload[]) => {
-        // Sử dụng Promise.all để gửi từng đơn hàng trong payload
-        await Promise.all(
-          payload.map(async (order) => {
-            try {
-              await apiClient.post({ url: '/orders', data: order });
-            } catch (error) {
-              throw new Error(`Failed to create order: ${error.message}`);
-            }
-          })
-        );
+export const useCancelInvoice = () => {
+  return useMutation(
+      async (values: any) =>
+          apiClient.delete({ url: `/invoices/${values}` }),
+      {
+          onSuccess: () => {
+              queryClient.fetchQuery(['listInvoice'])
+              message.success('Cancel Invoice successfully');
+              queryClient.invalidateQueries(['listInvoice']);
+          },
       },
-      onSuccess: () => {
-        // Xử lý khi thành công
-        message.success('Order(s) successfully created.');
-        queryClient.fetchQuery(["listOrder"]);
-        
-        // Ví dụ: Clear cartItems sau khi đơn hàng được gửi thành công
-         // Đặt hàm setCartItems ở đây nếu setCartItems là state của Jwelery component
+  );
+};
+
+export const useChangeInvoice = (invoiceStatus:any) => {
+  return useMutation(
+      async (values: any) =>
+          apiClient.put({ url: `/invoices/${values}/change` }),
+      {
+          onSuccess: () => {
+              queryClient.fetchQuery(['listInvoice',{invoiceStatus}])
+              message.success('Update Invoice successfully');
+              queryClient.invalidateQueries(['listProduct']);
+          },
       },
-      onError: (error: Error) => {
-        // Xử lý khi có lỗi
-        message.error(`Failed to create order(s): ${error.message}`);
-      },
-    });
-  };
+  );
+};

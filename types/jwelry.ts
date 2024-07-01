@@ -40,7 +40,7 @@ export interface Gem {
     colour:      string;
     clarity:     string;
     cut:         string;
-    gemPrice:    GemPrice;
+    price:    number;
 }
 export interface GemPrice {
     caratWeightPrice: number;

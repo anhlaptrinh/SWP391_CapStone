@@ -25,11 +25,11 @@ const STAFF_PRODUCT_PERMISSION : Permission={
         {
         id: '8426999229400870',
         parentId: '9100714781927704',
-        label: 'Products',
-        name: 'Products',
+        label: 'Order',
+        name: 'Order',
         type: PermissionType.CATALOGUE,
-        route: 'Products',
-        icon: 'ri:product-hunt-fill',
+        route: 'Order',
+        icon: 'ri-list-ordered',
         children:[{
             id: '6426999229400870',
             parentId: '8426999229400870',
@@ -81,38 +81,7 @@ const STAFF_PRODUCT_PERMISSION : Permission={
         route: 'point',
         component: '/staff/Point/index.tsx'
     },
-    {
-        id: '8426999229400873',
-        parentId: '9100714781927704',
-        label: 'Order',
-        name: 'order',
-        icon: 'ri-list-ordered',
-        type: PermissionType.CATALOGUE,
-        route: 'order',
-        order: 2,
-        children:[
-            {
-                id: '7426999229400873',
-                parentId: '8426999229400873',
-                label: 'Internal',
-                name: 'internal',
-                icon: 'ri-archive-fill',
-                type: PermissionType.MENU,
-                route: 'internal',
-                component: '/staff/order/internal/index.tsx'
-            },
-            {
-                id: '7426999229400874',
-                parentId: '8426999229400873',
-                label: 'External',
-                name: 'external',
-                icon: 'ri-archive-2-fill',
-                type: PermissionType.MENU,
-                route: 'external',
-                component: '/staff/order/external/index.tsx'
-            }
-        ],
-    }, {
+     {
         id: '8426999229400874',
         parentId: '9100714781927704',
         label: 'Checking',
@@ -125,6 +94,53 @@ const STAFF_PRODUCT_PERMISSION : Permission={
     }
 ]
 }
+const STAFF_ORDER_PERMISSION:Permission={
+    id: '9100714781927709',
+    parentId: '',
+    label: 'Order',
+    name: 'order',
+    icon: 'ri-list-ordered',
+    type: PermissionType.MENU,
+    route: 'order',
+    order: 1,
+    component: '/staff/order/index.tsx',
+
+}
+const STAFF_INVOICE_PERMISSION:Permission={
+    id: '9100714781927710',
+    parentId: '',
+    label: 'Invoice',
+    name: 'invoice',
+    icon: 'teenyicons:invoice-solid',
+    type: PermissionType.MENU,
+    route: 'invoice',
+    order: 2,
+    component: '/staff/invoice/index.tsx',
+}
+const STAFF_CHECKING_PERMISSION: Permission={
+    id: '9100714781927711',
+    parentId: '',
+    label: 'Checking',
+    name: 'checking',
+    icon: 'ri-survey-fill',
+    type: PermissionType.MENU,
+    route: 'check',
+    order: 3,
+    component: '/staff/invoiceChecked/index.tsx'
+}
+const STAFF_PROMOTION_PERMISSION: Permission={
+    id: '9100714781927712',
+    parentId: '',
+    label: 'Point',
+    name:   'point',
+    icon: 'ri-discount-percent-fill',
+    type: PermissionType.MENU,
+    route: 'point',
+    order: 4,
+    component: '/staff/Point/index.tsx'
+}
+
+
 
 const MANAGER_USER_PERMISSION: Permission = {
     id: '9100714781927704',
@@ -262,5 +278,9 @@ export const MANAGERS_PERMISSION = [
 ];
 export const STAFF_PERMISSION = [
     ADMIN_DASHBOARD_PERMISSION,
-    STAFF_PRODUCT_PERMISSION,
+    // STAFF_PRODUCT_PERMISSION,
+    STAFF_ORDER_PERMISSION,
+    STAFF_INVOICE_PERMISSION,
+    STAFF_CHECKING_PERMISSION,
+    STAFF_PROMOTION_PERMISSION
 ];

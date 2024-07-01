@@ -8,37 +8,24 @@ export interface InvoicePagination {
     hasPreviousPage: boolean;
 }
 
+
 export interface Invoice {
-    invoiceId:    number;
-    orderDate:    Date;
-    status:       boolean;
-    invoiceType:  boolean;
-    customerName: string;
-    userName:     string;
-    warranty:     string;
-    items:        Items[];
-    total:        number;
+    invoiceId:         number;
+    orderDate:         string;
+    invoiceType:       string;
+    invoiceStatus:     string;
+    total:             number;
+    perDiscount:       number;
+    totalWithDiscount: number;
+    customerName:      string;
+    userName:          string;
+    warranty:          string;
+    items:             Items[];
 }
 
 export interface Items {
     productId:    number;
     productName:  string;
     productPrice: number;
-}
-export interface Order {
-    orderId:      number;
-    invoiceType:  string;
-    customerName: string;
-    userName:     string;
-    warranty:     string;
-    orderDate:    Date;
-    orderStatus:       string;
-    orderDetails: OrderDetail[];
-}
-
-export interface OrderDetail {
-    productName:   string;
-    total: number;
-    perDiscount:   number;
 }
 

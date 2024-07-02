@@ -233,7 +233,11 @@ export default function GemList() {
   };
   return (
     <Card>
-      <Button type="primary" onClick={() => onOpenFormHandler()} className="mb-2">
+      <Button
+        type="primary"
+        onClick={() => onOpenFormHandler()}
+        className="mb-2"
+      >
         New
       </Button>
       <Table
@@ -254,10 +258,7 @@ export default function GemList() {
         style={{ marginTop: "1rem" }}
       /> */}
       {formGem !== false && (
-        <FormGem
-          formData={transformObject(formGem, "gemPrice")}
-          onClose={closeFormGem}
-        />
+        <FormGem formData={formGem} onClose={closeFormGem} />
       )}
     </Card>
   );

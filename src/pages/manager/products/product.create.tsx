@@ -37,7 +37,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
   const { mutateAsync: createMutate } = useCreateProduct();
   const { mutateAsync: updateMutate } = useUpdateProduct();
   const { data: dataProducttype } = useListProducttype();
-  const { data: dataColour } = useListColour();
+  // const { data: dataColour } = useListColour();
   const { data: dataGender } = useListGender();
   const { data: dataGem } = useListGem();
   const { data: dataMaterial } = useListMaterial();
@@ -60,23 +60,31 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
   }, [formData]);
 
   useEffect(() => {
-    form.setFieldsValue({
-      ...formData,
-      productTypeId: dataProducttype.find(
-        (g) => g.name === formData?.productType
-      ).id,
-      colourId: dataColour.find((g) => g.colourName === formData?.colour)
-        .colourId,
-      genderId: dataGender.find((g) => g.genderName === formData?.gender)
-        .genderId,
-      categoryId: dataCategory.find(
-        (g) => g.categoryName === formData?.category
-      ).categoryId,
-      gems: formData?.gems.map((gem: any) => gem.gemId),
-      materials: formData?.materials.map(
-        (material: any) => material.materialId
-      ),
-    });
+    if (
+      formData &&
+      dataProducttype &&
+      // dataColour &&
+      dataGender &&
+      dataCategory
+    ) {
+      form.setFieldsValue({
+        ...formData,
+        productTypeId: dataProducttype.find(
+          (g) => g.name === formData?.productType
+        ).id,
+        // colourId: dataColour.find((g) => g.colourName === formData?.colour)
+        //   .colourId,
+        genderId: dataGender.find((g) => g.genderName === formData?.gender)
+          .genderId,
+        categoryId: dataCategory.find(
+          (g) => g.categoryName === formData?.category
+        ).categoryId,
+        gems: formData?.gems.map((gem: any) => gem.gemId),
+        materials: formData?.materials.map(
+          (material: any) => material.materialId
+        ),
+      });
+    };
   }, [form, formData]);
 
   const prepareSelectOptions = (
@@ -208,7 +216,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               onChange={onChange}
               filterOption={filterOption}
               options={prepareSelectOptions(
-                dataColour,
+                [],
                 "colourId",
                 "colourName"
               )}

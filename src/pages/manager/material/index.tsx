@@ -253,7 +253,11 @@ export default function MaterialList() {
       /> */}
       {formMaterial !== false && (
         <FormMaterial
-          formData={transformObject(formMaterial, "materialPrice")}
+          formData={
+            formMaterial
+              ? transformObject(formMaterial, "materialPrice")
+              : formMaterial
+          }
           onClose={closeFormMaterial}
         />
       )}

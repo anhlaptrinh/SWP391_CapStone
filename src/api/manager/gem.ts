@@ -13,7 +13,7 @@ export interface GemPayload {
     colour: string;
     clarity: string;
     cut: string;
-    gemPrice: object;
+    // gemPrice: object;
 }
 export const useListGem = (payload?: any) => {
     return useQuery(['listGem'], () =>

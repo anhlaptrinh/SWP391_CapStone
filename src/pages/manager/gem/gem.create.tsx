@@ -57,14 +57,14 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
           colour: values.colour || formData.colour,
           clarity: values.clarity || formData.clarity,
           cut: values.cut || formData.cut,
-          gemPrice: {
-            caratWeightPrice:
-              values.caratWeightPrice || formData.gemPrice.caratWeightPrice,
-            clarityPrice: values.clarityPrice || formData.gemPrice.clarityPrice,
-            colourPrice: values.colourPrice || formData.gemPrice.colourPrice,
-            cutPrice: values.cutPrice || formData.gemPrice.cutPrice,
-            total: 0,
-          },
+          // gemPrice: {
+          //   caratWeightPrice:
+          //     values.caratWeightPrice || formData.gemPrice.caratWeightPrice,
+          //   clarityPrice: values.clarityPrice || formData.gemPrice.clarityPrice,
+          //   colourPrice: values.colourPrice || formData.gemPrice.colourPrice,
+          //   cutPrice: values.cutPrice || formData.gemPrice.cutPrice,
+          //   total: 0,
+          // },
         };
         if (values.featuredImage) {
           const updateImageUrl: string = await uploadFileToFirebase(
@@ -81,13 +81,13 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         const createData: GemPayload = {
           ...values,
           featuredImage: updateImageUrl,
-          gemPrice: {
-            caratWeightPrice: values.caratWeightPrice,
-            clarityPrice: values.clarityPrice,
-            colourPrice: values.colourPrice,
-            cutPrice: values.cutPrice,
-            total: 0,
-          },
+          // gemPrice: {
+          //   caratWeightPrice: values.caratWeightPrice,
+          //   clarityPrice: values.clarityPrice,
+          //   colourPrice: values.colourPrice,
+          //   cutPrice: values.cutPrice,
+          //   total: 0,
+          // },
         };
         await createMutate(createData);
         setLoading(false);
@@ -129,6 +129,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
       <Form initialValues={formData} form={form} layout="vertical">
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Form.Item
+            className="rounded-sm"
             label="Gem Name"
             name="gemName"
             required
@@ -176,7 +177,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
           >
             <Input />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label="Carat Weight Price"
             name="caratWeightPrice"
             required
@@ -185,8 +186,8 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             ]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
+          </Form.Item> */}
+          {/* <Form.Item
             label="Colour Price"
             name="colourPrice"
             required
@@ -209,7 +210,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             rules={[{ required: true, message: "Please input cut Price" }]}
           >
             <Input />
-          </Form.Item>
+          </Form.Item> */}
         </div>
         <Form.Item
           label="Package Images"

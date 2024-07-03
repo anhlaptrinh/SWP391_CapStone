@@ -47,13 +47,15 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
             {data?.id}
           </Descriptions.Item> */}
           <Descriptions.Item label="Product Name" span={2}>
-            {data?.productName}
+            <Typography.Text strong>{data?.productName}</Typography.Text>
           </Descriptions.Item>
           <Descriptions.Item label="Category" span={2}>
             <Typography.Text strong>{data?.category}</Typography.Text>
           </Descriptions.Item>
           <Descriptions.Item label="Production Cost" span={2}>
-            {numberWithCommas(data.productionCost)} VND
+            <Typography.Text strong>
+              {numberWithCommas(data.productionCost)} VND
+            </Typography.Text>
           </Descriptions.Item>
           <Descriptions.Item label="Percent Price Rate" span={2}>
             <Typography.Text strong>{data?.percentPriceRate}</Typography.Text>

@@ -596,9 +596,9 @@ small.redtext {
 .ant-select-show-search.css-dev-only-do-not-override-1mgnt1y.ant-select:not(.ant-select-customize-input) .ant-select-selector{
   border-radius: 10px;
 }
-.css-dev-only-do-not-override-1mgnt1y.ant-modal .ant-modal-content {
+/* .css-dev-only-do-not-override-1mgnt1y.ant-modal .ant-modal-content {
   background-color: #f5feff;
-}
+} */
 .css-dev-only-do-not-override-1mgnt1y.ant-modal .ant-modal-header {
   background: transparent;
 }
@@ -607,4 +607,12 @@ small.redtext {
 }
 .css-dev-only-do-not-override-1mgnt1y.ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
   border: 2px solid #d9d9d9;
+}
+label.ant-form-item-required {
+    font-weight: 500;
+}
+.css-dev-only-do-not-override-1mgnt1y.ant-modal .ant-modal-body {
+background: #f5feff;
+    padding: 10px;
+    border-radius: 10px;
 }

@@ -78,14 +78,16 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
             <Typography.Text strong>{data?.colour}</Typography.Text>
           </Descriptions.Item>
         </Descriptions>
-        <Descriptions title="Material Detail" bordered>
-          {data?.materials &&
-            data?.materials.map((material: any) => (
-              <Descriptions.Item label="Material Name" span={3}>
-                {material?.materialName}
-              </Descriptions.Item>
-            ))}
-        </Descriptions>
+        {data?.materials.length > 0 && (
+          <Descriptions title="Material Detail" bordered>
+            {data?.materials &&
+              data?.materials.map((material: any) => (
+                <Descriptions.Item label="Material Name" span={3}>
+                  {material?.materialName}
+                </Descriptions.Item>
+              ))}
+          </Descriptions>
+        )}
       </div>
       <Title level={5} className="my-5">
         Gem Detail

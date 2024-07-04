@@ -165,6 +165,7 @@ export default function ManagerUserList() {
       dataIndex: "phoneNumber",
     },
     { title: "Email", dataIndex: "email" },
+    { title: "Role", dataIndex: "role" },
     {
       title: "Address",
       dataIndex: "address",

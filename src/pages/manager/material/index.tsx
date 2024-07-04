@@ -227,13 +227,15 @@ export default function MaterialList() {
 
   return (
     <Card>
-      <Button
-        type="primary"
-        onClick={() => onOpenFormHandler()}
-        className="mb-2"
-      >
-        New
-      </Button>
+      <div className="text-right">
+        <Button
+          type="primary"
+          onClick={() => onOpenFormHandler()}
+          className="mb-2"
+        >
+          New
+        </Button>
+      </div>
       <Table
         rowKey="id"
         size="small"

@@ -616,3 +616,7 @@ background: #f5feff;
     padding: 10px;
     border-radius: 10px;
 }
+.css-dev-only-do-not-override-1mgnt1y.ant-descriptions.ant-descriptions-bordered >.ant-descriptions-view .ant-descriptions-row >.ant-descriptions-item-label {
+    color: rgba(0, 0, 0, 0.808);
+    font-weight: 500;
+}

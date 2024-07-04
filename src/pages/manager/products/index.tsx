@@ -190,11 +190,12 @@ export default function ProductsList() {
       dataIndex: "category",
     },
     { title: "Gender", dataIndex: "gender" },
-    { title: "Colour", dataIndex: "colour" },
+    // { title: "Colour", dataIndex: "colour" },
     {
-      title: "Production Cost",
+      title: " Product Price",
       dataIndex: "productionCost",
       render: (text) => <div>{numberWithCommas(text || 0)} VND</div>,
+      sorter: (a, b) => a.productionCost - b.productionCost
     },
     {
       title: "Action",
@@ -257,13 +258,15 @@ export default function ProductsList() {
   // };
   return (
     <Card>
-      <Button
-        type="primary"
-        onClick={() => onOpenFormHandler()}
-        className="mb-2"
-      >
-        New
-      </Button>
+      <div className="text-right">
+        <Button
+          type="primary"
+          onClick={() => onOpenFormHandler()}
+          className="mb-2"
+        >
+          New
+        </Button>
+      </div>
       <Table
         rowKey="id"
         size="small"

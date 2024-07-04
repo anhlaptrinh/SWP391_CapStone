@@ -1,4 +1,4 @@
-import { GemPayload, useCreateGem, useUpdateGem } from "@/api/manager/gem";
+import { GemPayload, useCreateGem, useListCarat, useListClarity, useListColor, useListCut, useListOrigin, useListShape, useUpdateGem } from "@/api/manager/gem";
 import {
   beforeUpload,
   fakeUpload,
@@ -14,6 +14,7 @@ import {
   Upload,
   UploadFile,
   UploadProps,
+  Select,
 } from "antd";
 import { useState, useEffect } from "react";
 
@@ -26,6 +27,12 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
   const [form] = Form.useForm();
   const { mutateAsync: createMutate } = useCreateGem();
   const { mutateAsync: updateMutate } = useUpdateGem();
+  const { data: dataShape } = useListShape();
+  const { data: dataOrigin } = useListOrigin();
+  const { data: dataClarity } = useListClarity();
+  const { data: dataCarat } = useListCarat();
+  const { data: dataCut } = useListCut();
+  const { data: dataColor } = useListColor();
   const [loading, setLoading] = useState<boolean>(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
@@ -42,31 +49,54 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
       setFileList(initialFileList);
     }
   }, [formData]);
-
+  useEffect(() => {
+    if (
+      formData &&
+      dataShape &&
+      dataOrigin &&
+      dataClarity &&
+      dataCarat &&
+      dataCut &&
+      dataColor
+    ) {
+      form.setFieldsValue({
+        ...formData,
+        shapeId: dataShape.find(
+          (g) => g.name === formData?.shape
+        ).shapeId,
+        originId: dataOrigin.find((g) => g.name === formData?.origin)
+          .originId,
+        clarityId: dataClarity.find((g) => g.level === formData?.clarity)
+          .clarityId,
+        caratId: dataCarat.find(
+          (g) => g.weight === formData?.carat
+        ).caratId,
+                cutId: dataCut.find(
+          (g) => g.level === formData?.cut
+        ).cutId,
+                colorId: dataColor.find(
+          (g) => g.name === formData?.color
+        ).colorId,
+      });
+    }
+  }, [form, formData]);
   const submitHandle = async () => {
     const values = await form.validateFields();
     try {
       setLoading(true);
       if (formData) {
-        const updateData: GemPayload = {
+        const updateData: any = {
           gemId: formData.gemId,
           gemName: values.gemName || formData.gemName,
           featuredImage: values.featuredImage || formData.featuredImage,
-          origin: values.origin || formData.origin,
-          caratWeight: values.caratWeight || formData.caratWeight,
-          colour: values.colour || formData.colour,
-          clarity: values.clarity || formData.clarity,
-          cut: values.cut || formData.cut,
-          // gemPrice: {
-          //   caratWeightPrice:
-          //     values.caratWeightPrice || formData.gemPrice.caratWeightPrice,
-          //   clarityPrice: values.clarityPrice || formData.gemPrice.clarityPrice,
-          //   colourPrice: values.colourPrice || formData.gemPrice.colourPrice,
-          //   cutPrice: values.cutPrice || formData.gemPrice.cutPrice,
-          //   total: 0,
-          // },
+          shapeId: values.shapeId || formData.shapeId,
+          originId: values.originId || formData.originId,
+          caratId: values.caratId || formData.caratId,
+          colorId: values.colorId || formData.colorId,
+          clarityId: values.clarityId || formData.clarityId,
+          cutId: values.cutId || formData.cutId,
         };
-        if (values.featuredImage) {
+        if (values?.featuredImage[0].uid) {
           const updateImageUrl: string = await uploadFileToFirebase(
             values?.featuredImage[0]
           );
@@ -81,13 +111,6 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         const createData: GemPayload = {
           ...values,
           featuredImage: updateImageUrl,
-          // gemPrice: {
-          //   caratWeightPrice: values.caratWeightPrice,
-          //   clarityPrice: values.clarityPrice,
-          //   colourPrice: values.colourPrice,
-          //   cutPrice: values.cutPrice,
-          //   total: 0,
-          // },
         };
         await createMutate(createData);
         setLoading(false);
@@ -105,6 +128,22 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
   }) => {
     setFileList(newFileList);
   };
+  const prepareSelectOptions = (
+    data: any[],
+    idField: string,
+    nameField: string
+  ) => {
+    if (!data) return [];
+    return data.map((item) => ({
+      value: item[idField],
+      label: item[nameField],
+    }));
+  };
+    const onChange = (_value: string) => {};
+    const filterOption = (
+      input: string,
+      option?: { label: string; value: string }
+    ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   return (
     <Modal
@@ -127,90 +166,106 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
       ]}
     >
       <Form initialValues={formData} form={form} layout="vertical">
+        <Form.Item
+          className="rounded-sm"
+          label="Gem Name"
+          name="gemName"
+          required
+          rules={[{ required: true, message: "Please input gemName" }]}
+        >
+          <Input placeholder="Gem Name" />
+        </Form.Item>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Form.Item
-            className="rounded-sm"
-            label="Gem Name"
-            name="gemName"
+            label="Shape"
+            name="shapeId"
             required
-            rules={[{ required: true, message: "Please input gemName" }]}
+            rules={[{ required: true, message: "Please input Shape" }]}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Carat Weight"
-            name="caratWeight"
-            required
-            rules={[{ required: true, message: "Please input Carat Weight" }]}
-          >
-            <Input />
+            <Select
+              showSearch
+              placeholder="Select a Shape"
+              optionFilterProp="children"
+              onChange={onChange}
+              filterOption={filterOption}
+              options={prepareSelectOptions(dataShape, "shapeId", "name")}
+            />
           </Form.Item>
           <Form.Item
             label="Origin"
-            name="origin"
+            name="originId"
             required
-            rules={[{ required: true, message: "Please input Origin" }]}
+            rules={[{ required: true, message: "Please input origin" }]}
           >
-            <Input />
+            <Select
+              showSearch
+              placeholder="Select a origin"
+              optionFilterProp="children"
+              onChange={onChange}
+              filterOption={filterOption}
+              options={prepareSelectOptions(dataOrigin, "originId", "name")}
+            />
           </Form.Item>
           <Form.Item
-            label="colour"
-            name="colour"
-            required
-            rules={[{ required: true, message: "Please input colour" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Clarity"
-            name="clarity"
+            label="clarity"
+            name="clarityId"
             required
             rules={[{ required: true, message: "Please input clarity" }]}
           >
-            <Input />
+            <Select
+              showSearch
+              placeholder="Select a clarity"
+              optionFilterProp="children"
+              onChange={onChange}
+              filterOption={filterOption}
+              options={prepareSelectOptions(dataClarity, "clarityId", "level")}
+            />
           </Form.Item>
           <Form.Item
-            label="Cut"
-            name="cut"
+            label="carat"
+            name="caratId"
+            required
+            rules={[{ required: true, message: "Please input carat" }]}
+          >
+            <Select
+              showSearch
+              placeholder="Select a Shape"
+              optionFilterProp="children"
+              onChange={onChange}
+              filterOption={filterOption}
+              options={prepareSelectOptions(dataCarat, "caratId", "weight")}
+            />
+          </Form.Item>
+          <Form.Item
+            label="cut"
+            name="cutId"
             required
             rules={[{ required: true, message: "Please input cut" }]}
           >
-            <Input />
-          </Form.Item>
-          {/* <Form.Item
-            label="Carat Weight Price"
-            name="caratWeightPrice"
-            required
-            rules={[
-              { required: true, message: "Please input Carat Weight Price" },
-            ]}
-          >
-            <Input />
-          </Form.Item> */}
-          {/* <Form.Item
-            label="Colour Price"
-            name="colourPrice"
-            required
-            rules={[{ required: true, message: "Please input Colour Price" }]}
-          >
-            <Input />
+            <Select
+              showSearch
+              placeholder="Select a cut"
+              optionFilterProp="children"
+              onChange={onChange}
+              filterOption={filterOption}
+              options={prepareSelectOptions(dataCut, "cutId", "level")}
+            />
           </Form.Item>
           <Form.Item
-            label="Clarity Price"
-            name="clarityPrice"
+            label="color"
+            name="colorId"
             required
-            rules={[{ required: true, message: "Please input clarity Price" }]}
+            rules={[{ required: true, message: "Please input color" }]}
           >
-            <Input />
+            <Select
+              showSearch
+              placeholder="Select a color"
+              optionFilterProp="children"
+              onChange={onChange}
+              filterOption={filterOption}
+              options={prepareSelectOptions(dataColor, "colorId", "name")}
+            />
           </Form.Item>
-          <Form.Item
-            label="Cut Price"
-            name="cutPrice"
-            required
-            rules={[{ required: true, message: "Please input cut Price" }]}
-          >
-            <Input />
-          </Form.Item> */}
         </div>
         <Form.Item
           label="Package Images"

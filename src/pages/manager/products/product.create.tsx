@@ -116,11 +116,10 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
           categoryId: values.categoryId || formData.category,
           productTypeId: values.productTypeId || formData.productType,
           genderId: values.genderId || formData.gender,
-          colourId: values.colourId || formData.colour,
-          gems: [1],
-          materials: [1],
+          gems: values.gems || formData.gems,
+          materials: values.materials || formData.materials,
         };
-        if (values.featuredImage) {
+        if (values?.featuredImage[0].uid) {
           const updateImageUrl: string = await uploadFileToFirebase(
             values?.featuredImage[0]
           );
@@ -179,15 +178,15 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
       ]}
     >
       <Form form={form} initialValues={formData} layout="vertical">
-        <Form.Item
-          label="Product Name"
-          name="productName"
-          required
-          rules={[{ required: true, message: "Please input product Name" }]}
-        >
-          <Input />
-        </Form.Item>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <Form.Item
+            label="Product Name"
+            name="productName"
+            required
+            rules={[{ required: true, message: "Please input product Name" }]}
+          >
+            <Input />
+          </Form.Item>
           <Form.Item
             label="Product Type"
             name="productTypeId"
@@ -203,7 +202,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               options={prepareSelectOptions(dataProducttype, "id", "name")}
             />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label="Colour"
             name="colourId"
             required
@@ -215,13 +214,9 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               optionFilterProp="children"
               onChange={onChange}
               filterOption={filterOption}
-              options={prepareSelectOptions(
-                [],
-                "colourId",
-                "colourName"
-              )}
+              options={prepareSelectOptions([], "colourId", "colourName")}
             />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             label="Percent Price Rate"
             name="percentPriceRate"
@@ -233,12 +228,10 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Production Cost"
+            label="Product Price"
             name="productionCost"
             required
-            rules={[
-              { required: true, message: "Please input Production Cost" },
-            ]}
+            rules={[{ required: true, message: "Please input  Product Price" }]}
           >
             <Input />
           </Form.Item>

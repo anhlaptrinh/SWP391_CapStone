@@ -180,10 +180,12 @@ export default function GemList() {
       title: "Origin",
       dataIndex: "origin",
     },
-    { title: "Carat weight", dataIndex: "caratWeight" },
-    { title: "Colour", dataIndex: "colour" },
+    { title: "Carat", dataIndex: "carat" },
+    { title: "Shape", dataIndex: "shape" },
+    { title: "Color", dataIndex: "color" },
     { title: "Clarity", dataIndex: "clarity" },
     { title: "Cut", dataIndex: "cut" },
+    { title: "Price", dataIndex: "price", sorter: (a, b) => a.price - b.price },
     {
       title: "Action",
       align: "center",
@@ -233,13 +235,15 @@ export default function GemList() {
   };
   return (
     <Card>
-      <Button
-        type="primary"
-        onClick={() => onOpenFormHandler()}
-        className="mb-2"
-      >
-        New
-      </Button>
+      <div className="text-right">
+        <Button
+          type="primary"
+          onClick={() => onOpenFormHandler()}
+          className="mb-2"
+        >
+          New
+        </Button>
+      </div>
       <Table
         rowKey="id"
         size="small"

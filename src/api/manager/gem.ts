@@ -17,9 +17,7 @@ export interface GemPayload {
 }
 export const useListGem = (payload?: any) => {
     return useQuery(['listGem'], () =>
-
         apiClient.get({ url: '/gems?page=1&pageSize=100', params: { gemId: payload }}),
-
     );
 };
 export const useDetailGem = (payload?: any) => {
@@ -69,5 +67,35 @@ export const useDeleteGem = () => {
                 queryClient.invalidateQueries(['listGem']);
             },
         },
+    );
+};
+export const useListShape = (payload?: any) => {
+    return useQuery(['listShapes'], () =>
+        apiClient.get({ url: '/shapes'}),
+    );
+};
+export const useListOrigin = (payload?: any) => {
+    return useQuery(['listOrigins'], () =>
+        apiClient.get({ url: '/origins'}),
+    );
+};
+export const useListClarity = (payload?: any) => {
+    return useQuery(['listClarities'], () =>
+        apiClient.get({ url: '/clarities'}),
+    );
+};
+export const useListCarat = (payload?: any) => {
+    return useQuery(['listCaratweights'], () =>
+        apiClient.get({ url: '/caratweights'}),
+    );
+};
+export const useListCut = (payload?: any) => {
+    return useQuery(['listCuts'], () =>
+        apiClient.get({ url: '/cuts'}),
+    );
+};
+export const useListColor = (payload?: any) => {
+    return useQuery(['listColors'], () =>
+        apiClient.get({ url: '/colors'}),
     );
 };

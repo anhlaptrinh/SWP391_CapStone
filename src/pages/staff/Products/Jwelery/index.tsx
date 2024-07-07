@@ -3,7 +3,7 @@ import { CircleLoading } from "@/components/loading";
 import { useOrderStore } from "@/store/order";
 import { Typography, Row, Col, Card, Divider, Tooltip,Image, Button, Pagination } from "antd";
 import { useState } from "react";
-import Gemsdetails from "../Gems/gems.details";
+import Jwelerydetails from "./jwelery.details";
 
 
 const { Text } = Typography;
@@ -95,7 +95,7 @@ export default function Jwelery() {
         />
       </div>
       {showDetail!==false &&(
-        <Gemsdetails data={showDetail} onClose={()=>handleCloseDetail}/>
+        <Jwelerydetails data={showDetail} onClose={handleCloseDetail}/>
       )}
     </div>
   );

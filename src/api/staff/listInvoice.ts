@@ -50,7 +50,7 @@ export const useListInvoice=(invoiceStatus: string, payload?: any)=>{
     )
 }
 
-export const useCreateInvoice = () => {
+export const useCreateInvoice = (clearCart:()=>void) => {
     return useMutation(
         async (values: any) =>
             apiClient.post({
@@ -61,6 +61,7 @@ export const useCreateInvoice = () => {
             onSuccess: () => {
                 message.success('Create Invoice successfully');
                 queryClient.invalidateQueries(['listInvoice']);
+                clearCart();
             },
         },
     );

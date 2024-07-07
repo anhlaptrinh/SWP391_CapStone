@@ -1,5 +1,6 @@
 import { useCreateInvoice, useUpdateInvoice } from "@/api/staff/listInvoice";
 import { useListGems, useListJwelery, uselistGold } from "@/api/staff/listProduct";
+import { useOrderStore } from "@/store/order";
 import { Button, Form, Input, Modal, Select, message } from "antd";
 import { useEffect, useState } from "react";
 
@@ -12,11 +13,12 @@ export type OrderCreateFormProps={
 export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
     const [loading,setloading]=useState<boolean>(false);
     const [form]=Form.useForm();
+    const { cartItems, clearCart } = useOrderStore();
     const {data: dataJewelry}=useListJwelery();
     const {data: dataGold}=uselistGold();
     const {data:dataGems}=useListGems();
-    const {mutateAsync: updateInvoice}=useUpdateInvoice();
-    const {mutateAsync: createInvoice}=useCreateInvoice();
+    // const {mutateAsync: updateInvoice}=useUpdateInvoice();
+    const {mutateAsync: createInvoice}=useCreateInvoice(clearCart);
 
     if(dataJewelry?.items.length>0){
       for(let i=0; i<dataJewelry?.items.length;i++){
@@ -53,47 +55,31 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
     }, [formData, form, dataJewelry, dataGems, dataGold]);
   
     const submitHandle= async ()=>{
-      const values=await form.validateFields();
+       const invoiceDetails = cartItems.map(item => item.id);
+       const values = await form.validateFields();
+    const payload = {
+      total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+      perDiscount: values.perDiscount,  // Adjust as needed
+      customerName: values.customerName,
+      phoneNumber: values.phoneNumber,
+      userId: values.userId,
+      invoiceDetails
+    };
       try{
         setloading(true);
-        const invoiceDetails = [];
-        if (values.invoiceDetailsJewelry) {
-          invoiceDetails.push(...values.invoiceDetailsJewelry);
-        }
-        if (values.invoiceDetailsGems) {
-          invoiceDetails.push(...values.invoiceDetailsGems);
-        }
-        if (values.invoiceDetailsGold) {
-          invoiceDetails.push(...values.invoiceDetailsGold);
-        }
-        // console.log("invoiceDetails:", invoiceDetails);
-        if(formData){
-          const updateData:any={
-            ...formData,
-            invoiceId: formData.invoiceId,
-          }
-          await updateInvoice(updateData);
-          setloading(false);
-        }else{
-          const createData:any={
-            ...values,
-            invoiceDetails,
-          };
-          await createInvoice(createData);
+        
+          await createInvoice(payload);
           setloading(false);
           
-        }
+          
+        
       } catch (error) {
         message.error(error.message || error);
         console.log(error);
         setloading(false);
       }
     }
-    const onChange = (_value: string) => {};
-    const filterOption = (
-      input: string,
-      option?: { label: string; value: string }
-    ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+    
   return (
     <Modal
         title={formData?.invoiceId?"Edit Order":"Create Order"}
@@ -144,57 +130,14 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
                 >
                   <Input addonAfter="%"/>
                 </Form.Item>
+                
                 <Form.Item
-                  label="Warranty Id"
-                  name='warrantyId'
-                  required
-                  rules={[{required: true, message: "Please input Warranty ID"}]}
-                >
-                   <Input/>
-                </Form.Item>
-                <Form.Item
-                  label="Jwelery Id"
-                  name="invoiceDetailsJewelry"
-                >
-                  <Select
-                    mode="multiple"
-                    
-                    showSearch
-                    placeholder='Select Jwelery Id'
-                    optionFilterProp="children"
-                    onChange={onChange}
-                    filterOption={filterOption}
-                    options={dataJewelry?.items}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Gems Id"
-                  name="invoiceDetailsGems"
-                >
-                  <Select
-                    mode="multiple"
-                    showSearch
-                    placeholder='Select Gems Id'
-                    optionFilterProp="children"
-                    onChange={onChange}
-                    filterOption={filterOption}
-                    options={dataGems?.items}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Gold Id"
-                  name="invoiceDetailsGold"
-                >
-                  <Select
-                    mode="multiple"
-                    showSearch
-                    placeholder='Select Gold Id'
-                    optionFilterProp="children"
-                    onChange={onChange}
-                    filterOption={filterOption}
-                    options={dataGold?.items}
-                  />
-                </Form.Item>
+            name="phoneNumber"
+            label="Phone Number"
+            rules={[{ required: true, message: 'Please enter phone number' }]}
+          >
+            <Input />
+          </Form.Item>
             </div>
 
 

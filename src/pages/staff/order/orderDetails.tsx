@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useOrderStore } from "@/store/order";
-import { Row, Col, Tag, Typography, Divider, Button, Image, Pagination } from "antd";
+import { Row, Col, Tag, Typography, Divider, Button, Image, Pagination, message } from "antd";
+import OrderForm from './order.create';
 
 const { Text } = Typography;
 
@@ -12,7 +13,7 @@ const OrderDetail: React.FC = () => {
   const itemsPerPage = 4; // Số lượng sản phẩm trên mỗi trang
   const [currentPage, setCurrentPage] = useState<number>(1); // Trang hiện tại
   const [currentTime, setCurrentTime] = useState<Date>(new Date()); // Thời gian hiện tại
-
+  const [openCreateModal,setOpenCreateModal]=useState(false);
   // Cập nhật thời gian mỗi giây
   useEffect(() => {
     const timer = setInterval(() => {
@@ -30,6 +31,18 @@ const OrderDetail: React.FC = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+  const handleCreateModal=()=>{
+    setOpenCreateModal(false);
+  }
+  const handleOpenCreate=()=>{
+    if(cartItems.length>0){
+      setOpenCreateModal(true);
+    }
+    else { 
+      message.error("Cart is empty");
+      setOpenCreateModal(false);
+    }
+  }
 
   // Xử lý khi xóa sản phẩm
   const handleRemoveItem = (item: any) => {
@@ -39,6 +52,7 @@ const OrderDetail: React.FC = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+  
 
   // Định dạng thời gian
   const formatTime = (date: Date) => {
@@ -139,8 +153,9 @@ const OrderDetail: React.FC = () => {
           onChange={handlePageChange}
         />
         <Button className="mt-3 mr-6" size="middle" type="primary" danger>Manage Order</Button>
-        <Button className="mt-3" size="middle" type="primary" >Create Order</Button>
+        <Button className="mt-3" size="middle" type="primary" onClick={handleOpenCreate} >Create Order</Button>
       </div>
+      {openCreateModal!==false&&(<OrderForm onclose={handleCreateModal}/>)}
     </div>
   );
 }

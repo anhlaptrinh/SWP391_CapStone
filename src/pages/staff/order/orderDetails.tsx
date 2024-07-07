@@ -1,16 +1,25 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOrderStore } from "@/store/order";
 import { Row, Col, Tag, Typography, Divider, Button, Image, Pagination } from "antd";
 
 const { Text } = Typography;
 
-export default function OrderDetail() {
+const OrderDetail: React.FC = () => {
   const cartItems = useOrderStore((state) => state.cartItems);
   const removeCartItem = useOrderStore((state) => state.removeCartItem);
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   
   const itemsPerPage = 4; // Số lượng sản phẩm trên mỗi trang
-  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  const [currentPage, setCurrentPage] = useState<number>(1); // Trang hiện tại
+  const [currentTime, setCurrentTime] = useState<Date>(new Date()); // Thời gian hiện tại
+
+  // Cập nhật thời gian mỗi giây
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Tính chỉ mục bắt đầu và chỉ mục kết thúc của sản phẩm trên trang hiện tại
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -31,12 +40,25 @@ export default function OrderDetail() {
     }
   };
 
+  // Định dạng thời gian
+  const formatTime = (date: Date) => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayName = days[date.getDay()];
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Months are zero-indexed
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    return `${dayName}, ${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
+
   return (
     <div>
       <Row justify="space-between" className="mb-3">
         <Col span={24}>
           <Text type="danger" strong>
-            Confirmation
+            Confirmation - {formatTime(currentTime)}
           </Text>
         </Col>
         <Col span={24}>
@@ -116,8 +138,11 @@ export default function OrderDetail() {
           total={cartItems.length}
           onChange={handlePageChange}
         />
-        <Button className="mt-3" size="large" type="primary" danger>Manage Order</Button>
+        <Button className="mt-3 mr-6" size="middle" type="primary" danger>Manage Order</Button>
+        <Button className="mt-3" size="middle" type="primary" >Create Order</Button>
       </div>
     </div>
   );
 }
+
+export default OrderDetail;

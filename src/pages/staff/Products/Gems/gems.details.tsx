@@ -34,8 +34,8 @@ export default function Gemsdetails({data,onClose}:formGemDetails) {
         { title: "Colour", dataIndex: "color" },
         { title: "Clarity", dataIndex: "clarity" },
         { title: "Cut", dataIndex: "cut" },
-        { title: "Price", dataIndex: "price",
-            render: (text)=><Text strong style={{ color: 'green' }}>
+        { title: "Price", dataIndex: "price", align:'center',
+            render: (text)=><Text strong style={{fontSize: '14px', color: 'green', whiteSpace: 'nowrap' }}>
             {new Intl.NumberFormat('vi-VN', {
               style: 'currency',
               currency: 'VND',

@@ -4,14 +4,12 @@ import { message } from "antd";
 import { queryClient } from "@/http/tanstack/react-query";
 
 export type OrderPayload = {
-    customerName?: string;
-    userName?: string;
-    warranty?: string;
-    orderDetails: [{
-      productName: string;
-      total: number;
-      perDiscount?: number;
-    }];
+    total:          number;
+    perDiscount:    number;
+    customerName:   string;
+    phoneNumber:    string;
+    userId:         number;
+    invoiceDetails: number[];
   };
 export const useListInvoice=(invoiceStatus: string, payload?: any)=>{
     return useQuery(['listInvoice',invoiceStatus ],()=>

@@ -95,14 +95,14 @@ export default function ProductsList() {
                   }
                   icon={<SearchOutlined />}
                   size="small"
-                  style={{ width: 90 }}
+                  style={{ width: 90, borderRadius: 5 }}
                 >
                   Search
                 </Button>
                 <Button
                   onClick={() => clearFilters && handleReset(clearFilters)}
                   size="small"
-                  style={{ width: 90 }}
+                  style={{ width: 90, borderRadius: 5 }}
                 >
                   Reset
                 </Button>
@@ -120,11 +120,12 @@ export default function ProductsList() {
                 <Button
                   type="link"
                   size="small"
+                  style={{ color: "red" }}
                   onClick={() => {
                     close();
                   }}
                 >
-                  close
+                  Close
                 </Button>
               </Space>
             </div>
@@ -193,9 +194,9 @@ export default function ProductsList() {
     // { title: "Colour", dataIndex: "colour" },
     {
       title: " Product Price",
-      dataIndex: "productionCost",
+      dataIndex: "productPrice",
       render: (text) => <div>{numberWithCommas(text || 0)} VND</div>,
-      sorter: (a, b) => a.productionCost - b.productionCost,
+      sorter: (a, b) => a.productPrice - b.productPrice,
     },
     {
       title: "Status",
@@ -207,9 +208,11 @@ export default function ProductsList() {
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
+            color: text ? "green" : "red",
+            fontWeight: "bold",
           }}
         >
-          {text ? "true" : "false"}
+          {text ? "True" : "False"}
         </div>
       ),
     },

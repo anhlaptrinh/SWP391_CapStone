@@ -20,7 +20,7 @@ import { FormGem } from "./gem.create";
 import { useListGem, useDeleteGem } from "@/api/manager/gem";
 import { CircleLoading } from "@/components/loading";
 import { IconButton, Iconify } from "@/components/icon";
-import { transformObject } from "@/utils/string";
+import { numberWithCommas, transformObject } from "@/utils/string";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 export default function GemList() {
@@ -88,14 +88,14 @@ export default function GemList() {
               }
               icon={<SearchOutlined />}
               size="small"
-              style={{ width: 90 }}
+              style={{ width: 90, borderRadius: 5 }}
             >
               Search
             </Button>
             <Button
               onClick={() => clearFilters && handleReset(clearFilters)}
               size="small"
-              style={{ width: 90 }}
+              style={{ width: 90, borderRadius: 5 }}
             >
               Reset
             </Button>
@@ -113,11 +113,12 @@ export default function GemList() {
             <Button
               type="link"
               size="small"
+              style={{ color: "red" }}
               onClick={() => {
                 close();
               }}
             >
-              close
+              Close
             </Button>
           </Space>
         </div>
@@ -185,7 +186,31 @@ export default function GemList() {
     { title: "Color", dataIndex: "color" },
     { title: "Clarity", dataIndex: "clarity" },
     { title: "Cut", dataIndex: "cut" },
-    { title: "Price", dataIndex: "price", sorter: (a, b) => a.price - b.price },
+    // { title: "Price", dataIndex: "price", sorter: (a, b) => a.price - b.price },
+    {
+      title: "Price",
+      dataIndex: "price",
+      render: (text) => <div>{numberWithCommas(text || 0)} VND</div>,
+      sorter: (a, b) => a.price - b.price,
+    },
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      render: (text) => (
+        <div
+          style={{
+            maxWidth: 200,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            color: text ? "green" : "red",
+            fontWeight: "bold",
+          }}
+        >
+          {text ? "True" : "False"}
+        </div>
+      ),
+    },
     {
       title: "Action",
       align: "center",

@@ -207,7 +207,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             />
           </Form.Item>
           <Form.Item
-            label="clarity"
+            label="Clarity"
             name="clarityId"
             required
             rules={[{ required: true, message: "Please input clarity" }]}
@@ -222,7 +222,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             />
           </Form.Item>
           <Form.Item
-            label="carat"
+            label="Carat"
             name="caratId"
             required
             rules={[{ required: true, message: "Please input carat" }]}
@@ -237,7 +237,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             />
           </Form.Item>
           <Form.Item
-            label="cut"
+            label="Cut"
             name="cutId"
             required
             rules={[{ required: true, message: "Please input cut" }]}
@@ -252,7 +252,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             />
           </Form.Item>
           <Form.Item
-            label="color"
+            label="Color"
             name="colorId"
             required
             rules={[{ required: true, message: "Please input color" }]}

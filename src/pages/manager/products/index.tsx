@@ -195,7 +195,23 @@ export default function ProductsList() {
       title: " Product Price",
       dataIndex: "productionCost",
       render: (text) => <div>{numberWithCommas(text || 0)} VND</div>,
-      sorter: (a, b) => a.productionCost - b.productionCost
+      sorter: (a, b) => a.productionCost - b.productionCost,
+    },
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      render: (text) => (
+        <div
+          style={{
+            maxWidth: 200,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {text ? "true" : "false"}
+        </div>
+      ),
     },
     {
       title: "Action",
@@ -264,7 +280,7 @@ export default function ProductsList() {
           onClick={() => onOpenFormHandler()}
           className="mb-2"
         >
-          New
+          Create Jwelery
         </Button>
       </div>
       <Table

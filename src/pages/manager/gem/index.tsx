@@ -241,7 +241,7 @@ export default function GemList() {
           onClick={() => onOpenFormHandler()}
           className="mb-2"
         >
-          New
+          Create Gem
         </Button>
       </div>
       <Table

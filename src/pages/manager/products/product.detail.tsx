@@ -6,7 +6,7 @@ export type ProductDetailProps = {
   onClose: () => void;
 };
 export function ProductDetail({ data, onClose }: ProductDetailProps) {
-     const { Title } = Typography;
+  const { Title } = Typography;
   const columns: ColumnsType<any> = [
     {
       title: "Gem Name",
@@ -16,10 +16,16 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
       title: "Origin",
       dataIndex: "origin",
     },
-    { title: "Carat Weight", dataIndex: "caratWeight" },
-    { title: "Colour", dataIndex: "colour" },
+    { title: "Carat", dataIndex: "carat" },
+    { title: "Color", dataIndex: "color" },
     { title: "Clarity", dataIndex: "clarity" },
     { title: "Cut", dataIndex: "cut" },
+    { title: "Shape", dataIndex: "shape" },
+    {
+      title: "Price",
+      dataIndex: "price",
+      render: (text) => <div>{numberWithCommas(text || 0)} VND</div>,
+    },
     // {
     //   title: "Production Cost",
     //   dataIndex: "productionCost",
@@ -47,18 +53,18 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
             {data?.id}
           </Descriptions.Item> */}
           <Descriptions.Item label="Product Name" span={2}>
-            <Typography.Text strong>{data?.productName}</Typography.Text>
+            <Typography.Text>{data?.productName}</Typography.Text>
           </Descriptions.Item>
           <Descriptions.Item label="Category" span={2}>
-            <Typography.Text strong>{data?.category}</Typography.Text>
+            <Typography.Text>{data?.category}</Typography.Text>
           </Descriptions.Item>
           <Descriptions.Item label="Production Cost" span={2}>
-            <Typography.Text strong>
+            <Typography.Text>
               {numberWithCommas(data.productionCost)} VND
             </Typography.Text>
           </Descriptions.Item>
           <Descriptions.Item label="Percent Price Rate" span={2}>
-            <Typography.Text strong>{data?.percentPriceRate}</Typography.Text>
+            <Typography.Text>{data?.percentPriceRate}</Typography.Text>
           </Descriptions.Item>
           {/* <Descriptions.Item label="Create at">
             {moment(data?.createdAt).format("DD/MM/YYYY HH:mm:ss")}
@@ -69,12 +75,12 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Status" span={2}>
-            <Tag color={data?.status ? "green" : "red"}>
-              {data?.status ? "true" : "false"}
+            <Tag color={data?.isActive ? "green" : "red"}>
+              {data?.isActive ? "True" : "False"}
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Gender" span={2}>
-            <Typography.Text strong>{data?.gender}</Typography.Text>
+            <Typography.Text>{data?.gender}</Typography.Text>
           </Descriptions.Item>
           {/* <Descriptions.Item label="Colour" span={2}>
             <Typography.Text strong>{data?.colour}</Typography.Text>
@@ -86,6 +92,29 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
               data?.materials.map((material: any) => (
                 <Descriptions.Item label="Material Name" span={3}>
                   {material?.materialName}
+                </Descriptions.Item>
+              ))}
+            {data?.materials &&
+              data?.materials.map((material: any) => (
+                <Descriptions.Item label="Weight" span={3}>
+                  {material?.weight}
+                </Descriptions.Item>
+              ))}
+            {data?.materials &&
+              data?.materials.map((material: any) => (
+                <Descriptions.Item label="Buy Price" span={3}>
+                  {/* {material?.materialPrice.buyPrice} */}
+                  <Typography.Text>
+                    {numberWithCommas(material?.materialPrice.buyPrice)} VND
+                  </Typography.Text>
+                </Descriptions.Item>
+              ))}
+            {data?.materials &&
+              data?.materials.map((material: any) => (
+                <Descriptions.Item label="Sell Price" span={3}>
+                  <Typography.Text>
+                    {numberWithCommas(material?.materialPrice.sellPrice)} VND
+                  </Typography.Text>
                 </Descriptions.Item>
               ))}
           </Descriptions>

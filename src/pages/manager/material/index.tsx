@@ -94,14 +94,14 @@ export default function MaterialList() {
                   }
                   icon={<SearchOutlined />}
                   size="small"
-                  style={{ width: 90 }}
+                  style={{ width: 90, borderRadius: 5 }}
                 >
                   Search
                 </Button>
                 <Button
                   onClick={() => clearFilters && handleReset(clearFilters)}
                   size="small"
-                  style={{ width: 90 }}
+                  style={{ width: 90, borderRadius: 5 }}
                 >
                   Reset
                 </Button>
@@ -119,11 +119,12 @@ export default function MaterialList() {
                 <Button
                   type="link"
                   size="small"
+                  style={{ color: "red" }}
                   onClick={() => {
                     close();
                   }}
                 >
-                  close
+                  Close
                 </Button>
               </Space>
             </div>
@@ -180,6 +181,24 @@ export default function MaterialList() {
       dataIndex: "materialPrice",
       render: (_, record) => (
         <div>{numberWithCommas(record.materialPrice?.sellPrice || 0)} VND</div>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      render: (text) => (
+        <div
+          style={{
+            maxWidth: 200,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            color: text ? "green" : "red",
+            fontWeight: "bold",
+          }}
+        >
+          {text ? "True" : "False"}
+        </div>
       ),
     },
     {

@@ -82,14 +82,14 @@ export default function ManagerUserList() {
                 }
                 icon={<SearchOutlined />}
                 size="small"
-                style={{ width: 90 }}
+                style={{ width: 90, borderRadius: 5 }}
               >
                 Search
               </Button>
               <Button
                 onClick={() => clearFilters && handleReset(clearFilters)}
                 size="small"
-                style={{ width: 90 }}
+                style={{ width: 90, borderRadius: 5 }}
               >
                 Reset
               </Button>
@@ -107,11 +107,12 @@ export default function ManagerUserList() {
               <Button
                 type="link"
                 size="small"
+                style={{ color: "red" }}
                 onClick={() => {
                   close();
                 }}
               >
-                close
+                Close
               </Button>
             </Space>
           </div>
@@ -176,9 +177,11 @@ export default function ManagerUserList() {
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
+            color: text ? "green" : "red",
+            fontWeight: "bold",
           }}
         >
-          {text ? "true" : "false"}
+          {text ? "True" : "False"}
         </div>
       ),
     },

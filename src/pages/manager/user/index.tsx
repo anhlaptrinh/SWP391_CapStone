@@ -167,6 +167,22 @@ export default function ManagerUserList() {
     { title: "Email", dataIndex: "email" },
     { title: "Role", dataIndex: "role" },
     {
+      title: "Status",
+      dataIndex: "isActive",
+      render: (text) => (
+        <div
+          style={{
+            maxWidth: 200,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {text ? "true" : "false"}
+        </div>
+      ),
+    },
+    {
       title: "Address",
       dataIndex: "address",
       render: (text) => (
@@ -200,13 +216,15 @@ export default function ManagerUserList() {
 
   return (
     <Card>
-      <Button
-        type="primary"
-        onClick={() => onOpenFormHandler()}
-        className="mb-2"
-      >
-        New
-      </Button>
+      <div className="text-right">
+        <Button
+          type="primary"
+          onClick={() => onOpenFormHandler()}
+          className="mb-2"
+        >
+          Create User
+        </Button>
+      </div>
       <Table
         rowKey="id"
         size="small"

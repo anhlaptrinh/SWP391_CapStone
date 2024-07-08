@@ -233,7 +233,7 @@ export default function MaterialList() {
           onClick={() => onOpenFormHandler()}
           className="mb-2"
         >
-          New
+          Create Material
         </Button>
       </div>
       <Table

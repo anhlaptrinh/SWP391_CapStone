@@ -17,7 +17,16 @@ import { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { InputType } from "#/api";
 import { FormGem } from "./gem.create";
-import { useListGem, useDeleteGem } from "@/api/manager/gem";
+import {
+  useListGem,
+  useDeleteGem,
+  useListShape,
+  useListOrigin,
+  useListClarity,
+  useListCarat,
+  useListCut,
+  useListColor,
+} from "@/api/manager/gem";
 import { CircleLoading } from "@/components/loading";
 import { IconButton, Iconify } from "@/components/icon";
 import { numberWithCommas, transformObject } from "@/utils/string";
@@ -26,6 +35,12 @@ import type { FilterDropdownProps } from "antd/es/table/interface";
 export default function GemList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
+    const { data: dataShape } = useListShape();
+    const { data: dataOrigin } = useListOrigin();
+    const { data: dataClarity } = useListClarity();
+    const { data: dataCarat } = useListCarat();
+    const { data: dataCut } = useListCut();
+    const { data: dataColor } = useListColor();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const { data, isLoading } = useListGem();
     const [searchText, setSearchText] = useState("");
@@ -219,7 +234,7 @@ export default function GemList() {
           <IconButton onClick={() => onOpenFormHandler(record)}>
             <Iconify icon="solar:pen-bold-duotone" size={18} />
           </IconButton>
-          <Popconfirm
+          {/* <Popconfirm
             title="Delete the Gem"
             okText="Yes"
             cancelText="No"
@@ -235,7 +250,7 @@ export default function GemList() {
                 className="text-error"
               />
             </IconButton>
-          </Popconfirm>
+          </Popconfirm> */}
         </div>
       ),
     },

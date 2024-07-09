@@ -2,6 +2,7 @@ import {
   MaterialPayload,
   useCreateMaterial,
   useUpdateMaterial,
+  useUpdatePriceMaterial,
 } from "@/api/manager/material";
 import { Button, Form, Input, Modal, message } from "antd";
 import { useState } from "react";
@@ -14,6 +15,7 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
   const [form] = Form.useForm();
   const { mutateAsync: createMutate } = useCreateMaterial();
   const { mutateAsync: updateMutate } = useUpdateMaterial();
+  const { mutateAsync: updatePriceMutate } = useUpdatePriceMaterial();
   const [loading, setLoading] = useState<boolean>(false);
 
   const submitHandle = async () => {
@@ -21,16 +23,24 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
     const values = await form.validateFields();
     try {
       if (formData) {
-        const updateData: MaterialPayload = {
-          materialId: formData.materialId,
-          materialName: formData.materialName || values.materialName,
-          materialPrice: {
-            buyPrice: formData.buyPrice || values.buyPrice,
-            sellPrice: formData.sellPrice || values.sellPrice,
-          },
-        };
-        await updateMutate(updateData);
-        setLoading(false);
+        if (formData?.check) {
+          const updateData: any = {
+            materialId: formData.materialId,
+            materialName: values.materialName || formData.materialName,
+          };
+          await updateMutate(updateData);
+          setLoading(false);
+        } else {
+          const updateData: any = [
+            {
+              materialId: formData.materialId,
+              buyPrice: values.buyPrice || formData.buyPrice,
+              sellPrice: values.sellPrice || formData.sellPrice,
+            },
+          ];
+          await updatePriceMutate(updateData);
+          setLoading(false);
+        }
       } else {
         const createData: MaterialPayload = {
           ...values,
@@ -77,30 +87,35 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
         // wrapperCol={{ span: 18 }}
         layout="vertical"
       >
-        <Form.Item
-          label="Material Name"
-          name="materialName"
-          required
-          rules={[{ required: true, message: "Please input materialName" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Buy Price"
-          name="buyPrice"
-          required
-          rules={[{ required: true, message: "Please input Buy Price" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Sell price"
-          name="sellPrice"
-          required
-          rules={[{ required: true, message: "Please input Sell price" }]}
-        >
-          <Input />
-        </Form.Item>
+        {formData?.check ? (
+          <Form.Item
+            label="Material Name"
+            name="materialName"
+            required
+            rules={[{ required: true, message: "Please input materialName" }]}
+          >
+            <Input />
+          </Form.Item>
+        ) : (
+          <>
+            <Form.Item
+              label="Buy Price"
+              name="buyPrice"
+              required
+              rules={[{ required: true, message: "Please input Buy Price" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Sell price"
+              name="sellPrice"
+              required
+              rules={[{ required: true, message: "Please input Sell price" }]}
+            >
+              <Input />
+            </Form.Item>
+          </>
+        )}
       </Form>
     </Modal>
   );

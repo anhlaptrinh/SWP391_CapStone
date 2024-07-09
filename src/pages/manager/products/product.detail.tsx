@@ -76,7 +76,7 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
           </Descriptions.Item>
           <Descriptions.Item label="Status" span={2}>
             <Tag color={data?.isActive ? "green" : "red"}>
-              {data?.isActive ? "True" : "False"}
+              {data?.isActive ? "Active" : "InActive "}
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Gender" span={2}>
@@ -88,35 +88,54 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
         </Descriptions>
         {data?.materials.length > 0 && (
           <Descriptions title="Material Detail" bordered>
-            {data?.materials &&
+            <Descriptions.Item label="Material Name" span={3}>
+              {data?.materials[0]?.materialName}
+            </Descriptions.Item>
+            <Descriptions.Item label="Weight" span={3}>
+              {data?.materials[0]?.weight}
+            </Descriptions.Item>
+            <Descriptions.Item label="Buy Price" span={3}>
+              {data?.materials[0]?.materialPrice.buyPrice}
+              <Typography.Text>
+                {numberWithCommas(data?.materials[0]?.materialPrice.buyPrice)}{" "}
+                VND
+              </Typography.Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Sell Price" span={3}>
+              <Typography.Text>
+                {numberWithCommas(data?.materials[0]?.materialPrice.sellPrice)}{" "}
+                VND
+              </Typography.Text>
+            </Descriptions.Item>
+            {/* {data?.materials &&
               data?.materials.map((material: any) => (
                 <Descriptions.Item label="Material Name" span={3}>
                   {material?.materialName}
                 </Descriptions.Item>
-              ))}
-            {data?.materials &&
+              ))} */}
+            {/* {data?.materials &&
               data?.materials.map((material: any) => (
                 <Descriptions.Item label="Weight" span={3}>
                   {material?.weight}
                 </Descriptions.Item>
-              ))}
-            {data?.materials &&
+              ))} */}
+            {/* {data?.materials &&
               data?.materials.map((material: any) => (
                 <Descriptions.Item label="Buy Price" span={3}>
-                  {/* {material?.materialPrice.buyPrice} */}
+                  {material?.materialPrice.buyPrice}
                   <Typography.Text>
                     {numberWithCommas(material?.materialPrice.buyPrice)} VND
                   </Typography.Text>
                 </Descriptions.Item>
-              ))}
-            {data?.materials &&
+              ))} */}
+            {/* {data?.materials &&
               data?.materials.map((material: any) => (
                 <Descriptions.Item label="Sell Price" span={3}>
                   <Typography.Text>
                     {numberWithCommas(material?.materialPrice.sellPrice)} VND
                   </Typography.Text>
                 </Descriptions.Item>
-              ))}
+              ))} */}
           </Descriptions>
         )}
       </div>

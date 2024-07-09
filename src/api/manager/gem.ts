@@ -98,4 +98,9 @@ export const useListColor = (payload?: any) => {
     return useQuery(['listColors'], () =>
         apiClient.get({ url: '/colors'}),
     );
+}; 
+export const useListGemPrices = (payload?: any) => {
+    return useQuery(['listGemPrices'], () =>
+        apiClient.get({ url: '/gems/prices' }),
+    );
 };

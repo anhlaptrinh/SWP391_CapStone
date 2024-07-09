@@ -9,7 +9,7 @@ export const useListJwelery = (payload?:any) => {
 
 export const useListGems=(payload?:any)=>{
     return useQuery(['listGems'], () =>
-        apiClient.get({ url: `/gems?page=1&pageSize=100`,params:{gemId:payload}}),
+        apiClient.get({ url: `/products/gems?isActive=true&page=1&pageSize=100`,params:{gemId:payload}}),
     );
 }
 export const useListGemsById=(payload?:any)=>{
@@ -20,7 +20,7 @@ export const useListGemsById=(payload?:any)=>{
 
 export const uselistGold=(payload?:any) => {
     return useQuery(['list-gold'], () =>
-        apiClient.get({ url: `/products/materials?page=1&pageSize=100`,params:{materialId:payload}}),
+        apiClient.get({ url: `/products/materials?isActive=true&page=1&pageSize=100`,params:{materialId:payload}}),
     );
 }
 

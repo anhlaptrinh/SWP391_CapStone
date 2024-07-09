@@ -11,10 +11,11 @@ export type OrderPayload = {
     userId:         number;
     invoiceDetails: number[];
   };
-export const useListInvoice=(invoiceStatus: string, payload?: any)=>{
+export const useListInvoice=(invoiceStatus: string,invoiceType:string, payload?: any)=>{
     return useQuery(['listInvoice',invoiceStatus ],()=>
         apiClient.get({url: '/invoices',params: {
           invoiceStatus,
+          invoiceType,
           page: 1,
           pageSize: 100,
           invoiceId: payload
@@ -50,7 +51,7 @@ export const useListInvoice=(invoiceStatus: string, payload?: any)=>{
     )
 }
 
-export const useCreateInvoice = () => {
+export const useCreateInvoice = (clearCart:()=>void) => {
     return useMutation(
         async (values: any) =>
             apiClient.post({
@@ -61,6 +62,23 @@ export const useCreateInvoice = () => {
             onSuccess: () => {
                 message.success('Create Invoice successfully');
                 queryClient.invalidateQueries(['listInvoice']);
+                clearCart();
+            },
+        },
+    );
+};
+export const useCreatePurchaseInvoice = (clearCart:()=>void) => {
+    return useMutation(
+        async (values: any) =>
+            apiClient.post({
+                url: `/invoices/CreatePurchaseInvoice`,
+                data: values,
+            }),
+        {
+            onSuccess: () => {
+                message.success('Create Purchase Invoice successfully');
+                queryClient.invalidateQueries(['listInvoice']);
+                clearCart();
             },
         },
     );

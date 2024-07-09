@@ -7,9 +7,9 @@ import { useState } from 'react';
 
 export default function Invoice() {
   const data:any=[];
-  const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending')
-  const {data: invoiceProcessing,isLoading: isLoadingProcessing}= useListInvoice('Processing')
-  const { data: deliveredInvoices, isLoading: isLoadingDelivered } = useListInvoice('Delivered');
+  const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending','Sale')
+  const {data: invoiceProcessing,isLoading: isLoadingProcessing}= useListInvoice('Processing','Sale')
+  const { data: deliveredInvoices, isLoading: isLoadingDelivered } = useListInvoice('Delivered','Sale');
   const [status,setStatus]=useState<any>("Pending")
   const {mutateAsync: statusInvoice}=useChangeInvoice(status);
   const { TabPane } = Tabs;
@@ -167,7 +167,7 @@ export default function Invoice() {
             <Table
               rowKey="invoiceId"
               columns={columns}
-              pagination={false}
+              
               scroll={{ x: "max-content" }}
               dataSource={invoicePending.items}
               size="large"
@@ -178,7 +178,7 @@ export default function Invoice() {
             <Table
               rowKey="invoiceId"
               columns={columns}
-              pagination={false}
+             
               scroll={{ x: "max-content" }}
               dataSource={invoiceProcessing.items}
               size="large"
@@ -189,7 +189,7 @@ export default function Invoice() {
             <Table
               rowKey="invoiceId"
               columns={columns}
-              pagination={false}
+              
               scroll={{ x: "max-content" }}
               dataSource={deliveredInvoices.items}
               size="large"
@@ -204,7 +204,7 @@ export default function Invoice() {
             <Table
               rowKey="invoiceId"
               columns={columns}
-              pagination={false}
+              
               scroll={{ x: "max-content" }}
               dataSource={data}
               size="large"
@@ -215,7 +215,7 @@ export default function Invoice() {
             <Table
               rowKey="invoiceId"
               columns={columns}
-              pagination={false}
+              
               scroll={{ x: "max-content" }}
               dataSource={data}
               size="large"
@@ -226,7 +226,7 @@ export default function Invoice() {
             <Table
               rowKey="invoiceId"
               columns={columns}
-              pagination={false}
+              
               scroll={{ x: "max-content" }}
               dataSource={data}
               size="large"

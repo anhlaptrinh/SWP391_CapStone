@@ -27,40 +27,10 @@ const STAFF_PRODUCT_PERMISSION : Permission={
         parentId: '9100714781927704',
         label: 'Order',
         name: 'Order',
-        type: PermissionType.CATALOGUE,
+        type: PermissionType.MENU,
         route: 'Order',
         icon: 'ri-list-ordered',
-        children:[{
-            id: '6426999229400870',
-            parentId: '8426999229400870',
-            label: 'Gems',
-            name: 'Gems',
-            type: PermissionType.MENU,
-            route: 'Gems',
-            icon: 'fa6-solid:gem',
-            component: '/staff/Products/Gems/index.tsx'
-        },
-        {
-            id: '6426999229400871',
-            parentId: '8426999229400870',
-            label: 'Gold',
-            name: 'Gold',
-            type: PermissionType.MENU,
-            route: 'Gold',
-            icon: 'ri-vip-crown-fill',
-             component: '/staff/Products/Gold/index.tsx'
-        },
-        {
-            id: '6426999229400872',
-            parentId: '8426999229400870',
-            label: 'Jwerlery',
-            name: 'Jwerlery',
-            type: PermissionType.MENU,
-            route: 'Jwerlery',
-            icon: 'ri-bard-fill',
-             component: '/staff/Products/Jwelery/index.tsx'
-        }
-    ]
+        component: '/staff/order/index.tsx'
     },
         {
         id: '8426999229400871',

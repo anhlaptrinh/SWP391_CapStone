@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useOrderStore } from "@/store/order";
-import { Row, Col, Tag, Typography, Divider, Button, Image, Pagination } from "antd";
+import { Row, Col, Tag, Typography, Divider, Button, Image, Pagination, message } from "antd";
+import OrderForm from './order.create';
+import { useCustomerStore } from '@/store/discount';
+
 
 const { Text } = Typography;
 
@@ -8,10 +11,11 @@ const OrderDetail: React.FC = () => {
   const cartItems = useOrderStore((state) => state.cartItems);
   const removeCartItem = useOrderStore((state) => state.removeCartItem);
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  
   const itemsPerPage = 4; // Số lượng sản phẩm trên mỗi trang
   const [currentPage, setCurrentPage] = useState<number>(1); // Trang hiện tại
   const [currentTime, setCurrentTime] = useState<Date>(new Date()); // Thời gian hiện tại
+  const [openCreateModal,setOpenCreateModal]=useState(false);
+  const {selectedCustomer} = useCustomerStore();
 
   // Cập nhật thời gian mỗi giây
   useEffect(() => {
@@ -25,11 +29,24 @@ const OrderDetail: React.FC = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = cartItems.slice(indexOfFirstItem, indexOfLastItem);
-
+  
   // Xử lý khi chuyển trang
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+  const handleCreateModal=()=>{
+    setOpenCreateModal(false);
+  }
+  
+  const handleOpenCreate=()=>{
+    if(cartItems.length>0){
+      setOpenCreateModal(true);
+    }
+    else { 
+      message.error("Cart is empty");
+      setOpenCreateModal(false);
+    }
+  }
 
   // Xử lý khi xóa sản phẩm
   const handleRemoveItem = (item: any) => {
@@ -39,6 +56,7 @@ const OrderDetail: React.FC = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+  
 
   // Định dạng thời gian
   const formatTime = (date: Date) => {
@@ -47,10 +65,8 @@ const OrderDetail: React.FC = () => {
     const day = date.getDate();
     const month = date.getMonth() + 1; // Months are zero-indexed
     const year = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-    return `${dayName}, ${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    
+    return `${dayName}, ${day}/${month}/${year}`;
   };
 
   return (
@@ -58,14 +74,14 @@ const OrderDetail: React.FC = () => {
       <Row justify="space-between" className="mb-3">
         <Col span={24}>
           <Text type="danger" strong>
-            Confirmation - {formatTime(currentTime)}
+            Confirmation
           </Text>
         </Col>
         <Col span={24}>
-          <Text strong>Order ID: 30</Text>
+          <Text strong>Customer Name: {selectedCustomer?.name} </Text>
         </Col>
         <Col span={24}>
-          <Text strong>Customer Info: 093487388</Text>
+          <Text strong>Customer Phone: {selectedCustomer?.phone} </Text>
         </Col>
       </Row>
 
@@ -75,7 +91,7 @@ const OrderDetail: React.FC = () => {
             <Text>Order Date:</Text>
           </Col>
           <Col span={12}>
-            <Text>21st October</Text>
+            <Text>{formatTime(currentTime)}</Text>
           </Col>
           <Col span={12}>
             <Text>Order Number:</Text>
@@ -127,8 +143,11 @@ const OrderDetail: React.FC = () => {
               Total: {new Intl.NumberFormat('vi-VN', {
                 style: 'currency',
                 currency: 'VND',
-              }).format(totalPrice)} <Tag color="red">5%</Tag>
+              }).format(totalPrice)} <Tag color="red">{selectedCustomer?.discount}%</Tag>
             </Text>
+          </Col>
+          <Col span={12}>
+              <Button type='dashed'  >Draft</Button>
           </Col>
         </Row>
         <Pagination
@@ -138,9 +157,18 @@ const OrderDetail: React.FC = () => {
           total={cartItems.length}
           onChange={handlePageChange}
         />
-        <Button className="mt-3 mr-6" size="middle" type="primary" danger>Manage Order</Button>
-        <Button className="mt-3" size="middle" type="primary" >Create Order</Button>
+        <Row>
+          <Col span={24}>
+          <Button className="mt-3 mr-6" size="small" type="primary" danger>Manage Order</Button>
+          <Button className="mt-3" size="small" type="primary" onClick={handleOpenCreate} >Create Order</Button>
+        
+          </Col>
+          
+        </Row>
       </div>
+      
+      {openCreateModal!==false&&(<OrderForm formData={selectedCustomer} onclose={handleCreateModal}/>)}
+      
     </div>
   );
 }

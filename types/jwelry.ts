@@ -58,3 +58,37 @@ export interface MaterialPrice {
     buyPrice:  number;
     sellPrice: number;
 }
+export interface ProductGem {
+    productId:     number;
+    productName:   string;
+    featuredImage: string;
+    shape:         string;
+    origin:        string;
+    carat:         number;
+    color:         string;
+    clarity:       string;
+    cut:           string;
+    productPrice:  number;
+    isActive:      boolean;
+    quantity:      number;
+    counter:       null | string;
+    productType:   string;
+    unit:          null | string;
+}
+
+export interface GoldProduct {
+    productId:     number;
+    productName:   string;
+    quantity:      number;
+    materialPrice: GoldPrice;
+    counter:       string;
+    isActive:      boolean;
+    productType:   string;
+    unit:          string;
+}
+
+export interface GoldPrice {
+    buyPrice:  number;
+    sellPrice: number;
+    effDate:   Date;
+}

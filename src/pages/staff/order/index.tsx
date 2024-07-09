@@ -3,11 +3,19 @@ import Gems from "../Products/Gems";
 import Gold from "../Products/Gold";
 import OrderDetail from "./orderDetails";
 import Jwelery from "../Products/Jwelery";
+import { useState } from "react";
+import DiscountPoint from "../Point";
 
 
 
 export default function Order() {
   const { TabPane } = Tabs;
+  const userlocal=localStorage.getItem('user')||"";
+  const user = JSON.parse(userlocal);
+  const username=user.username;
+  
+
+
 const { Title } = Typography;
   return (
     <div className="h-full">
@@ -43,12 +51,16 @@ const { Title } = Typography;
         >
           <div className="text-center w-full">
             <h3 className="font-mono text-center ">
-              <strong>Hi Ánh, we received your order</strong>
+              <strong>Hi {username}, we received your order</strong>
             </h3>
           </div>
+          
           <OrderDetail />
+          
         </Card>
+
       </Col>
+      
     </Row>
   </div>
   );

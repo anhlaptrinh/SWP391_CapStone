@@ -1,5 +1,4 @@
 import { useCreateInvoice, useUpdateInvoice } from "@/api/staff/listInvoice";
-import { useListGems, useListJwelery, uselistGold } from "@/api/staff/listProduct";
 import { useOrderStore } from "@/store/order";
 import { Button, Form, Input, Modal, Select, message } from "antd";
 import { useEffect, useState } from "react";
@@ -13,58 +12,38 @@ export type OrderCreateFormProps={
 export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
     const [loading,setloading]=useState<boolean>(false);
     const [form]=Form.useForm();
+    const userlocal=localStorage.getItem('user')||"";
+    const user = JSON.parse(userlocal);
+
+// Lấy username và id
+    const id = user?.id;
     const { cartItems, clearCart } = useOrderStore();
-    const {data: dataJewelry}=useListJwelery();
-    const {data: dataGold}=uselistGold();
-    const {data:dataGems}=useListGems();
     // const {mutateAsync: updateInvoice}=useUpdateInvoice();
     const {mutateAsync: createInvoice}=useCreateInvoice(clearCart);
 
-    if(dataJewelry?.items.length>0){
-      for(let i=0; i<dataJewelry?.items.length;i++){
-        dataJewelry.items[i].value=dataJewelry.items[i].productId;
-        dataJewelry.items[i].label=`JW${dataJewelry.items[i].productId}`;
-      }
-    }
-    if(dataGems?.items.length>0){
-      for(let i=0; i<dataGems?.items.length;i++){
-        dataGems.items[i].value=dataGems.items[i].gemId;
-        dataGems.items[i].label=`GE${dataGems.items[i].gemId}`;
-      }
-    }
-    if(dataGold?.items.length>0){
-      for(let i=0; i<dataGold?.items.length;i++){
-        dataGold.items[i].value=dataGold.items[i].productId;
-        dataGold.items[i].label=`GO${dataGold.items[i].productId}`;
-      }
-    }
+    
     useEffect(() => {
-      if (formData) {
-        const { invoiceDetailsJewelry, invoiceDetailsGems, invoiceDetailsGold } = formData;
-        const convertedJewelry = invoiceDetailsJewelry?.map((item: any) => item.productId);
-        const convertedGems = invoiceDetailsGems?.map((item: any) => item.gemId);
-        const convertedGold = invoiceDetailsGold?.map((item: any) => item.productId);
-  
-        form.setFieldsValue({
-          invoiceDetailsJewelry: convertedJewelry,
-          invoiceDetailsGems: convertedGems,
-          invoiceDetailsGold: convertedGold,
-          ...formData, // Set other form fields from formData
-        });
-      }
-    }, [formData, form, dataJewelry, dataGems, dataGold]);
+      form.setFieldsValue({
+        customerName: formData?.name,
+        phoneNumber: formData?.phone,
+        perDiscount: formData?.discount,
+        userId: user.id,
+      });
+    }, [formData, form,user]);
   
     const submitHandle= async ()=>{
-       const invoiceDetails = cartItems.map(item => item.id);
-       const values = await form.validateFields();
-    const payload = {
-      total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
-      perDiscount: values.perDiscount,  // Adjust as needed
-      customerName: values.customerName,
-      phoneNumber: values.phoneNumber,
-      userId: values.userId,
-      invoiceDetails
-    };
+      const invoiceDetails = cartItems.map(item => ({
+        productId: item.id,
+        quantity: item.quantity,
+      }));
+       const payload = {
+        total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+        perDiscount: form.getFieldValue('perDiscount'),
+        customerName: form.getFieldValue('customerName'),
+        phoneNumber: form.getFieldValue('phoneNumber'),
+        userId: form.getFieldValue('userId'),
+        invoiceDetails: invoiceDetails,
+      };
       try{
         setloading(true);
         
@@ -110,9 +89,10 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
                   label="User Id"
                   name='userId'
                   required
+                  
                   rules={[{required: true, message: "Please input User ID"}]}
                 >
-                  <Input />
+                  <Input disabled />
                 </Form.Item>
             <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
                <Form.Item

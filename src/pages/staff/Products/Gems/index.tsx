@@ -1,4 +1,4 @@
-import { Gem } from "#/jwelry";
+import { Gem, ProductGem } from "#/jwelry";
 import { CircleLoading } from "@/components/loading";
 import { Row, Col, Card, Button,Image, Typography, Divider, Pagination, Tooltip } from "antd";
 import { useState } from "react";
@@ -25,13 +25,13 @@ export default function Gems() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  const handleAddToCart = (gem: Gem) => {
+  const handleAddToCart = (gem: ProductGem) => {
     addCartItem({
-      id: gem.gemId,
-      name: gem.gemName,
+      id: gem.productId,
+      name: gem.productName,
       image: gem.featuredImage,
       quantity: 1, // Default quantity
-      price: gem.price,
+      price: gem.productPrice,
     });
   };
   const handleCloseDetail=()=>{
@@ -40,8 +40,8 @@ export default function Gems() {
   return (
     <div>
       <Row gutter={[16, 16]}>
-        {currentItems?.map((gem: Gem) => (
-          <Col xs={24} sm={12} lg={8} key={gem.gemId}>
+        {currentItems?.map((gem: ProductGem) => (
+          <Col xs={24} sm={12} lg={8} key={gem.productId}>
             <Card
               hoverable
               className="shadow-lg rounded-lg overflow-hidden h-30"
@@ -49,7 +49,7 @@ export default function Gems() {
           <Card className="flex  items-center overflow-hidden shadow-lg justify-center h-20">
             <Image
                 src={gem.featuredImage}
-                alt={gem.gemName}
+                alt={gem.productName}
                 className="w-full h-full object-cover "
                 
               />
@@ -57,13 +57,13 @@ export default function Gems() {
               <Divider />
               <Card.Meta
               className="text-center"
-              title={<Tooltip>{gem.gemName}</Tooltip>}
+              title={<Tooltip>{gem.productName}</Tooltip>}
               description={
                 <Text strong style={{ color: 'green' }}>
                   {new Intl.NumberFormat('vi-VN', {
                     style: 'currency',
                     currency: 'VND',
-                  }).format(gem?.price)}
+                  }).format(gem?.productPrice)}
                 </Text>
               }
             />

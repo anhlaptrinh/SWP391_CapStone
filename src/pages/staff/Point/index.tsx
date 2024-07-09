@@ -4,6 +4,7 @@ import {
   Col,
   Form,
   Input,
+  message,
   Modal,
   Pagination,
   Row,
@@ -13,50 +14,17 @@ import Table, { ColumnsType } from "antd/es/table";
 import { useState } from "react";
 
 import { InputType } from "#/api";
+import { useDiscount } from "@/api/staff/discount";
+import { useCustomerStore } from "@/store/discount";
 
 export default function DiscountPoint() {
-  const { Title } = Typography;
+  const { Title,Text } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const [createPoint,setPoint]=useState(false);
+  const setSelectedCustomer = useCustomerStore((state) => state.setSelectedCustomer);
   // Thêm dữ liệu cứng cho bảng
-  const data = [
-    {
-      id: 1,
-      name: "John Doe",
-      sdt: "123456789",
-      point: 100,
-      color: "40%",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      sdt: "987654321",
-      point: 200,
-      color: "10%",
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      sdt: "555666777",
-      point: 150,
-      color: "20%",
-    },
-    {
-      id: 4,
-      name: "Bob Brown",
-      sdt: "111222333",
-      point: 180,
-      color: "30%",
-    },
-    {
-      id: 5,
-      name: "Emma Davis",
-      sdt: "999888777",
-      point: 250,
-      color: "50%",
-    },
-  ];
+  const {data,isLoading} = useDiscount();
 
   const columns: ColumnsType<any> = [
     {
@@ -67,11 +35,11 @@ export default function DiscountPoint() {
     },
     {
       title: "Name",
-      dataIndex: "name",
+      dataIndex: "fullName",
     },
     {
       title: "Phone Number",
-      dataIndex: "sdt",
+      dataIndex: "phoneNumber",
     },
     {
       title: "Point",
@@ -79,9 +47,31 @@ export default function DiscountPoint() {
     },
     {
       title: "Ưu Đãi",
-      dataIndex: "color", },
+      dataIndex: "discount",
+      align:'center',
+      render: (text)=><Text strong style={{color:'red'}}>{text}%</Text>
+    },
+    {
+      title: "Action",
+      align:'center',
+      dataIndex: "action",
+      render:(_,record:any)=>{
+        return( <Button  size="middle" onClick={
+          ()=>{
+            handleApply(record)
+          }
+        } type="primary" >Apply</Button>)
+      }
+    },
   ];
-
+  const handleApply = (record: any) => {
+    setSelectedCustomer({
+      name: record.fullName,
+      phone: record.phoneNumber,
+      discount:record.discount
+    });
+    message.success('apply Success')
+  };
   const resetHandler = () => {
     form.resetFields();
   };
@@ -156,18 +146,9 @@ export default function DiscountPoint() {
         rowKey="id"
         size="small"
         scroll={{ x: "max-content" }}
-        pagination={false}
         columns={columns}
-        dataSource={data} // Sử dụng dữ liệu cứng đã tạo
+        dataSource={data?.items} // Sử dụng dữ liệu cứng đã tạo
         // loading={isLoading}
-      />
-      <Pagination
-        showSizeChanger
-        onChange={onPageChange}
-        // total={data?.totalPages}
-        // showTotal={(total) => ` ${total} `}
-        // current={data?.page}
-        style={{ marginTop: "1rem" }}
       />
      <Modal
         title="Nhập thông tin ưu đãi"
@@ -178,7 +159,7 @@ export default function DiscountPoint() {
       >
         <Form form={form} layout="vertical" name="userForm">
           <Form.Item
-            name="phone"
+            name="phoneNumber"
             label="Số điện thoại"
             rules={[
               { required: true, message: "Vui lòng nhập số điện thoại!" },
@@ -187,7 +168,7 @@ export default function DiscountPoint() {
             <Input />
           </Form.Item>
           <Form.Item
-            name="name"
+            name="fullName"
             label="Tên Khách Hàng"
             rules={[{ required: true, message: "Vui lòng nhập tên!" }]}
           >

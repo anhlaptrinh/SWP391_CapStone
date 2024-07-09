@@ -1,4 +1,5 @@
-import { Modal, Button, Table, Typography, Tag } from 'antd'
+import { numberWithCommas } from '@/utils/string';
+import { Modal, Button, Table, Typography, Tag, Descriptions } from 'antd'
 import { ColumnsType } from 'antd/es/table';
 
 
@@ -7,65 +8,94 @@ type formGemDetails={
     onClose:()=>void
 }
 export default function Gemsdetails({data,onClose}:formGemDetails) {
-    const { Title,Text } = Typography;
-    const GemDetail:any=[data]
-    const columns: ColumnsType<any> = [
-        {
-          title: "Gem Name",
-          dataIndex: "gemName",
-        },
-        {
-            title: "Image",
-            dataIndex: "featuredImage",
-            key: "featuredImage",
-            render: (_text: any, { featuredImage }) => {
-              return <img alt={data.gemName} src={featuredImage} width={50} height={50} />;
-            },
-          },
-          {
-            title: "Shape",
-            dataIndex: "shape",
-          },
-        {
-          title: "Origin",
-          dataIndex: "origin",
-        },
-        { title: "Weight", dataIndex: "carat" },
-        { title: "Colour", dataIndex: "color" },
-        { title: "Clarity", dataIndex: "clarity" },
-        { title: "Cut", dataIndex: "cut" },
-        { title: "Price", dataIndex: "price", align:'center',
-            render: (text)=><Text strong style={{fontSize: '14px', color: 'green', whiteSpace: 'nowrap' }}>
-            {new Intl.NumberFormat('vi-VN', {
-              style: 'currency',
-              currency: 'VND',
-            }).format(text)}
-          </Text>
-        },
-      ];
-    return (
-    <Modal
-    open
-    onCancel={() => onClose()}
-    width={800}
-    footer={[
-      <Button key="back" onClick={onClose}>
-        Cancel
-      </Button>,
-    ]}
-  >
-    <Title level={5} className="my-5">
-        Gem Detail
-      </Title>
-      <Table
-        rowKey="id"
-        size="large"
-        pagination={false}
-        
-        columns={columns}
-        dataSource={GemDetail}
-      />
     
-  </Modal>
+    
+    return (
+      <Modal
+      open
+      onCancel={() => onClose()}
+      width={800}
+      footer={[
+        <Button key="back" onClick={onClose}>
+          Cancel
+        </Button>,
+      ]}
+    >
+      <div>
+        <Descriptions
+          title="Product Detail"
+          bordered
+          style={{ marginBottom: "2rem" }}
+        >
+          {/* <Descriptions.Item label="Id" span={3}>
+            {data?.id}
+          </Descriptions.Item> */}
+          <Descriptions.Item label="Product Name" span={2}>
+            <Typography.Text strong>{data?.productName}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Category" span={2}>
+            <Typography.Text strong>{data?.productType}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Product Price" span={2}>
+            <Typography.Text strong>
+              {numberWithCommas(data.productPrice)} VND
+            </Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Origin" span={2}>
+            <Typography.Text strong>{data?.origin}</Typography.Text>
+          </Descriptions.Item>
+          
+          <Descriptions.Item label="Status" span={2}>
+            <Tag color={data?.isActive ? "green" : "red"}>
+              {data?.isActive? "active" : "inactive"}
+
+            </Tag>
+          </Descriptions.Item>
+          <Descriptions.Item label="Quantity" span={2}>
+            <Tag color={data?.quantity<=3 ? "green" : "green"}>
+              {data?.quantity }
+            </Tag>
+          </Descriptions.Item>
+          <Descriptions.Item label="Counter" span={2}>
+            <Typography.Text strong>{data?.counter}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Counter" span={2}>
+            <Typography.Text strong>{data?.counter}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Image" span={2}>
+          <img src={data?.featuredImage} alt="Product Image" style={{ maxWidth: '60px' }} />
+          </Descriptions.Item>
+          <Descriptions.Item label="Unit" span={2}>
+          <Typography.Text strong>{data?.unit}</Typography.Text>
+          </Descriptions.Item>
+        </Descriptions>
+        
+        
+      </div>
+      <Descriptions
+        title="Product Specifications"
+        bordered
+        style={{ marginBottom: "2rem" }}
+      >
+      <Descriptions.Item label="Shape" span={2}>
+            <Typography.Text strong>{data?.shape}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Carat Weight" span={2}>
+            <Typography.Text strong>{data?.carat}g</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Clarity" span={1}>
+            <Typography.Text strong>
+              {numberWithCommas(data.clarity)} 
+            </Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Cut" span={1}>
+            <Typography.Text strong>{data?.cut}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Color" span={1}>
+            <Typography.Text strong>{data?.color}</Typography.Text>
+          </Descriptions.Item>
+      </Descriptions>
+      
+    </Modal>
   )
 }

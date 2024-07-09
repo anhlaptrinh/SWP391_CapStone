@@ -10,8 +10,8 @@ export default function InvoiceChecked() {
   const data: any = [];
   const { data: deliveredInvoices, isLoading: isLoadingDelivered } =
     useListInvoice("Delivered",'Sale');
-  const [status, setStatus] = useState<any>("Pending");
-  const { mutateAsync: statusInvoice } = useChangeInvoice(status);
+  
+  const { mutateAsync: statusInvoice } = useChangeInvoice();
   const { TabPane } = Tabs;
   const [form] = Form.useForm();
   const [openPurchaseModal, setPurchaseModal] = useState(false);
@@ -89,13 +89,7 @@ export default function InvoiceChecked() {
       key: "perDiscount",
       render: (text) => <Tag color="red">{text}%</Tag>,
     },
-    {
-      title: "Type",
-      align: "center",
-      dataIndex: "invoiceType",
-      key: "invoiceType",
-      render: (text) => <Tag color="green">{text}</Tag>,
-    },
+    
 
     {
       title: "Amount",
@@ -133,19 +127,17 @@ export default function InvoiceChecked() {
       dataIndex: "actions",
       align: "center",
       render: (_, record) => (
-        <div className="text-gray flex w-full items-center justify-center">
-          <IconButton
-            onClick={(e) => {
-              e.stopPropagation();
-              setStatus(record.invoiceStatus);
-              statusInvoice(record.invoiceId);
-            }}
-          >
-            <Iconify icon="mdi:credit-card-outline" size={18} />
-          </IconButton>
-     
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+          <Popover content=" You want repurchase this invoice?">
+            <Button
+              type="primary"
+             size="middle"
+              // onClick={() => handleUpdate(record)}
+            >Repurchase</Button>
+          </Popover>
+          
         </div>
-      ),
+      )
     },
   ];
 

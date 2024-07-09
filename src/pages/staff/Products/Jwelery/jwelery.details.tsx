@@ -26,6 +26,11 @@ export default function Jwelerydetails({data,onClose}:JwerleryProps) {
       //   dataIndex: "productionCost",
       //   render: (text) => <div>{numberWithCommas(text || 0)} VND</div>,
       // },
+      {
+        title: "Price",
+        dataIndex: "price",
+        render: (text) => <div>{numberWithCommas(text || 0)} VND</div>,
+      },
     ];
     return (
       <Modal
@@ -82,15 +87,39 @@ export default function Jwelerydetails({data,onClose}:JwerleryProps) {
             </Descriptions.Item>
           </Descriptions>
           {data?.materials.length > 0 && (
-            <Descriptions title="Material Detail" bordered>
-              {data?.materials &&
-                data?.materials.map((material: any) => (
-                  <Descriptions.Item label="Material Name" span={3}>
-                    {material?.materialName}
-                  </Descriptions.Item>
-                ))}
-            </Descriptions>
-          )}
+          <Descriptions title="Material Detail" bordered>
+            {data?.materials &&
+              data?.materials.map((material: any) => (
+                <Descriptions.Item label="Material Name" span={3}>
+                  {material?.materialName}
+                </Descriptions.Item>
+              ))}
+            {data?.materials &&
+              data?.materials.map((material: any) => (
+                <Descriptions.Item label="Weight" span={3}>
+                  {material?.weight}
+                </Descriptions.Item>
+              ))}
+            {data?.materials &&
+              data?.materials.map((material: any) => (
+                <Descriptions.Item label="Buy Price" span={3}>
+                  {/* {material?.materialPrice.buyPrice} */}
+                  <Typography.Text>
+                    {numberWithCommas(material?.materialPrice.buyPrice)} VND
+                  </Typography.Text>
+                </Descriptions.Item>
+              ))}
+            {data?.materials &&
+              data?.materials.map((material: any) => (
+                <Descriptions.Item label="Sell Price" span={3}>
+                  <Typography.Text>
+                    {numberWithCommas(material?.materialPrice.sellPrice)} VND
+                  </Typography.Text>
+                </Descriptions.Item>
+              ))}
+          </Descriptions>
+        )}
+          
         </div>
         <Title level={5} className="my-5">
           Gem Detail

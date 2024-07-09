@@ -56,8 +56,8 @@ export default function Gemsdetails({data,onClose}:formGemDetails) {
               {data?.quantity }
             </Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="Counter" span={2}>
-            <Typography.Text strong>{data?.counter}</Typography.Text>
+          <Descriptions.Item label="Product Type" span={2}>
+            <Typography.Text strong>{data?.productType}</Typography.Text>
           </Descriptions.Item>
           <Descriptions.Item label="Counter" span={2}>
             <Typography.Text strong>{data?.counter}</Typography.Text>

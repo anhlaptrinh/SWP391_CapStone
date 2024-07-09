@@ -36,7 +36,7 @@ export default function GoldDetail({data,onClose}:GoldDetailProps) {
             </Descriptions.Item>
             <Descriptions.Item label="Sale Price" span={2}>
               <Typography.Text strong>
-                {numberWithCommas(data.materialPrice?.sellPrice)} VND
+                {numberWithCommas(data.materialPrice?.sellPrice)||""} VND
               </Typography.Text>
             </Descriptions.Item>
             <Descriptions.Item label="Purchase Price" span={2}>

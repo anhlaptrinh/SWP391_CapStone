@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import {
   Button,
   Card,
@@ -14,14 +15,16 @@ import Table, { ColumnsType } from "antd/es/table";
 import { useState } from "react";
 
 import { InputType } from "#/api";
-import { useDiscount } from "@/api/staff/discount";
+import { useCreateDiscount, useDiscount } from "@/api/staff/discount";
 import { useCustomerStore } from "@/store/discount";
 
 export default function DiscountPoint() {
   const { Title,Text } = Typography;
   const [form] = Form.useForm();
+  
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const [createPoint,setPoint]=useState(false);
+  const {mutateAsync:createDiscount}=useCreateDiscount()
   const setSelectedCustomer = useCustomerStore((state) => state.setSelectedCustomer);
   // Thêm dữ liệu cứng cho bảng
   const {data,isLoading} = useDiscount();
@@ -91,7 +94,10 @@ export default function DiscountPoint() {
     form
       .validateFields()
       .then((values) => {
-        console.log("Received values of form: ", values);
+        if (!values.hasOwnProperty("point")) {
+          values.point = 0; // Thiết lập giá trị mặc định cho point nếu không tồn tại
+        }
+        createDiscount(values)
         setPoint(false);
         form.resetFields();
       })
@@ -168,21 +174,19 @@ export default function DiscountPoint() {
             <Input />
           </Form.Item>
           <Form.Item
-            name="fullName"
+            name="customerName"
             label="Tên Khách Hàng"
             rules={[{ required: true, message: "Vui lòng nhập tên!" }]}
           >
             <Input />
           </Form.Item>
-          {/* <Form.Item
-            name="discount"
-            label="Phần trăm ưu đãi"
-            rules={[
-              { required: true, message: "Vui lòng nhập phần trăm ưu đãi!" },
-            ]}
+          <Form.Item
+            name="point"
+            label="Promotion point"
+           
           >
-            <InputNumber  min={0} max={100} style={{ width: "100%" }} />
-          </Form.Item> */}
+            <Input disabled defaultValue={0} />
+          </Form.Item>
         </Form>
       </Modal>
     </Card>

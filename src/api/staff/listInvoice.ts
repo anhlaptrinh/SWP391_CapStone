@@ -22,6 +22,17 @@ export const useListInvoice=(invoiceStatus: string,invoiceType:string, payload?:
         }}) 
     )
 }
+export const useListPurchaseInvoice=(invoiceStatus: string,invoiceType:string, payload?: any)=>{
+    return useQuery(['listPurchaseInvoice',invoiceStatus ],()=>
+        apiClient.get({url: '/invoices',params: {
+          invoiceStatus,
+          invoiceType,
+          page: 1,
+          pageSize: 100,
+          invoiceId: payload
+        }}) 
+    )
+}
 // export const useListProcessingInvoice=(payload?:any)=>{
 //   return useQuery(['listInvoice', ],()=>
 //       apiClient.get({url: '/invoices?invoiceStatus=Processing&page=1&pageSize=100', params: {invoiceId:payload}}) 
@@ -98,15 +109,19 @@ export const useCancelInvoice = () => {
   );
 };
 
-export const useChangeInvoice = (invoiceStatus:any) => {
+export const useChangeInvoice = () => {
   return useMutation(
       async (values: any) =>
           apiClient.put({ url: `/invoices/${values}/change` }),
       {
-          onSuccess: () => {
-              queryClient.fetchQuery(['listInvoice',{invoiceStatus}])
+        onSuccess: (response) => {
+            if (response.status === 204) {
+                message.success('No Content, but Invoice updated successfully');
+                queryClient.invalidateQueries(['listInvoice']); 
+            } else if (response.status === 200) {
               message.success('Update Invoice successfully');
-              queryClient.invalidateQueries(['listProduct']);
+            }
+            
           },
       },
   );

@@ -3,6 +3,7 @@ import { useOrderStore } from "@/store/order";
 import { Row, Col, Tag, Typography, Divider, Button, Image, Pagination, message } from "antd";
 import OrderForm from './order.create';
 import { useCustomerStore } from '@/store/discount';
+import OrderUpdater from './order.state';
 
 
 const { Text } = Typography;
@@ -15,7 +16,9 @@ const OrderDetail: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1); // Trang hiện tại
   const [currentTime, setCurrentTime] = useState<Date>(new Date()); // Thời gian hiện tại
   const [openCreateModal,setOpenCreateModal]=useState(false);
+  const [statusOrder,setStatusOrder]=useState('Pending');
   const {selectedCustomer} = useCustomerStore();
+  const [stateOrder,setStateOrder]=useState(false)
 
   // Cập nhật thời gian mỗi giây
   useEffect(() => {
@@ -37,10 +40,23 @@ const OrderDetail: React.FC = () => {
   const handleCreateModal=()=>{
     setOpenCreateModal(false);
   }
+  const handleStateModal=()=>{
+    setStateOrder(false);
+  }
   
   const handleOpenCreate=()=>{
     if(cartItems.length>0){
       setOpenCreateModal(true);
+    }
+    else { 
+      message.error("Cart is empty");
+      setOpenCreateModal(false);
+    }
+  }
+  const handleOpenDraft=()=>{
+    if(cartItems.length>0){
+      setOpenCreateModal(true);
+      setStatusOrder('Draft')
     }
     else { 
       message.error("Cart is empty");
@@ -147,7 +163,7 @@ const OrderDetail: React.FC = () => {
             </Text>
           </Col>
           <Col span={12}>
-              <Button type='dashed'  >Draft</Button>
+              <Button type='dashed' onClick={handleOpenDraft}  >Draft</Button>
           </Col>
         </Row>
         <Pagination
@@ -159,15 +175,15 @@ const OrderDetail: React.FC = () => {
         />
         <Row>
           <Col span={24}>
-          <Button className="mt-3 mr-6" size="small" type="primary" danger>Manage Order</Button>
+          <Button className="mt-3 mr-6" size="small" type="primary" onClick={()=>setStateOrder(true)} danger>Manage Order</Button>
           <Button className="mt-3" size="small" type="primary" onClick={handleOpenCreate} >Create Order</Button>
         
           </Col>
           
         </Row>
       </div>
-      
-      {openCreateModal!==false&&(<OrderForm formData={selectedCustomer} onclose={handleCreateModal}/>)}
+      {stateOrder!==false &&(<OrderUpdater onClose={handleStateModal}/>)}
+      {openCreateModal!==false&&(<OrderForm status={statusOrder} formData={selectedCustomer} onclose={handleCreateModal}/>)}
       
     </div>
   );

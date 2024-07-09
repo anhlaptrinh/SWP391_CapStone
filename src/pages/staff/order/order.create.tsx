@@ -4,31 +4,34 @@ import { Button, Form, Input, Modal, Select, message } from "antd";
 import { useEffect, useState } from "react";
 
 export type OrderCreateFormProps={
+    status?:string,
     formData?:any;
     onclose: ()=> void;
 }
 
 
-export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
+export default function OrderForm({status,formData,onclose}:OrderCreateFormProps) {
     const [loading,setloading]=useState<boolean>(false);
     const [form]=Form.useForm();
     const userlocal=localStorage.getItem('user')||"";
     const user = JSON.parse(userlocal);
 
 // Lấy username và id
-    const id = user?.id;
     const { cartItems, clearCart } = useOrderStore();
     // const {mutateAsync: updateInvoice}=useUpdateInvoice();
     const {mutateAsync: createInvoice}=useCreateInvoice(clearCart);
 
     
     useEffect(() => {
-      form.setFieldsValue({
-        customerName: formData?.name,
-        phoneNumber: formData?.phone,
-        perDiscount: formData?.discount,
-        userId: user.id,
-      });
+      if(formData){
+        form.setFieldsValue({
+          customerName: formData?.name,
+          phoneNumber: formData?.phone,
+          perDiscount: formData?.discount,
+          
+        });
+      } 
+      
     }, [formData, form,user]);
   
     const submitHandle= async ()=>{
@@ -36,13 +39,15 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
         productId: item.id,
         quantity: item.quantity,
       }));
+      const values=await form.validateFields()
        const payload = {
         total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
-        perDiscount: form.getFieldValue('perDiscount'),
-        customerName: form.getFieldValue('customerName'),
-        phoneNumber: form.getFieldValue('phoneNumber'),
-        userId: form.getFieldValue('userId'),
+        perDiscount: form.getFieldValue('perDiscount')||values.perDiscount,
+        customerName: form.getFieldValue('customerName') ||values.customerName,
+        phoneNumber: form.getFieldValue('phoneNumber') || values.customerName ,
+        userId:  user.id,
         invoiceDetails: invoiceDetails,
+        invoiceStatus: status,
       };
       try{
         setloading(true);
@@ -85,7 +90,7 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
             layout="vertical"
         >
            
-                <Form.Item
+                {/* <Form.Item
                   label="User Id"
                   name='userId'
                   required
@@ -93,7 +98,7 @@ export default function OrderForm({formData,onclose}:OrderCreateFormProps) {
                   rules={[{required: true, message: "Please input User ID"}]}
                 >
                   <Input disabled />
-                </Form.Item>
+                </Form.Item> */}
             <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
                <Form.Item
                   label="Customer Name"

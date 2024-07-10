@@ -21,7 +21,7 @@ const { Title } = Typography;
     <div className="h-full">
     <Row gutter={12}>
       <Col span={14}>
-        <Card>
+        <Card style={{ backgroundColor: '#f0f2f5' }} >
           <Input.Search
             placeholder="Search"
             style={{ marginBottom: "16px" }}
@@ -41,13 +41,13 @@ const { Title } = Typography;
       </Col>
       <Col span={10}>
         <Card
-          style={{ borderRadius: "10px" }}
+          style={{ borderRadius: "10px", backgroundColor:'#F1F1F1' }}
           title={
             <Title className="text-center" level={3}>
               Order Details
             </Title>
           }
-          headStyle={{ background: "pink", borderRadius: "10px 10px 0 0" }}
+          headStyle={{ background: "#B5C18E", borderRadius: "10px 10px 0 0" }}
         >
           <div className="text-center w-full">
             <h3 className="font-mono text-center ">

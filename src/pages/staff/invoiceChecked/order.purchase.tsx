@@ -1,5 +1,4 @@
 import { Modal, Form, Tabs, Input, Button } from "antd";
-import form from "antd/es/form";
 import TabPane from "antd/es/tabs/TabPane";
 import { useState } from "react";
 
@@ -36,7 +35,7 @@ export default function OrderPurchase({
               >
                 <Input />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 name="phoneNumber"
                 label="Phone Number"
                 rules={[
@@ -44,49 +43,24 @@ export default function OrderPurchase({
                 ]}
               >
                 <Input />
-              </Form.Item>
+              </Form.Item> */}
+              
               <Form.Item
-                name="userId"
-                label="User ID"
-                rules={[{ required: true, message: "Please enter user ID" }]}
+                name="quantity"
+                label="Quantity"
+                rules={[{ required: true, message: "Please enter weight" }]}
               >
-                <Input />
+                <Input type="number" />
               </Form.Item>
               <Form.Item
-                name="weights"
-                label="Weight"
+                name="ProductId"
+                label="Product Id"
                 rules={[{ required: true, message: "Please enter weight" }]}
               >
                 <Input type="number" />
               </Form.Item>
             </TabPane>
-            <TabPane tab="Gems" key="gems">
-              <Form.Item
-                name="customerName"
-                label="Customer Name"
-                rules={[
-                  { required: true, message: "Please enter customer name" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="phoneNumber"
-                label="Phone Number"
-                rules={[
-                  { required: true, message: "Please enter phone number" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="userId"
-                label="User ID"
-                rules={[{ required: true, message: "Please enter user ID" }]}
-              >
-                <Input />
-              </Form.Item>
-            </TabPane>
+            
           </Tabs>
           <Form.Item>
             <Button type="primary" htmlType="submit" className="mt-4">

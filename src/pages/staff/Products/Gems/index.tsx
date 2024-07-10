@@ -45,8 +45,9 @@ export default function Gems() {
             <Card
               hoverable
               className="shadow-lg rounded-lg overflow-hidden h-30"
+              style={{ backgroundColor: '#ffffff' }}
             >
-          <Card className="flex  items-center overflow-hidden shadow-lg justify-center h-20">
+          <Card  className="flex  items-center overflow-hidden shadow-lg justify-center h-20">
             <Image
                 src={gem.featuredImage}
                 alt={gem.productName}
@@ -69,15 +70,16 @@ export default function Gems() {
             />
               <div className="mt-3 flex justify-around">
                 <Button
-                  size="small"
+                  size="middle"
                   type="primary"
                   onClick={() => setShowDetail(gem)}
                 >
                   Details
                 </Button>
                 <Button
-                  size="small"
+                  size="middle"
                   type="default"
+                  style={{color:'#fff',backgroundColor:'#4F6F52'}}
                   onClick={() => handleAddToCart(gem)}
                 >
                   Select

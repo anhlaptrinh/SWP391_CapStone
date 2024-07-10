@@ -120,7 +120,7 @@ const OrderDetail: React.FC = () => {
           </Col>
           <Col span={12}>
             <Text>
-              <Tag color="green-inverse">Done</Tag>
+              <Tag color="green-inverse">----</Tag>
             </Text>
           </Col>
         </Row>
@@ -139,7 +139,7 @@ const OrderDetail: React.FC = () => {
                 <Image src={item.image} alt={item.name} width={50} />
               </Col>
               <Col span={5}>{item.name}</Col>
-              <Col span={5}>{item.quantity}</Col>
+              <Col span={5}>x{item.quantity}</Col>
               <Col span={4}>{new Intl.NumberFormat('vi-VN', {
                 style: 'currency',
                 currency: 'VND',
@@ -173,10 +173,10 @@ const OrderDetail: React.FC = () => {
           total={cartItems.length}
           onChange={handlePageChange}
         />
-        <Row>
+        <Row className='pt-5'>
           <Col span={24}>
-          <Button className="mt-3 mr-6" size="small" type="primary" onClick={()=>setStateOrder(true)} danger>Manage Order</Button>
-          <Button className="mt-3" size="small" type="primary" onClick={handleOpenCreate} >Create Order</Button>
+          <Button className="mt-3 mr-6" size="middle" type="primary" onClick={()=>setStateOrder(true)} danger>Manage Order</Button>
+          <Button className="mt-3" size="middle" type="primary" onClick={handleOpenCreate} >Create Order</Button>
         
           </Col>
           

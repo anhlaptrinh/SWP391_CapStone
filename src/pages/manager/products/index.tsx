@@ -64,9 +64,7 @@ export default function ProductsList() {
           setSearchText("");
         };
 
-        const getColumnSearchProps = (
-          dataIndex: any
-        ): TableColumnType<any> => ({
+        const getColumnSearchProps = (dataIndex: any ): TableColumnType<any> => ({
           filterDropdown: ({
             setSelectedKeys,
             selectedKeys,

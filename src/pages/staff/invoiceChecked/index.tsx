@@ -1,10 +1,10 @@
-import { useChangeInvoice, useListInvoice } from "@/api/staff/listInvoice";
-import { IconButton, Iconify } from "@/components/icon";
+import { useChangeInvoice, useListInvoice, useListPurchaseInvoice } from "@/api/staff/listInvoice";
 import { CircleLoading } from "@/components/loading";
 import { Table, Popover, Tag, Tabs, Button, Col, Form, Input, Row } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useState } from "react";
-import OrderPurchase from "../order/order.purchase";
+import OrderPurchase from "./order.purchase";
+import OrderRePurchase from "./order.repurchase";
 
 export default function InvoiceChecked() {
   const data: any = [];
@@ -14,12 +14,17 @@ export default function InvoiceChecked() {
   const { mutateAsync: statusInvoice } = useChangeInvoice();
   const { TabPane } = Tabs;
   const [form] = Form.useForm();
+  const {data: invoicePPending,isLoading: isLoadingPPending}=useListPurchaseInvoice('Pending','Purchase')
+  const {data: invoicePDraft,isLoading: isLoadingPDraft}= useListPurchaseInvoice('Draft','Purchase')
+  const { data: deliveredPInvoices, isLoading: isLoadingPDelivered } = useListPurchaseInvoice('Delivered','Purchase');
   const [openPurchaseModal, setPurchaseModal] = useState(false);
+  const [datarepurchase,setrePurchase]=useState([]);
+  const [dataopenPurchase,setopenPurchase]=useState(false);
   if (isLoadingDelivered) return <CircleLoading />;
-
-  const handlePurchaseModal = () => {
-    setPurchaseModal(false);
-  };
+  if (isLoadingPPending) return <CircleLoading />;
+  if (isLoadingPDraft) return <CircleLoading />;
+  if (isLoadingPDelivered) return <CircleLoading />;
+ 
   const columns: ColumnsType<any> = [
     {
       title: "ID",
@@ -35,7 +40,12 @@ export default function InvoiceChecked() {
       dataIndex: "warranty",
       key: "warranty",
     },
-
+    {
+      title: "Customer",
+      align: "center",
+      dataIndex: "customerName",
+      key: "customerName",
+    },
     {
       title: "Items Order",
       align: "center",
@@ -51,6 +61,7 @@ export default function InvoiceChecked() {
             columns={[
               { title: "ID", dataIndex: "productId", key: "productId" },
               { title: "Name", dataIndex: "productName", key: "productName" },
+              { title: 'Quantity',align:'center', dataIndex: 'quantity', key: 'quantity' },
               {
                 title: "Price",
                 dataIndex: "productPrice",
@@ -132,7 +143,7 @@ export default function InvoiceChecked() {
             <Button
               type="primary"
              size="middle"
-              // onClick={() => handleUpdate(record)}
+               onClick={() => handlePurchase(record)}
             >Repurchase</Button>
           </Popover>
           
@@ -140,7 +151,99 @@ export default function InvoiceChecked() {
       )
     },
   ];
+  const columnsBuy: ColumnsType<any> = [
+    {
+      title: "ID",
+      dataIndex: "invoiceId",
+      key: 'invoiceId',
+      width: '5%'
+    },
+    
+    { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
 
+    {
+      title: "Items Order",
+      align: "center",
+      dataIndex: "items",
+      key: "items",
+      render: (items) => {
+        const popoverContent = (
+          <Table
+            dataSource={items.map((item:any, index:number) => ({ ...item, key: index }))}
+            columns={[
+              { title: 'ID', dataIndex: 'productId', key: 'productId' },
+              { title: 'Name', dataIndex: 'productName', key: 'productName' },
+              { title: 'Quantity',align:'center', dataIndex: 'quantity', key: 'quantity' },
+              { 
+                title: 'Price', 
+                dataIndex: 'productPrice', 
+                key: 'productPrice', 
+                render: (text) => `${new Intl.NumberFormat('en-US').format(text)} VND`
+              }
+            ]}
+            pagination={false}
+            size="small"
+            bordered
+          />
+        );
+        return (
+          <Popover content={popoverContent} title="Item Details" trigger="hover">
+            <a>View Items</a>
+          </Popover>
+        );
+      }
+    },
+    
+   
+    {
+      title: "Type",
+      align: "center",
+      dataIndex: "inOrOut",
+      key: "inOrOut",
+      render: (text) => <Tag color="purple">{text}</Tag>
+    },
+
+    {
+      title: "Amount",
+      align: "center",
+      dataIndex: "total",
+      key: "total",
+      render: (_,record) => `${new Intl.NumberFormat('en-US').format(record.total || 0)} VND`,
+    },
+    {
+      title: "Order Status",
+      align: "center",
+      dataIndex: "invoiceStatus",
+      key: "invoiceStatus",
+      render: (status) => {
+        let color;
+        switch(status) {
+          case 'Delivered':
+            color = 'green';
+            break;
+          case 'Pending':
+            color = 'gold';
+            break;
+          case 'Processing':
+            color = 'magenta';
+            break;
+          default:
+            color = 'blue';
+        }
+        return <Tag color={color}>{status}</Tag>;
+      }
+    },
+    
+    
+  ];
+  const handlePurchaseModal = () => {
+    setPurchaseModal(false);
+    setopenPurchase(false);
+  };
+  const handlePurchase=(data:any)=>{
+      setrePurchase(data);
+      setopenPurchase(true);
+  }
   const onFinishHandler = (values: any) => {
     console.log(values);
   };
@@ -186,21 +289,49 @@ export default function InvoiceChecked() {
             bordered
           />
         </TabPane>
-        <TabPane tab="Purchase Invoice" key="2">
-          <Table
-            rowKey="invoiceId"
-            columns={columns}
-            
-            scroll={{ x: "max-content" }}
-            dataSource={data}
-            size="large"
-            bordered
-          />
-        </TabPane>
-        {openPurchaseModal !== false && (
+        <TabPane tab="Purchase Orders" key="2">
+        <Tabs defaultActiveKey="2-1" type='card'>
+          <TabPane tab="Pending" key="2-1">
+            <Table
+              rowKey="invoiceId"
+              columns={columnsBuy}
+              
+              scroll={{ x: "max-content" }}
+              dataSource={invoicePPending?.items}
+              size="large"
+              bordered
+            />
+          </TabPane>
+          <TabPane tab="Processing" key="2-2">
+            <Table
+              rowKey="invoiceId"
+              columns={columnsBuy}
+              
+              scroll={{ x: "max-content" }}
+              dataSource={invoicePDraft?.items}
+              size="large"
+              bordered
+            />
+          </TabPane>
+          <TabPane tab="Delivered" key="2-3">
+            <Table
+              rowKey="invoiceId"
+              columns={columnsBuy}
+              
+              scroll={{ x: "max-content" }}
+              dataSource={deliveredPInvoices?.items}
+              size="large"
+              bordered
+            />
+          </TabPane>
+        </Tabs>
+      </TabPane>
+        
+      </Tabs>
+      {openPurchaseModal !== false && (
           <OrderPurchase onclose={handlePurchaseModal} />
         )}
-      </Tabs>
+        {dataopenPurchase!==false&&(<OrderRePurchase data={datarepurchase} onclose={handlePurchaseModal}/>)}
     </div>
   );
 }

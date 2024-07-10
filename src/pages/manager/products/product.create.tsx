@@ -248,10 +248,10 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Product Price"
+            label="Production Cost"
             name="productionCost"
             required
-            rules={[{ required: true, message: "Please input  Product Price" }]}
+            rules={[{ required: true, message: "Please input  Production Cost" }]}
           >
             <Input />
           </Form.Item>

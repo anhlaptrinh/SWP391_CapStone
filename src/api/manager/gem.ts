@@ -36,7 +36,7 @@ export const useCreateGem = (payload?: any) => {
         {
             onSuccess: () => {
                 message.success('Create gem successfully');
-                queryClient.invalidateQueries(['listGem']);
+                queryClient.invalidateQueries(['listGems']);
             },
         },
     );
@@ -52,7 +52,7 @@ export const useUpdateGem = (payload?: any) => {
         {
             onSuccess: () => {
                 message.success('Update gem successfully');
-                queryClient.invalidateQueries(['listGem']);
+                queryClient.invalidateQueries(['listGems']);
             },
         },
     );

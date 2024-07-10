@@ -184,6 +184,13 @@ export default function MaterialList() {
       ),
     },
     {
+      title: "Effective Date",
+      dataIndex: "materialPrice",
+      render: (_, record) => (
+        <div>{new Date(record.materialPrice?.effDate).toLocaleString()}</div>
+      ),
+    },
+    {
       title: "Status",
       dataIndex: "isActive",
       render: (text) => (
@@ -197,7 +204,7 @@ export default function MaterialList() {
             fontWeight: "bold",
           }}
         >
-          {text ? "True" : "False"}
+          {text ? "Active" : "Inactive"}
         </div>
       ),
     },
@@ -215,7 +222,7 @@ export default function MaterialList() {
             className="mr-2"
             onClick={() => onOpenFormHandler({ ...record, check: true })}
           >
-            edit gem
+            Edit Gem
           </Button>
           <Button
             type="primary"
@@ -223,7 +230,7 @@ export default function MaterialList() {
             ghost
             onClick={() => onOpenFormHandler({ ...record, check: false })}
           >
-            update price
+            Update Price
           </Button>
           {/* <Popconfirm
             title="Delete the material"

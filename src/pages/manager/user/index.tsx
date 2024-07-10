@@ -177,6 +177,23 @@ export default function ManagerUserList() {
     },
     { title: "Email", dataIndex: "email" },
     { title: "Role", dataIndex: "role" },
+    { title: "Counter", dataIndex: "counter" },
+    {
+      title: "Address",
+      dataIndex: "address",
+      render: (text) => (
+        <div
+          style={{
+            maxWidth: 150,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {text}
+        </div>
+      ),
+    },
     {
       title: "Status",
       dataIndex: "isActive",
@@ -191,23 +208,7 @@ export default function ManagerUserList() {
             fontWeight: "bold",
           }}
         >
-          {text ? "True" : "False"}
-        </div>
-      ),
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      render: (text) => (
-        <div
-          style={{
-            maxWidth: 200,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {text}
+          {text ? "Active" : "Inactive"}
         </div>
       ),
     },

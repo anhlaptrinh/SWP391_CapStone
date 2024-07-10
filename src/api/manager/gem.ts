@@ -16,7 +16,7 @@ export interface GemPayload {
     // gemPrice: object;
 }
 export const useListGem = (payload?: any) => {
-    return useQuery(['listGem'], () =>
+    return useQuery(['listGems'], () =>
         apiClient.get({ url: '/gems?page=1&pageSize=100', params: { gemId: payload }}),
     );
 };

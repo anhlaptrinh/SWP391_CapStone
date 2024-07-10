@@ -212,7 +212,7 @@ export default function ProductsList() {
             fontWeight: "bold",
           }}
         >
-          {text ? "True" : "False"}
+          {text ? "Active" : "Inactive"}
         </div>
       ),
     },

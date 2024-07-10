@@ -222,7 +222,7 @@ export default function GemList() {
             fontWeight: "bold",
           }}
         >
-          {text ? "True" : "False"}
+          {text ? "Active" : "Inactive"}
         </div>
       ),
     },

@@ -318,7 +318,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
                   style={{ marginTop: "5px" }}
                   onClick={() => setCheckPrice(false)}
                 >
-                  close price
+                  Close Price
                 </Button>
               </div>
             ) : (
@@ -328,7 +328,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
                 className="mr-2"
                 onClick={() => setCheckPrice(true)}
               >
-                add price
+                Add Price
               </Button>
             )}
           </>

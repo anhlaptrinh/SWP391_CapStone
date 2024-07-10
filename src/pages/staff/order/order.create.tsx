@@ -106,22 +106,22 @@ export default function OrderForm({status,formData,onclose}:OrderCreateFormProps
                   required
                   rules={[{required: true, message: "Please input Customer Name"}]}
                 >
-                  <Input/>
+                  <Input disabled/>
 
                 </Form.Item>
                 <Form.Item
                   label="Discount"
                   name='perDiscount'
                 >
-                  <Input addonAfter="%"/>
+                  <Input disabled addonAfter="%"/>
                 </Form.Item>
                 
                 <Form.Item
-            name="phoneNumber"
-            label="Phone Number"
-            rules={[{ required: true, message: 'Please enter phone number' }]}
-          >
-            <Input />
+                name="phoneNumber"
+                label="Phone Number"
+                rules={[{ required: true, message: 'Please enter phone number' }]}
+                >
+            <Input disabled />
           </Form.Item>
             </div>
 

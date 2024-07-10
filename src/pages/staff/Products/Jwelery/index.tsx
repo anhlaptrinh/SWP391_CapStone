@@ -42,9 +42,10 @@ export default function Jwelery() {
           <Col xs={24} sm={12} lg={8} key={product.productId}>
             <Card
               hoverable
+              
               className="shadow-lg rounded-lg overflow-hidden h-30"
             >
-          <Card className="flex  items-center overflow-hidden shadow-lg justify-center h-20">
+          <Card  className="flex  items-center overflow-hidden shadow-lg justify-center h-20">
             <Image
                 src={product.featuredImage}
                 alt={product.productName}
@@ -67,14 +68,15 @@ export default function Jwelery() {
             />
               <div className="mt-3 flex justify-around">
                 <Button
-                  size="small"
+                  size="middle"
                   type="primary"
                   onClick={() => setShowDetail(product)}
                 >
                   Details
                 </Button>
                 <Button
-                  size="small"
+                  size="middle"
+                  style={{color:'#fff',backgroundColor:'#4F6F52'}}
                   type="default"
                   onClick={() => handleAddToCart(product)}
                 >

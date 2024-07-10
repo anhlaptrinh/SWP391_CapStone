@@ -8,6 +8,8 @@ import {
   message,
   Modal,
   Pagination,
+  Popconfirm,
+  Popover,
   Row,
   Typography,
 } from "antd";
@@ -58,13 +60,26 @@ export default function DiscountPoint() {
       title: "Action",
       align:'center',
       dataIndex: "action",
-      render:(_,record:any)=>{
-        return( <Button  size="middle" onClick={
-          ()=>{
-            handleApply(record)
-          }
-        } type="primary" >Apply</Button>)
-      }
+      render:(_,record)=>(
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+          
+         <Popconfirm
+          title="Are you sure you want to Apply Discount?"
+          onConfirm={() => handleApply(record)}
+          onCancel={() => handleNoApply(record)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Popover content="Apply Discount">
+            <Button
+              type="primary"
+              
+            >Apply</Button>
+          </Popover>
+        </Popconfirm>
+        </div>
+        
+      )
     },
   ];
   const handleApply = (record: any) => {
@@ -73,7 +88,15 @@ export default function DiscountPoint() {
       phone: record.phoneNumber,
       discount:record.discount
     });
-    message.success('apply Success')
+    message.success('Get Info with discount')
+  };
+  const handleNoApply = (record: any) => {
+    setSelectedCustomer({
+      name: record.fullName,
+      phone: record.phoneNumber,
+      discount:0,
+    });
+    message.success('Get Info without discount!')
   };
   const resetHandler = () => {
     form.resetFields();

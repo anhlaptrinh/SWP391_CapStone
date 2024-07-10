@@ -114,15 +114,126 @@ export const useChangeInvoice = () => {
       async (values: any) =>
           apiClient.put({ url: `/invoices/${values}/change` }),
       {
-        onSuccess: (response) => {
-            if (response.status === 204) {
-                message.success('No Content, but Invoice updated successfully');
-                queryClient.invalidateQueries(['listInvoice']); 
-            } else if (response.status === 200) {
+        onSuccess: () => {
               message.success('Update Invoice successfully');
-            }
+              queryClient.invalidateQueries(['listInvoice']); 
             
           },
       },
   );
+};
+// print invoice 
+export const usePrintInvoice = () => {
+    return useMutation(
+        async (invoiceId: number) => {
+            try {
+                const response = await apiClient.download({
+                    url: `/invoices/${invoiceId}/pdf`,
+                    method: 'POST', // Ensure you use GET method to fetch the PDF
+                    responseType: 'blob', // Ensure response is a blob
+                });
+
+                // Extract file name from content-disposition header if available
+                const contentDisposition = response.headers?.['content-disposition'];
+                let fileName = 'invoice.pdf';
+                if (contentDisposition) {
+                    const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
+                    if (fileNameMatch && fileNameMatch.length === 2) {
+                        fileName = decodeURIComponent(fileNameMatch[1]);
+                    }
+                }
+
+                // Create a Blob object from the response data
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+
+                // Create a temporary link element to download the file
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = fileName;
+
+                // Append the link to the DOM and trigger the download
+                document.body.appendChild(link);
+                link.click();
+
+                // Clean up: remove the link and revoke the URL object
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(link.href);
+
+                // Optionally, you may want to invalidate the list of invoices in the cache
+                queryClient.invalidateQueries(['listInvoice']);
+            } catch (error) {
+                throw new Error(`Failed to download PDF: ${error.message}`);
+            }
+        },
+        {
+            onSuccess: () => {
+                message.success('Download successful');
+            },
+            onError: (error: any) => {
+                message.error(`Failed to download PDF: ${error.message}`);
+            },
+        }
+    );
+};
+
+
+export const usePrintWarranty = () => {
+    return useMutation(
+        async  (invoiceId:number) => {
+            const response = await apiClient.download({
+                url: `/pdf?invoiceId=${invoiceId}&warrantyId=1`,
+                method: 'POST',
+                responseType: 'blob', // Đảm bảo rằng phản hồi là một blob
+            });
+
+            // Lấy tên file từ header nếu có
+            const contentDisposition = response.headers?.['content-disposition'];
+            let fileName = 'invoice.pdf';
+            if (contentDisposition) {
+                const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
+                if (fileNameMatch && fileNameMatch.length === 2) {
+                    fileName = decodeURIComponent(fileNameMatch[1]);
+                }
+            }
+
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(link.href);
+        },
+        {
+            onSuccess: () => {
+                message.success('Download successfully');
+                queryClient.invalidateQueries(['listInvoice']);
+            },
+            onError: (error: any) => {
+                message.error(`Failed to download PDF: ${error.message}`);
+            },
+        },
+    );
+};
+
+export const usePaymentVNPAY = () => {
+    return useMutation(
+        async (invoiceId:number) => {
+            const response = await apiClient.post({
+                url: `/invoices/${invoiceId}/payment`,
+                
+            });
+            return response.data.paymentUrl; // URL từ API trả về
+        },
+        {
+            onSuccess: (paymentUrl) => {
+                // Chuyển hướng người dùng đến URL thanh toán VNPAY
+                window.location.href = paymentUrl;
+            },
+            onError: (error: any) => {
+                message.error(`Failed to initiate payment: ${error.message}`);
+            },
+        },
+    );
 };

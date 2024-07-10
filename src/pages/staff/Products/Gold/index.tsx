@@ -70,15 +70,16 @@ export default function Gold() {
             />
               <div className="mt-3 flex justify-around">
                 <Button
-                  size="small"
+                  size="middle"
                   type="primary"
                   onClick={() => setShowDetail(gold)}
                 >
                   Details
                 </Button>
                 <Button
-                  size="small"
+                  size="middle"
                   type="default"
+                  style={{backgroundColor: '#4F6F52', color:'white'}}
                   onClick={() => handleAddToCart(gold)}
                 >
                   Select

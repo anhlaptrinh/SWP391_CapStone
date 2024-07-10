@@ -9,9 +9,6 @@ type updateOrderForm={
     onClose:()=>void;
 }
 export default function OrderUpdater({onClose}:updateOrderForm) {
-    const {data: invoicePPending,isLoading: isLoadingPPending}=useListPurchaseInvoice('Pending','Purchase')
-  const {data: invoicePDraft,isLoading: isLoadingPDraft}= useListPurchaseInvoice('Draft','Purchase')
-  const { data: deliveredPInvoices, isLoading: isLoadingPDelivered } = useListPurchaseInvoice('Delivered','Purchase');
   const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending','Sale')
   const {data: invoiceDraft,isLoading: isLoadingDraft}= useListInvoice('Draft','Sale')
   const { data: deliveredInvoices, isLoading: isLoadingDelivered } = useListInvoice('Delivered','Sale');
@@ -20,11 +17,11 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
   const { TabPane } = Tabs;
 
   if (isLoadingPending) return <CircleLoading />;
-  if (isLoadingPDraft) return <CircleLoading />;
+ 
   if (isLoadingDelivered) return <CircleLoading />;
-  if (isLoadingPPending) return <CircleLoading />;
+  
   if (isLoadingDraft) return <CircleLoading />;
-  if (isLoadingPDelivered) return <CircleLoading />;
+ 
 
 
 
@@ -220,7 +217,7 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
       title: "Action",
       align: "center",
       key: "action",
-      render: (_, record) => (
+      render: (_) => (
         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
           <Popover content="Update this record">
             <Button
@@ -247,94 +244,10 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
       )
     }
   ];
-  const columnsBuy: ColumnsType<any> = [
-    {
-      title: "ID",
-      dataIndex: "invoiceId",
-      key: 'invoiceId',
-      width: '5%'
-    },
-    
-    { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-
-    {
-      title: "Items Order",
-      align: "center",
-      dataIndex: "items",
-      key: "items",
-      render: (items) => {
-        const popoverContent = (
-          <Table
-            dataSource={items.map((item:any, index:number) => ({ ...item, key: index }))}
-            columns={[
-              { title: 'ID', dataIndex: 'productId', key: 'productId' },
-              { title: 'Name', dataIndex: 'productName', key: 'productName' },
-              { title: 'Quantity',align:'center', dataIndex: 'quantity', key: 'quantity' },
-              { 
-                title: 'Price', 
-                dataIndex: 'productPrice', 
-                key: 'productPrice', 
-                render: (text) => `${new Intl.NumberFormat('en-US').format(text)} VND`
-              }
-            ]}
-            pagination={false}
-            size="small"
-            bordered
-          />
-        );
-        return (
-          <Popover content={popoverContent} title="Item Details" trigger="hover">
-            <a>View Items</a>
-          </Popover>
-        );
-      }
-    },
-    
-   
-    {
-      title: "Type",
-      align: "center",
-      dataIndex: "inOrOut",
-      key: "inOrOut",
-      render: (text) => <Tag color="purple">{text}</Tag>
-    },
-
-    {
-      title: "Amount",
-      align: "center",
-      dataIndex: "items",
-      key: "items",
-      render: (_,record) => `${new Intl.NumberFormat('en-US').format(record.items[0]?.productPrice || 0)} VND`,
-    },
-    {
-      title: "Order Status",
-      align: "center",
-      dataIndex: "invoiceStatus",
-      key: "invoiceStatus",
-      render: (status) => {
-        let color;
-        switch(status) {
-          case 'Delivered':
-            color = 'green';
-            break;
-          case 'Pending':
-            color = 'gold';
-            break;
-          case 'Processing':
-            color = 'magenta';
-            break;
-          default:
-            color = 'blue';
-        }
-        return <Tag color={color}>{status}</Tag>;
-      }
-    },
-    
-    
-  ];
+  
   return (
    <Modal
-    title="View Order"
+    title="View Sale Order"
     open
       onCancel={() => onClose()}
       width={1000}
@@ -344,10 +257,7 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
         </Button>,
       ]}
    >
-    <Tabs defaultActiveKey="1" className="mt-3" >
-      <TabPane tab="Sales Orders" key="1">
-        <Tabs defaultActiveKey="1" type='card'>
-          
+    <Tabs defaultActiveKey="1" className="mt-3" type="card" >
           <TabPane tab="Draft" key="1-2">
             <Table
               rowKey="invoiceId"
@@ -381,45 +291,9 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
               bordered
             />
           </TabPane>
-        </Tabs>
-      </TabPane>
-      <TabPane tab="Purchase Orders" key="2">
-        <Tabs defaultActiveKey="2-1" type='card'>
-          <TabPane tab="Pending" key="2-1">
-            <Table
-              rowKey="invoiceId"
-              columns={columnsBuy}
-              
-              scroll={{ x: "max-content" }}
-              dataSource={invoicePPending?.items}
-              size="large"
-              bordered
-            />
-          </TabPane>
-          <TabPane tab="Processing" key="2-2">
-            <Table
-              rowKey="invoiceId"
-              columns={columnsBuy}
-              
-              scroll={{ x: "max-content" }}
-              dataSource={invoicePDraft?.items}
-              size="large"
-              bordered
-            />
-          </TabPane>
-          <TabPane tab="Delivered" key="2-3">
-            <Table
-              rowKey="invoiceId"
-              columns={columnsBuy}
-              
-              scroll={{ x: "max-content" }}
-              dataSource={deliveredPInvoices?.items}
-              size="large"
-              bordered
-            />
-          </TabPane>
-        </Tabs>
-      </TabPane>
+        
+      
+      
     </Tabs>
    </Modal>
   )

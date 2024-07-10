@@ -59,6 +59,12 @@ axiosInstance.interceptors.response.use(
     },
 );
 class APIClient {
+    download(config: AxiosRequestConfig): Promise<AxiosResponse<Blob>> {
+        return axiosInstance.request<Blob>({
+            ...config,
+            responseType: 'blob',
+        });
+    }
     get<T = any>(config: AxiosRequestConfig): Promise<T> {
         return this.request({ ...config, method: 'GET' });
     }

@@ -79,7 +79,7 @@ export default function Gems() {
                 <Button
                   size="middle"
                   type="default"
-                  style={{color:'#fff',backgroundColor:'#4F6F52'}}
+                  style={{color:'#fff',backgroundColor:'#53c41a'}}
                   onClick={() => handleAddToCart(gem)}
                 >
                   Select

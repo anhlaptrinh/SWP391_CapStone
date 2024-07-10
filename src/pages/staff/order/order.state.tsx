@@ -247,7 +247,7 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
   
   return (
    <Modal
-    title="View Order"
+    title="View Sale Order"
     open
       onCancel={() => onClose()}
       width={1000}
@@ -257,10 +257,7 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
         </Button>,
       ]}
    >
-    <Tabs defaultActiveKey="1" className="mt-3" >
-      <TabPane tab="Sales Orders" key="1">
-        <Tabs defaultActiveKey="1" type='card'>
-          
+    <Tabs defaultActiveKey="1" className="mt-3" type="card" >
           <TabPane tab="Draft" key="1-2">
             <Table
               rowKey="invoiceId"
@@ -294,8 +291,8 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
               bordered
             />
           </TabPane>
-        </Tabs>
-      </TabPane>
+        
+      
       
     </Tabs>
    </Modal>

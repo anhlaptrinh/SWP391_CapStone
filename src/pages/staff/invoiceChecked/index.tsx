@@ -34,12 +34,12 @@ export default function InvoiceChecked() {
     },
 
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-    {
-      title: "Warranty",
-      align: "center",
-      dataIndex: "warranty",
-      key: "warranty",
-    },
+    // {
+    //   title: "Warranty",
+    //   align: "center",
+    //   dataIndex: "warranty",
+    //   key: "warranty",
+    // },
     {
       title: "Customer",
       align: "center",

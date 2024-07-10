@@ -113,7 +113,7 @@ const OrderDetail: React.FC = () => {
             <Text>Order Number:</Text>
           </Col>
           <Col span={12}>
-            <Text>BNS3883</Text>
+          <Tag color="red-inverse">----</Tag>
           </Col>
           <Col span={12}>
             <Text>Delivery:</Text>

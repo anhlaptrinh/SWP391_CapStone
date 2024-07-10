@@ -85,3 +85,8 @@ export const useListProducttype = () => {
         apiClient.get({ url: '/producttypes' }),
     );
 };
+export const useListCounter = () => {
+    return useQuery(['listCounter'], () =>
+        apiClient.get({ url: '/counters' }),
+    );
+};

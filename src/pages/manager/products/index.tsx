@@ -309,7 +309,14 @@ export default function ProductsList() {
         style={{ marginTop: "1rem" }}
       /> */}
       {formProduct !== false && (
-        <FormProduct formData={formProduct} onClose={closeFormProduct} />
+        <FormProduct
+          formData={
+            formProduct
+              ? { ...formProduct, weight: formProduct.materials[0].weight }
+              : formProduct
+          }
+          onClose={closeFormProduct}
+        />
       )}
       {showDetail !== false && (
         <ProductDetail data={showDetail} onClose={closeDetail} />

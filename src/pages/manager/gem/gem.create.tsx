@@ -297,37 +297,41 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             />
           </Form.Item>
         </div>
-        {checkPrice ? (
-          <div className="flex items-center">
-            <Form.Item
-              className="rounded-sm"
-              label="Gem price"
-              name="price"
-              required
-              rules={[{ required: true, message: "Please input price" }]}
-            >
-              <Input placeholder="Gem price" />
-            </Form.Item>
-            <Button
-              type="primary"
-              ghost
-              danger
-              className="ml-4"
-              style={{ marginTop: "5px" }}
-              onClick={() => setCheckPrice(false)}
-            >
-              close price
-            </Button>
-          </div>
-        ) : (
-          <Button
-            type="primary"
-            ghost
-            className="mr-2"
-            onClick={() => setCheckPrice(true)}
-          >
-            add price
-          </Button>
+        {!formData?.gemId && (
+          <>
+            {checkPrice ? (
+              <div className="flex items-center">
+                <Form.Item
+                  className="rounded-sm"
+                  label="Gem price"
+                  name="price"
+                  required
+                  rules={[{ required: true, message: "Please input price" }]}
+                >
+                  <Input placeholder="Gem price" />
+                </Form.Item>
+                <Button
+                  type="primary"
+                  ghost
+                  danger
+                  className="ml-4"
+                  style={{ marginTop: "5px" }}
+                  onClick={() => setCheckPrice(false)}
+                >
+                  close price
+                </Button>
+              </div>
+            ) : (
+              <Button
+                type="primary"
+                ghost
+                className="mr-2"
+                onClick={() => setCheckPrice(true)}
+              >
+                add price
+              </Button>
+            )}
+          </>
         )}
         <Form.Item
           label="Package Images"

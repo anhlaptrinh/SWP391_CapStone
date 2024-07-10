@@ -1,4 +1,15 @@
-import { GemPayload, useCreateGem, useListCarat, useListClarity, useListColor, useListCut, useListOrigin, useListShape, useUpdateGem } from "@/api/manager/gem";
+import {
+  GemPayload,
+  useCreateGem,
+  useListCarat,
+  useListClarity,
+  useListColor,
+  useListGemPrices,
+  useListCut,
+  useListOrigin,
+  useListShape,
+  useUpdateGem,
+} from "@/api/manager/gem";
 import {
   beforeUpload,
   fakeUpload,
@@ -15,6 +26,7 @@ import {
   UploadFile,
   UploadProps,
   Select,
+  message as Message,
 } from "antd";
 import { useState, useEffect } from "react";
 
@@ -33,7 +45,9 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
   const { data: dataCarat } = useListCarat();
   const { data: dataCut } = useListCut();
   const { data: dataColor } = useListColor();
+  const { data: dataGemPrices } = useListGemPrices();
   const [loading, setLoading] = useState<boolean>(false);
+  const [checkPrice, setCheckPrice] = useState<boolean>(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   useEffect(() => {
@@ -105,11 +119,27 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         await updateMutate(updateData);
         setLoading(false);
       } else {
+        const result = dataGemPrices.find(
+          (item) =>
+            item.caratId === values.caratId &&
+            item.clarityId === values.clarityId &&
+            item.colorId === values.colorId &&
+            item.cutId === values.cutId &&
+            item.originId === values.originId
+        );
+
+        const price = result ? result.price : null;
+        if (price === null && checkPrice === false) {
+          setCheckPrice(true);
+          setLoading(false);
+          return Message.error("Price not found! Please enter price.");
+        }
         const updateImageUrl: string = await uploadFileToFirebase(
           values?.featuredImage[0]
         );
         const createData: GemPayload = {
           ...values,
+          price: price === null ? values.price : price,
           featuredImage: updateImageUrl,
         };
         await createMutate(createData);
@@ -267,6 +297,42 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
             />
           </Form.Item>
         </div>
+        {!formData?.gemId && (
+          <>
+            {checkPrice ? (
+              <div className="flex items-center">
+                <Form.Item
+                  className="rounded-sm"
+                  label="Gem price"
+                  name="price"
+                  required
+                  rules={[{ required: true, message: "Please input price" }]}
+                >
+                  <Input placeholder="Gem price" />
+                </Form.Item>
+                <Button
+                  type="primary"
+                  ghost
+                  danger
+                  className="ml-4"
+                  style={{ marginTop: "5px" }}
+                  onClick={() => setCheckPrice(false)}
+                >
+                  Close Price
+                </Button>
+              </div>
+            ) : (
+              <Button
+                type="primary"
+                ghost
+                className="mr-2"
+                onClick={() => setCheckPrice(true)}
+              >
+                Add Price
+              </Button>
+            )}
+          </>
+        )}
         <Form.Item
           label="Package Images"
           name="featuredImage"

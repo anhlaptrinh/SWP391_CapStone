@@ -37,7 +37,7 @@ export const useCreateMaterial = (payload?: any) => {
 };
 export const useUpdateMaterial = (payload?: any) => {
     return useMutation(
-        async (values: MaterialPayload) =>
+        async (values: any) =>
             apiClient.put({
                 url: `/materials`,
                 params: payload,
@@ -46,6 +46,22 @@ export const useUpdateMaterial = (payload?: any) => {
         {
             onSuccess: () => {
                 message.success('Update Material successfully');
+                queryClient.invalidateQueries(['listMaterial']);
+            },
+        },
+    );
+};
+export const useUpdatePriceMaterial = (payload?: any) => {
+    return useMutation(
+        async (values: any) =>
+            apiClient.post({
+                url: `/materials/price`,
+                params: payload,
+                data: values,
+            }),
+        {
+            onSuccess: () => {
+                message.success('Update price Material successfully');
                 queryClient.invalidateQueries(['listMaterial']);
             },
         },

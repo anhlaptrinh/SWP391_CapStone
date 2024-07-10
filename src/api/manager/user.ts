@@ -19,6 +19,11 @@ export const useListUser = () => {
         apiClient.get({ url: '/users?page=1&pageSize=100'}),
     );
 };
+export const useListCounters = () => {
+    return useQuery(['listCounters'], () =>
+        apiClient.get({ url: '/counters' }),
+    );
+};
 export const useDetailUser = (payload?: any) => {
     return useQuery(['detailUser'], () =>
         apiClient.get({ url: '/users', params: { UserId: payload } }),
@@ -46,6 +51,20 @@ export const useUpdateUser = (payload?: any) => {
                 url: `/users`,
                 params: payload,
                 data: values,
+            }),
+        {
+            onSuccess: () => {
+                message.success('Update User successfully');
+                queryClient.invalidateQueries(['listUser']);
+            },
+        },
+    );
+};
+export const useUpdateCounters = () => {
+    return useMutation(
+        async (values: any) =>
+            apiClient.put({
+                url: `/users/${values.userId}/assign-to-counter?counterId=${values.counterId}`,
             }),
         {
             onSuccess: () => {

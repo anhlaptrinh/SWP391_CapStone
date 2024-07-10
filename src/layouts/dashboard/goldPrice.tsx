@@ -50,24 +50,12 @@ export function GoldPriceTable({ onClose }: GoldPriceProps) {
         </Button>,
       ]}
     >
-      <div className="flex gap-3">
-        <Table
-          dataSource={data?.DataList?.Data}
-          columns={columns}
-          loading={isLoading}
-          scroll={{ x: 700 }}
-        />
-        <div className="w-full">
-          <iframe
-            className="w-full"
-            src="https://www.tradingview-widget.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22FOREXCOM%3AXAUUSD%22%2C%22colorTheme%22%3A%22light%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A126%2C%22isTransparent%22%3Afalse%2C%22utm_source%22%3A%22www.goldapi.io%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22single-quote%22%2C%22page-uri%22%3A%22www.goldapi.io%2Fdashboard%22%7D"
-          />
-          <iframe
-            className="w-full h-[500px]"
-            src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_8a92b&symbol=OANDA%3AXAUUSD&interval=3&symboledit=1&saveimage=1&toolbarbg=f1f3f6&details=1&hotlist=1&studies=%5B%5D&theme=light&style=1&timezone=Asia%2FHo_Chi_Minh&withdateranges=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=vi_VN&referral_id=1713&utm_source=giavang.org&utm_medium=widget&utm_campaign=chart&utm_term=OANDA%3AXAUUSD#%7B%22page-uri%22%3A%22giavang.org%2Fthe-gioi%2F%22%7D"
-          />
-        </div>
-      </div>
+      <Table
+        dataSource={data?.DataList?.Data}
+        columns={columns}
+        loading={isLoading}
+        scroll={{ x: 700 }}
+      />
     </Modal>
   );
 }

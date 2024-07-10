@@ -22,6 +22,7 @@ import {
   useCreateProduct,
   useListCategory,
   useListColour,
+  useListCounter,
   useListGender,
   useListProducttype,
   useUpdateProduct,
@@ -37,6 +38,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
   const { mutateAsync: createMutate } = useCreateProduct();
   const { mutateAsync: updateMutate } = useUpdateProduct();
   const { data: dataProducttype } = useListProducttype();
+  const { data: dataCounter } = useListCounter();
   // const { data: dataColour } = useListColour();
   const { data: dataGender } = useListGender();
   const { data: dataGem } = useListGem();
@@ -112,12 +114,18 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
           productionCost: values.productionCost || formData.productionCost,
           status: true,
           featuredImage: formData.featuredImage,
-          weight: values.weight || formData.weight,
+          // weight: values.weight || formData.weight,
           categoryId: values.categoryId || formData.category,
-          productTypeId: values.productTypeId || formData.productType,
+          counterId: values.counterId || formData.counter,
           genderId: values.genderId || formData.gender,
           gems: values.gems || formData.gems,
-          materials: values.materials || formData.materials,
+          materials: [
+            {
+              materialId:
+                values.materials[0] || formData.materials[0].materialId,
+              weight: values.weight || formData.materials[0].weight,
+            },
+          ],
         };
         if (values?.featuredImage[0].uid) {
           const updateImageUrl: string = await uploadFileToFirebase(
@@ -133,7 +141,15 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
         const createData: any = {
           ...values,
           featuredImage: updateImageUrl,
+          materials: [
+            {
+              materialId:
+                values.materials,
+              weight: values.weight,
+            },
+          ],
         };
+        delete createData.weight;
         await createMutate(createData);
       }
       setLoading(false);
@@ -188,18 +204,22 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Product Type"
-            name="productTypeId"
+            label="Counter"
+            name="counterId"
             required
-            rules={[{ required: true, message: "Please input product type" }]}
+            rules={[{ required: true, message: "Please input counter" }]}
           >
             <Select
               showSearch
-              placeholder="Select a product type"
+              placeholder="Select a counter"
               optionFilterProp="children"
               onChange={onChange}
               filterOption={filterOption}
-              options={prepareSelectOptions(dataProducttype, "id", "name")}
+              options={prepareSelectOptions(
+                dataCounter,
+                "counterId",
+                "counterName"
+              )}
             />
           </Form.Item>
           {/* <Form.Item
@@ -228,10 +248,10 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Product Price"
+            label="Production Cost"
             name="productionCost"
             required
-            rules={[{ required: true, message: "Please input  Product Price" }]}
+            rules={[{ required: true, message: "Please input  Production Cost" }]}
           >
             <Input />
           </Form.Item>
@@ -280,8 +300,8 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             rules={[{ required: true, message: "Please input material" }]}
           >
             <Select
-              mode="multiple"
-              showSearch
+              // mode="multiple"
+              // showSearch
               placeholder="Select a material"
               optionFilterProp="children"
               onChange={onChange}
@@ -308,6 +328,22 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               filterOption={filterOption}
               options={prepareSelectOptions(dataGem?.items, "gemId", "gemName")}
             />
+          </Form.Item>
+          <Form.Item
+            label="Weight"
+            name="weight"
+            required
+            rules={[{ required: true, message: "Please input weight" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Quantity"
+            name="quantity"
+            required
+            rules={[{ required: true, message: "Please input quantity" }]}
+          >
+            <Input />
           </Form.Item>
         </div>
         <Form.Item

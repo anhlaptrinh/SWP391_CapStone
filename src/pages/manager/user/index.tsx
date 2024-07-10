@@ -19,11 +19,13 @@ import { useListUser } from "@/api/manager/user";
 import { CircleLoading } from "@/components/loading";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import { Counters } from "./counters";
 export default function ManagerUserList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const [formUser, setFormUser] = useState<any>(false);
+  const [formCounter, setFormCounter] = useState<any>(false);
   const { data, isLoading } = useListUser();
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
@@ -36,8 +38,16 @@ export default function ManagerUserList() {
       setFormUser(undefined);
     }
   };
+    const onOpenFormCounter = (record?: any) => {
+      if (record) {
+        setFormCounter(record);
+      } else {
+        setFormCounter(undefined);
+      }
+    };
   const closeFormUser = async () => {
     setFormUser(false);
+    setFormCounter(false);
   };
       const handleSearch = (
         selectedKeys: string[],
@@ -167,6 +177,23 @@ export default function ManagerUserList() {
     },
     { title: "Email", dataIndex: "email" },
     { title: "Role", dataIndex: "role" },
+    { title: "Counter", dataIndex: "counter" },
+    {
+      title: "Address",
+      dataIndex: "address",
+      render: (text) => (
+        <div
+          style={{
+            maxWidth: 150,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {text}
+        </div>
+      ),
+    },
     {
       title: "Status",
       dataIndex: "isActive",
@@ -181,27 +208,29 @@ export default function ManagerUserList() {
             fontWeight: "bold",
           }}
         >
-          {text ? "True" : "False"}
+          {text ? "Active" : "Inactive"}
         </div>
       ),
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      render: (text) => (
-        <div
-          style={{
-            maxWidth: 200,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {text}
+      title: "Action",
+      align: "center",
+      render: (_, record) => (
+        <div className="text-gray flex w-full items-center justify-center">
+          {/* <IconButton onClick={() => onOpenFormHandler(record)}>
+            <Iconify icon="solar:pen-bold-duotone" size={18} />
+          </IconButton> */}
+          <Button
+            type="primary"
+            ghost
+            className="mr-2"
+            onClick={() => onOpenFormCounter(record)}
+          >
+            Assign counter
+          </Button>
         </div>
       ),
     },
-    // { title: "Status", dataIndex: "status" },
   ];
 
   const resetHandler = () => {
@@ -247,6 +276,9 @@ export default function ManagerUserList() {
       /> */}
       {formUser !== false && (
         <FormUser formData={formUser} onClose={closeFormUser} />
+      )}
+      {formCounter !== false && (
+        <Counters formData={formCounter} onClose={closeFormUser} />
       )}
     </Card>
   );

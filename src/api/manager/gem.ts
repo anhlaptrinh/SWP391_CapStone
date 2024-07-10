@@ -16,7 +16,7 @@ export interface GemPayload {
     // gemPrice: object;
 }
 export const useListGem = (payload?: any) => {
-    return useQuery(['listGem'], () =>
+    return useQuery(['listGems'], () =>
         apiClient.get({ url: '/gems?page=1&pageSize=100', params: { gemId: payload }}),
     );
 };
@@ -36,7 +36,7 @@ export const useCreateGem = (payload?: any) => {
         {
             onSuccess: () => {
                 message.success('Create gem successfully');
-                queryClient.invalidateQueries(['listGem']);
+                queryClient.invalidateQueries(['listGems']);
             },
         },
     );
@@ -52,7 +52,7 @@ export const useUpdateGem = (payload?: any) => {
         {
             onSuccess: () => {
                 message.success('Update gem successfully');
-                queryClient.invalidateQueries(['listGem']);
+                queryClient.invalidateQueries(['listGems']);
             },
         },
     );
@@ -97,5 +97,10 @@ export const useListCut = (payload?: any) => {
 export const useListColor = (payload?: any) => {
     return useQuery(['listColors'], () =>
         apiClient.get({ url: '/colors'}),
+    );
+}; 
+export const useListGemPrices = (payload?: any) => {
+    return useQuery(['listGemPrices'], () =>
+        apiClient.get({ url: '/gems/prices' }),
     );
 };

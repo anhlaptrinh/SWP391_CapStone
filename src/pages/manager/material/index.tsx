@@ -27,9 +27,9 @@ export default function MaterialList() {
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const [formMaterial, setFormMaterial] = useState<any>(false);
-      const [searchText, setSearchText] = useState("");
-      const [searchedColumn, setSearchedColumn] = useState("");
-      const searchInput = useRef<InputRef>(null);
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
   const { data, isLoading } = useListMaterial();
   const { mutateAsync: deleteMutate } = useDeleteMaterial();
   if (isLoading) return <CircleLoading />;
@@ -184,6 +184,13 @@ export default function MaterialList() {
       ),
     },
     {
+      title: "Effective Date",
+      dataIndex: "materialPrice",
+      render: (_, record) => (
+        <div>{new Date(record.materialPrice?.effDate).toLocaleString()}</div>
+      ),
+    },
+    {
       title: "Status",
       dataIndex: "isActive",
       render: (text) => (
@@ -197,7 +204,7 @@ export default function MaterialList() {
             fontWeight: "bold",
           }}
         >
-          {text ? "True" : "False"}
+          {text ? "Active" : "Inactive"}
         </div>
       ),
     },
@@ -206,10 +213,26 @@ export default function MaterialList() {
       align: "center",
       render: (_, record) => (
         <div className="text-gray flex w-full items-center justify-center">
-          <IconButton onClick={() => onOpenFormHandler(record)}>
+          {/* <IconButton onClick={() => onOpenFormHandler(record)}>
             <Iconify icon="solar:pen-bold-duotone" size={18} />
-          </IconButton>
-          <Popconfirm
+          </IconButton> */}
+          <Button
+            type="primary"
+            ghost
+            className="mr-2"
+            onClick={() => onOpenFormHandler({ ...record, check: true })}
+          >
+            Edit Gem
+          </Button>
+          <Button
+            type="primary"
+            danger
+            ghost
+            onClick={() => onOpenFormHandler({ ...record, check: false })}
+          >
+            Update Price
+          </Button>
+          {/* <Popconfirm
             title="Delete the material"
             okText="Yes"
             cancelText="No"
@@ -225,7 +248,7 @@ export default function MaterialList() {
                 className="text-error"
               />
             </IconButton>
-          </Popconfirm>
+          </Popconfirm> */}
         </div>
       ),
     },

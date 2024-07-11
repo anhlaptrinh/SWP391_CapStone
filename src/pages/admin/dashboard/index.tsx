@@ -126,7 +126,7 @@ export default function MenuLevel() {
       },
       {
         today: "Monthly Profit Change",
-        title: dataMonthlyProfitChange + "%",
+        title: <div style={{ color: dataMonthlyProfitChange > 0 ? "green" : "red" }}>{dataMonthlyProfitChange + "%"}</div>,
         icon: cart,
       },
     ];

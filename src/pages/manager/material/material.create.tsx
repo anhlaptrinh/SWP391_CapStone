@@ -87,7 +87,7 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
         // wrapperCol={{ span: 18 }}
         layout="vertical"
       >
-        {formData?.check ? (
+        {formData?.checkName && (
           <Form.Item
             label="Material Name"
             name="materialName"
@@ -96,7 +96,8 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
           >
             <Input />
           </Form.Item>
-        ) : (
+        )}
+        {formData?.check && (
           <>
             <Form.Item
               label="Buy Price"

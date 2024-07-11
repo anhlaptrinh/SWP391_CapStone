@@ -223,14 +223,14 @@ export default function MaterialList() {
             type="primary"
             ghost
             className="mr-2"
-            onClick={() => onOpenFormHandler({ ...record, check: true })}
+            onClick={() => onOpenFormHandler({ ...record, checkName: true })}
           >
             Edit Gem
           </Button>
           <Button
             type="primary"
             className="mr-2"
-            onClick={() => onOpenFormHandler({ ...record, check: false })}
+            onClick={() => onOpenFormHandler({ ...record, check: true })}
           >
             Update Price
           </Button>
@@ -274,7 +274,7 @@ export default function MaterialList() {
       <div className="text-right">
         <Button
           type="primary"
-          onClick={() => onOpenFormHandler()}
+          onClick={() => onOpenFormHandler({ check: true, checkName: true })}
           className="mb-2"
         >
           Create Material

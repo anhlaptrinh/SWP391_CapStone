@@ -91,7 +91,7 @@ export default function MenuLevel() {
       <svg
         width="22"
         height="22"
-        viewBox="0 0 20 20"
+        viewBox="0 0 384 512"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         key={0}
@@ -99,7 +99,24 @@ export default function MenuLevel() {
         <path
           fillRule="evenodd"
           clipRule="evenodd"
-          d="M10 2C7.79086 2 6 3.79086 6 6V7H5C4.49046 7 4.06239 7.38314 4.00612 7.88957L3.00612 16.8896C2.97471 17.1723 3.06518 17.455 3.25488 17.6669C3.44458 17.8789 3.71556 18 4 18H16C16.2844 18 16.5554 17.8789 16.7451 17.6669C16.9348 17.455 17.0253 17.1723 16.9939 16.8896L15.9939 7.88957C15.9376 7.38314 15.5096 7 15 7H14V6C14 3.79086 12.2091 2 10 2ZM12 7V6C12 4.89543 11.1046 4 10 4C8.89543 4 8 4.89543 8 6V7H12ZM6 10C6 9.44772 6.44772 9 7 9C7.55228 9 8 9.44772 8 10C8 10.5523 7.55228 11 7 11C6.44772 11 6 10.5523 6 10ZM13 9C12.4477 9 12 9.44772 12 10C12 10.5523 12.4477 11 13 11C13.5523 11 14 10.5523 14 10C14 9.44772 13.5523 9 13 9Z"
+          d="M374.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-320 320c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l320-320zM128 128A64 64 0 1 0 0 128a64 64 0 1 0 128 0zM384 384a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z"
+          fill="#fff"
+        />
+      </svg>,
+    ];
+    const invoice = [
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 384 512"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        key={0}
+      >
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM80 64h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16s7.2-16 16-16zm16 96H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V256c0-17.7 14.3-32 32-32zm0 32v64H288V256H96zM240 416h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16s7.2-16 16-16z"
           fill="#fff"
         />
       </svg>,
@@ -113,16 +130,16 @@ export default function MenuLevel() {
         // bnb: "bnb2",
       },
       {
-        today: "Transaction",
-        title: dataTransaction,
-        icon: profile,
-      },
-      {
         today: "Daily Profit",
         title: numberWithCommas(dataDailyProfit || 0),
         // persent: "-20%",
-        icon: heart,
+        icon: dollor,
         // bnb: "redtext",
+      },
+      {
+        today: "Transaction",
+        title: dataTransaction,
+        icon: invoice,
       },
       {
         today: "Monthly Profit Change",

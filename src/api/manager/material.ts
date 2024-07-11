@@ -47,6 +47,7 @@ export const useUpdateMaterial = (payload?: any) => {
             onSuccess: () => {
                 message.success('Update Material successfully');
                 queryClient.invalidateQueries(['listMaterial']);
+                queryClient.invalidateQueries(['list-gold']);
             },
         },
     );
@@ -63,6 +64,7 @@ export const useUpdatePriceMaterial = (payload?: any) => {
             onSuccess: () => {
                 message.success('Update price Material successfully');
                 queryClient.invalidateQueries(['listMaterial']);
+                queryClient.invalidateQueries(['listProduct']);
             },
         },
     );

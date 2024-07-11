@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   Pagination,
+  Popconfirm,
   Row,
   Space,
   Typography,
@@ -15,11 +16,13 @@ import Highlighter from "react-highlight-words";
 import { SearchOutlined } from "@ant-design/icons";
 import { InputType } from "#/api";
 import { FormUser } from "./formUser";
-import { useListUser } from "@/api/manager/user";
+import { useEmployeeRevenue, useListUser } from "@/api/manager/user";
 import { CircleLoading } from "@/components/loading";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import { Counters } from "./counters";
+import { useUpdateStatus } from "@/api/manager/products";
+import axios from "axios";
 export default function ManagerUserList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
@@ -30,6 +33,9 @@ export default function ManagerUserList() {
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
     const searchInput = useRef<InputRef>(null);
+       const [loading, setLoading] = useState<boolean>(false);
+       const [error, setError] = useState<string | null>(null);
+      const { mutateAsync: updateStatusMutate } = useUpdateStatus("listUser");
   if (isLoading) return <CircleLoading />;
   const onOpenFormHandler = (record?: any) => {
     if (record) {
@@ -63,6 +69,30 @@ export default function ManagerUserList() {
         clearFilters();
         setSearchText("");
       };
+
+    const fetchEmployeeRevenue = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get(
+          "https://jewelrysalessystem.azurewebsites.net/api/users/employee-revenue",
+          {
+            responseType: "blob",
+          }
+        );
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "EmployeeRevenue.xlsx");
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode?.removeChild(link);
+      } catch (error) {
+        setError("Failed to fetch employee revenue");
+      } finally {
+        setLoading(false);
+      }
+    };
       const getColumnSearchProps = (dataIndex: any): TableColumnType<any> => ({
         filterDropdown: ({
           setSelectedKeys,
@@ -228,6 +258,28 @@ export default function ManagerUserList() {
           >
             Assign counter
           </Button>
+          <Popconfirm
+            title="Are you sure update status?"
+            okText="Yes"
+            cancelText="No"
+            placement="left"
+            onConfirm={(e: any) => {
+              e.stopPropagation();
+              updateStatusMutate({
+                id: record.userId,
+                name: "users",
+              });
+            }}
+          >
+            <Button
+              type="primary"
+              ghost
+              danger
+              className="mr-2"
+            >
+              Change status
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },
@@ -252,9 +304,17 @@ export default function ManagerUserList() {
         <Button
           type="primary"
           onClick={() => onOpenFormHandler()}
-          className="mb-2"
+          className="mb-2 mr-2"
         >
           Create User
+        </Button>
+        <Button
+          type="primary"
+          onClick={fetchEmployeeRevenue}
+          disabled={loading}
+          className="mb-2"
+        >
+          Employee revenue
         </Button>
       </div>
       <Table

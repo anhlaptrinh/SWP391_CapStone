@@ -58,10 +58,12 @@ const lineChart = {
             '#8c8c8c',
             '#8c8c8c',
             '#8c8c8c',
+            '#8c8c8c',
+            '#8c8c8c',
           ],
         },
       },
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Dec'],
+      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     },
 
     tooltip: {

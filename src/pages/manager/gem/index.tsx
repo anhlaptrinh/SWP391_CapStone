@@ -32,6 +32,7 @@ import { IconButton, Iconify } from "@/components/icon";
 import { numberWithCommas, transformObject } from "@/utils/string";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import { useUpdateStatus } from "@/api/manager/products";
 export default function GemList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
@@ -41,6 +42,7 @@ export default function GemList() {
     const { data: dataCarat } = useListCarat();
     const { data: dataCut } = useListCut();
     const { data: dataColor } = useListColor();
+     const { mutateAsync: updateStatusMutate } = useUpdateStatus("listGems");
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const { data, isLoading } = useListGem();
     const [searchText, setSearchText] = useState("");
@@ -234,23 +236,28 @@ export default function GemList() {
           <IconButton onClick={() => onOpenFormHandler(record)}>
             <Iconify icon="solar:pen-bold-duotone" size={18} />
           </IconButton>
-          {/* <Popconfirm
-            title="Delete the Gem"
+          <Popconfirm
+            title="Are you sure update status?"
             okText="Yes"
             cancelText="No"
             placement="left"
-            onConfirm={() => {
-              submitHandleDelete(record.gemId.toString());
+            onConfirm={(e: any) => {
+              e.stopPropagation();
+              updateStatusMutate({
+                id: record.gemId,
+                name: "gems",
+              });
             }}
           >
-            <IconButton>
-              <Iconify
-                icon="mingcute:delete-2-fill"
-                size={18}
-                className="text-error"
-              />
-            </IconButton>
-          </Popconfirm> */}
+            <Button
+              type="primary"
+              ghost
+              danger
+              className="mr-2"
+            >
+              Change status
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },

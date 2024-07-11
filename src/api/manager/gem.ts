@@ -20,6 +20,37 @@ export const useListGem = (payload?: any) => {
         apiClient.get({ url: '/gems?page=1&pageSize=100', params: { gemId: payload }}),
     );
 };
+export const useMonthlyProfit = (payload?: any) => {
+    return useQuery(['monthlyProfit'], () =>
+        apiClient.get({ url: '/invoices/monthlyProfit', params: { gemId: payload } }),
+    );
+};
+
+export const useTransaction = (payload?: any) => {
+    return useQuery(['transaction'], () =>
+        apiClient.get({ url: '/invoices/transaction', params: { gemId: payload } }),
+    );
+};
+export const useDailyProfit = (payload?: any) => {
+    return useQuery(['dailyProfit'], () =>
+        apiClient.get({ url: '/invoices/dailyProfit', params: { gemId: payload } }),
+    );
+};
+export const useMonthlyProfitChange = (payload?: any) => {
+    return useQuery(['monthlyProfitChange'], () =>
+        apiClient.get({ url: '/invoices/monthlyProfitChange', params: { gemId: payload } }),
+    );
+};
+export const useMonthlyRevenueOfYear = (payload?: any) => {
+    return useQuery(['monthlyRevenueOfYear'], () =>
+        apiClient.get({ url: '/invoices/MonthlyRevenueOfYear', params: { gemId: payload } }),
+    );
+};
+export const useQuantityProductSaleInMonth = (payload?: any) => {
+    return useQuery(['quantityProductSaleInMonth'], () =>
+        apiClient.get({ url: '/invoices/QuantityProductSaleInMonth', params: { gemId: payload } }),
+    );
+};
 export const useDetailGem = (payload?: any) => {
     return useQuery(['detailGem'], () =>
         apiClient.get({ url: '/gems', params: { gemId: payload }}),

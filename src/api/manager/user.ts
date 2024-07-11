@@ -19,6 +19,11 @@ export const useListUser = () => {
         apiClient.get({ url: '/users?page=1&pageSize=100'}),
     );
 };
+export const useEmployeeRevenue = () => {
+    return useQuery(['employeeRevenue'], () =>
+        apiClient.get({ url: '/users/employee-revenue' }),
+    );
+};
 export const useListCounters = () => {
     return useQuery(['listCounters'], () =>
         apiClient.get({ url: '/counters' }),

@@ -6,9 +6,18 @@ import {
 } from "antd";
 import EChart from "@/components/chart/EChart";
 import LineChart from "@/components/chart/LineChart";
+import { useDailyProfit, useMonthlyProfit, useMonthlyProfitChange, useMonthlyRevenueOfYear, useQuantityProductSaleInMonth, useTransaction } from "@/api/manager/gem";
+import { numberWithCommas } from "@/utils/string";
 
 export default function MenuLevel() {
   const { Title } = Typography;
+  const { data: dataMonthlyProfit } = useMonthlyProfit();
+  const { data: dataTransaction } = useTransaction();
+  const { data: dataDailyProfit } = useDailyProfit();
+  const { data: dataMonthlyProfitChange } = useMonthlyProfitChange();
+  const { data: dataMonthlyRevenueOfYear } = useMonthlyRevenueOfYear();
+  const { data: dataQuantityProductSaleInMonth } =
+    useQuantityProductSaleInMonth();
     const dollor = [
       <svg
         width="22"
@@ -97,32 +106,28 @@ export default function MenuLevel() {
     ];
     const count = [
       {
-        today: "Today’s Sales",
-        title: "$53,000",
-        persent: "+30%",
+        today: "Monthly Profit",
+        title: numberWithCommas(dataMonthlyProfit || 0),
+        // persent: "+30%",
         icon: dollor,
-        bnb: "bnb2",
+        // bnb: "bnb2",
       },
       {
-        today: "Today’s Users",
-        title: "3,200",
-        persent: "+20%",
+        today: "Transaction",
+        title: dataTransaction,
         icon: profile,
-        bnb: "bnb2",
       },
       {
-        today: "New Clients",
-        title: "+1,200",
-        persent: "-20%",
+        today: "Daily Profit",
+        title: numberWithCommas(dataDailyProfit || 0),
+        // persent: "-20%",
         icon: heart,
-        bnb: "redtext",
+        // bnb: "redtext",
       },
       {
-        today: "New Orders",
-        title: "$13,200",
-        persent: "10%",
+        today: "Monthly Profit Change",
+        title: dataMonthlyProfitChange + "%",
         icon: cart,
-        bnb: "bnb2",
       },
     ];
   return (
@@ -159,12 +164,14 @@ export default function MenuLevel() {
       <Row gutter={[24, 0]}>
         <Col xs={24} sm={24} md={12} lg={12} xl={10} className="mb-6">
           <Card bordered={false} className="criclebox h-full">
-            <EChart />
+            <EChart dataMonthlyRevenueOfYear={dataMonthlyRevenueOfYear} />
           </Card>
         </Col>
         <Col xs={24} sm={24} md={12} lg={12} xl={14} className="mb-6">
           <Card bordered={false} className="criclebox h-full">
-            <LineChart/>
+            <LineChart
+              dataQuantityProductSaleInMonth={dataQuantityProductSaleInMonth}
+            />
           </Card>
         </Col>
       </Row>

@@ -177,6 +177,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
     <Modal
       title={formData?.productId ? "Edit Product" : "Create Product"}
       open
+      width={800}
       onOk={submitHandle}
       onCancel={onClose}
       footer={[
@@ -194,7 +195,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
       ]}
     >
       <Form form={form} initialValues={formData} layout="vertical">
-        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <Form.Item
             label="Product Name"
             name="productName"
@@ -251,7 +252,9 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             label="Production Cost"
             name="productionCost"
             required
-            rules={[{ required: true, message: "Please input  Production Cost" }]}
+            rules={[
+              { required: true, message: "Please input  Production Cost" },
+            ]}
           >
             <Input />
           </Form.Item>

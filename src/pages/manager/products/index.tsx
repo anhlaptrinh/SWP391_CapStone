@@ -17,13 +17,23 @@ import Table, { ColumnsType } from "antd/es/table";
 import { useRef, useState } from "react";
 import { InputType } from "#/api";
 import { FormProduct } from "./product.create";
-import { useDeleteProduct, useListProduct } from "@/api/manager/products";
+import {
+  useDeleteProduct,
+  useListProduct,
+  useListCategory,
+  useListCounter,
+  useListGender,
+  useListProducttype,
+  useUpdateStatus,
+} from "@/api/manager/products";
 import { CircleLoading } from "@/components/loading";
 import { numberWithCommas } from "@/utils/string";
 import { ProductDetail } from "./product.detail";
 import { IconButton, Iconify } from "@/components/icon";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import { useListGem } from "@/api/manager/gem";
+import { useListMaterial } from "@/api/manager/material";
 export default function ProductsList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
@@ -33,6 +43,14 @@ export default function ProductsList() {
       const searchInput = useRef<InputRef>(null);
   const { data, isLoading } = useListProduct();
   const { mutateAsync: deleteMutate } = useDeleteProduct();
+   const { data: dataProducttype } = useListProducttype();
+   const { data: dataCounter } = useListCounter();
+   // const { data: dataColour } = useListColour();
+   const { data: dataGender } = useListGender();
+   const { data: dataGem } = useListGem();
+   const { data: dataMaterial } = useListMaterial();
+   const { data: dataCategory } = useListCategory();
+     const { mutateAsync: updateStatusMutate } = useUpdateStatus("listProduct");
   const [formProduct, setFormProduct] = useState<any>(false);
   const [showDetail, setShowDetail] = useState<any>(false);
   if (isLoading) return <CircleLoading />;
@@ -227,26 +245,31 @@ export default function ProductsList() {
           >
             <Iconify icon="solar:pen-bold-duotone" size={18} />
           </IconButton>
-          {/* <Popconfirm
-            title="Delete the Product?"
+          <Popconfirm
+            title="Are you sure update status?"
             okText="Yes"
             cancelText="No"
             placement="left"
-            onConfirm={(e : any) => { e.stopPropagation();
-            deleteMutate(record.productId)}}
+            onConfirm={(e: any) => {
+              e.stopPropagation();
+              updateStatusMutate({
+                id: record.productId,
+                name: "products",
+              });
+            }}
           >
-            <IconButton
-              onClick={(e) => {
+            <Button
+              onClick={(e: any) => {
                 e.stopPropagation();
               }}
+              type="primary"
+              ghost
+              danger
+              className="mr-2"
             >
-              <Iconify
-                icon="mingcute:delete-2-fill"
-                size={18}
-                className="text-error"
-              />
-            </IconButton>
-          </Popconfirm> */}
+              Change status
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },

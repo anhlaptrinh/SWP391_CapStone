@@ -22,12 +22,15 @@ import { numberWithCommas, transformObject } from "@/utils/string";
 import { IconButton, Iconify } from "@/components/icon";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import { useUpdateStatus } from "@/api/manager/products";
 export default function MaterialList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
   const [formMaterial, setFormMaterial] = useState<any>(false);
   const [searchText, setSearchText] = useState("");
+     const { mutateAsync: updateStatusMutate } =
+       useUpdateStatus("listMaterial");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
   const { data, isLoading } = useListMaterial();
@@ -226,29 +229,28 @@ export default function MaterialList() {
           </Button>
           <Button
             type="primary"
-            danger
-            ghost
+            className="mr-2"
             onClick={() => onOpenFormHandler({ ...record, check: false })}
           >
             Update Price
           </Button>
-          {/* <Popconfirm
-            title="Delete the material"
+          <Popconfirm
+            title="Are you sure update status?"
             okText="Yes"
             cancelText="No"
             placement="left"
-            onConfirm={() => {
-              submitHandleDelete(record.materialId.toString());
+            onConfirm={(e: any) => {
+              e.stopPropagation();
+              updateStatusMutate({
+                id: record.materialId,
+                name: "materials",
+              });
             }}
           >
-            <IconButton>
-              <Iconify
-                icon="mingcute:delete-2-fill"
-                size={18}
-                className="text-error"
-              />
-            </IconButton>
-          </Popconfirm> */}
+            <Button type="primary" ghost danger className="mr-2">
+              Change status
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },

@@ -70,6 +70,18 @@ export const useDeleteProduct = () => {
         },
     );
 };
+export const useUpdateStatus = (payload: any) => {
+    return useMutation(
+        async (values: any) =>
+            apiClient.delete({ url: `/${values.name}/${values.id}` }),
+        {
+            onSuccess: () => {
+                message.success('Update status successfully');
+                queryClient.invalidateQueries([`${payload}`]);
+            },
+        },
+    );
+};
 export const useListColour = () => {
     return useQuery(['listColour'], () =>
         apiClient.get({ url: '/colours'}),

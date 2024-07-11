@@ -8,6 +8,7 @@ import { create } from 'zustand';
 import userService, { SignInReq } from '@/api/services/userService';
 import {
   ADMIN_PERMISSION,
+  CASHIER_PERMISSION,
   MANAGERS_PERMISSION,
   STAFF_PERMISSION,
 } from '@/router/constant';
@@ -87,7 +88,19 @@ export const useSignIn = () => {
         user.permissions = MANAGERS_PERMISSION;
         setUserInfo(user);
         navigatge("/dashboard", { replace: true });
-      } else {
+      } else if(
+        decodetoken[
+          'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+        ] === 'Cashier'
+      ) {
+        user.permissions = CASHIER_PERMISSION;
+        setUserInfo(user);
+        navigatge("/dashboard", { replace: true });
+      }else if(
+        decodetoken[
+          'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+        ] === 'Seller'
+      ) {
         user.permissions = STAFF_PERMISSION;
         setUserInfo(user);
         navigatge("/staff/order", { replace: true });

@@ -54,7 +54,7 @@ const STAFF_PRODUCT_PERMISSION : Permission={
      {
         id: '8426999229400874',
         parentId: '9100714781927704',
-        label: 'Checking',
+        label: 'Purchase Order',
         name: 'Checking',
         icon: 'ri-survey-fill',
         type: PermissionType.MENU,
@@ -90,7 +90,7 @@ const STAFF_INVOICE_PERMISSION:Permission={
 const STAFF_CHECKING_PERMISSION: Permission={
     id: '9100714781927711',
     parentId: '',
-    label: 'Checking',
+    label: 'Purchase Order',
     name: 'checking',
     icon: 'ri-survey-fill',
     type: PermissionType.MENU,
@@ -247,10 +247,14 @@ export const MANAGERS_PERMISSION = [
     MANAGER_MATERIAL_PERMISSION,
 ];
 export const STAFF_PERMISSION = [
-    ADMIN_DASHBOARD_PERMISSION,
     // STAFF_PRODUCT_PERMISSION,
     STAFF_ORDER_PERMISSION,
-    STAFF_INVOICE_PERMISSION,
     STAFF_CHECKING_PERMISSION,
-    STAFF_PROMOTION_PERMISSION
+    STAFF_PROMOTION_PERMISSION,
+];
+
+export const CASHIER_PERMISSION = [
+    ADMIN_DASHBOARD_PERMISSION,
+    // STAFF_PRODUCT_PERMISSION,
+    STAFF_INVOICE_PERMISSION,
 ];

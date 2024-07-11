@@ -102,3 +102,8 @@ export const useListCounter = () => {
         apiClient.get({ url: '/counters' }),
     );
 };
+export const useListRole = () => {
+    return useQuery(['listRole'], () =>
+        apiClient.get({ url: '/roles/getAllRole' }),
+    );
+};

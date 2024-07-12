@@ -1,5 +1,6 @@
+import { useListRole } from "@/api/manager/products";
 import { UserPayload, useCreateUser, useUpdateUser } from "@/api/manager/user";
-import { Button, Form, Input, Modal, message } from "antd";
+import { Button, Form, Input, Modal, Select, message } from "antd";
 import { useState } from "react";
 
 export type UserCreateFormProps = {
@@ -10,6 +11,7 @@ export function FormUser({ formData, onClose }: UserCreateFormProps) {
   const [form] = Form.useForm();
   const { mutateAsync: createMutate } = useCreateUser();
   const { mutateAsync: updateMutate } = useUpdateUser();
+  const { data: dataRole } = useListRole();
   const [loading, setLoading] = useState<boolean>(false);
 
   const submitHandle = async () => {
@@ -25,7 +27,6 @@ export function FormUser({ formData, onClose }: UserCreateFormProps) {
         setLoading(false);
       } else {
         const createData: UserPayload = { ...values };
-        createData.roleId = "3";
         await createMutate(createData);
         setLoading(false);
       }
@@ -36,6 +37,23 @@ export function FormUser({ formData, onClose }: UserCreateFormProps) {
       setLoading(false);
     }
   };
+    const onChange = (_value: string) => {};
+  const filterOption = (
+    input: string,
+    option?: { label: string; value: string }
+  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+  const prepareSelectOptions = (
+    data: any[],
+    idField: string,
+    nameField: string
+  ) => {
+    if (!data) return [];
+    return data.map((item) => ({
+      value: item[idField],
+      label: item[nameField],
+    }));
+  };
+
 
   return (
     <Modal
@@ -111,6 +129,21 @@ export function FormUser({ formData, onClose }: UserCreateFormProps) {
           rules={[{ required: true, message: "Please input address" }]}
         >
           <Input />
+        </Form.Item>
+        <Form.Item
+          label="Role"
+          name="roleId"
+          required
+          rules={[{ required: true, message: "Please input role" }]}
+        >
+          <Select
+            showSearch
+            placeholder="Select a role"
+            optionFilterProp="children"
+            onChange={onChange}
+            filterOption={filterOption}
+            options={prepareSelectOptions(dataRole, "roleId", "roleName")}
+          />
         </Form.Item>
       </Form>
     </Modal>

@@ -95,7 +95,7 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
               {data?.materials[0]?.weight}
             </Descriptions.Item>
             <Descriptions.Item label="Buy Price" span={3}>
-              {data?.materials[0]?.materialPrice.buyPrice}
+              {/* {data?.materials[0]?.materialPrice.buyPrice} */}
               <Typography.Text>
                 {numberWithCommas(data?.materials[0]?.materialPrice.buyPrice)}{" "}
                 VND

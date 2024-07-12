@@ -1,203 +1,46 @@
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Input,
-  Pagination,
-  Popconfirm,
-  Row,
-  Space,
-  Typography,
-} from "antd";
-import { Modal } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
-import Highlighter from "react-highlight-words";
-import Table, { ColumnsType } from "antd/es/table";
+import { Modal, Button, Table } from "antd";
+import { useListGoldPrice } from "@/api/services/service";
 import { numberWithCommas } from "@/utils/string";
-import { useListMaterial } from "@/api/manager/material";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import { useRef, useState } from "react";
+
 export type GoldPriceProps = {
   onClose: () => void;
 };
 export function GoldPriceTable({ onClose }: GoldPriceProps) {
-    const { Title } = Typography;
-  const { data, isLoading } = useListMaterial();  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const searchInput = useRef<InputRef>(null);
-        const handleSearch = (
-          selectedKeys: string[],
-          confirm: FilterDropdownProps["confirm"],
-          dataIndex: any
-        ) => {
-          confirm();
-          setSearchText(selectedKeys[0]);
-          setSearchedColumn(dataIndex);
-        };
-
-        const handleReset = (clearFilters: () => void) => {
-          clearFilters();
-          setSearchText("");
-        };
-
-        const getColumnSearchProps = (
-          dataIndex: any
-        ): TableColumnType<any> => ({
-          filterDropdown: ({
-            setSelectedKeys,
-            selectedKeys,
-            confirm,
-            clearFilters,
-            close,
-          }) => (
-            <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-              <Input
-                ref={searchInput}
-                placeholder={`Search ${dataIndex}`}
-                value={selectedKeys[0]}
-                onChange={(e) =>
-                  setSelectedKeys(e.target.value ? [e.target.value] : [])
-                }
-                onPressEnter={() =>
-                  handleSearch(selectedKeys as string[], confirm, dataIndex)
-                }
-                style={{ marginBottom: 8, display: "block" }}
-              />
-              <Space>
-                <Button
-                  type="primary"
-                  onClick={() =>
-                    handleSearch(selectedKeys as string[], confirm, dataIndex)
-                  }
-                  icon={<SearchOutlined />}
-                  size="small"
-                  style={{ width: 90, borderRadius: 5 }}
-                >
-                  Search
-                </Button>
-                <Button
-                  onClick={() => clearFilters && handleReset(clearFilters)}
-                  size="small"
-                  style={{ width: 90, borderRadius: 5 }}
-                >
-                  Reset
-                </Button>
-                <Button
-                  type="link"
-                  size="small"
-                  onClick={() => {
-                    confirm({ closeDropdown: false });
-                    setSearchText((selectedKeys as string[])[0]);
-                    setSearchedColumn(dataIndex);
-                  }}
-                >
-                  Filter
-                </Button>
-                <Button
-                  type="link"
-                  size="small"
-                  style={{ color: "red" }}
-                  onClick={() => {
-                    close();
-                  }}
-                >
-                  Close
-                </Button>
-              </Space>
-            </div>
-          ),
-          filterIcon: (filtered: boolean) => (
-            <SearchOutlined
-              style={{ color: filtered ? "#1677ff" : undefined }}
-            />
-          ),
-          onFilter: (value, record) =>
-            record[dataIndex]
-              .toString()
-              .toLowerCase()
-              .includes((value as string).toLowerCase()),
-          onFilterDropdownOpenChange: (visible) => {
-            if (visible) {
-              setTimeout(() => searchInput.current?.select(), 100);
-            }
-          },
-          render: (text) =>
-            searchedColumn === dataIndex ? (
-              <Highlighter
-                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-                searchWords={[searchText]}
-                autoEscape
-                textToHighlight={text ? text.toString() : ""}
-              />
-            ) : (
-              text
-            ),
-        });
-        const columns: ColumnsType<any> = [
-          {
-            title: "No",
-            dataIndex: "no",
-            render: (_text, _data, index) => <Title level={5}>{++index}</Title>,
-            width: "5%",
-          },
-          {
-            title: "Material Name",
-            dataIndex: "materialName",
-            key: "materialName",
-            ...getColumnSearchProps("materialName"),
-          },
-          {
-            title: "Buy Price",
-            dataIndex: "materialPrice",
-            render: (_, record) => (
-              <div>
-                {numberWithCommas(record.materialPrice?.buyPrice || 0)} VND
-              </div>
-            ),
-          },
-          {
-            title: "Sell Price",
-            dataIndex: "materialPrice",
-            render: (_, record) => (
-              <div>
-                {numberWithCommas(record.materialPrice?.sellPrice || 0)} VND
-              </div>
-            ),
-          },
-          {
-            title: "Effective Date",
-            dataIndex: "materialPrice",
-            render: (_, record) => (
-              <div>
-                {new Date(record.materialPrice?.effDate).toLocaleString()}
-              </div>
-            ),
-          },
-          // {
-          //   title: "Status",
-          //   dataIndex: "isActive",
-          //   render: (text) => (
-          //     <div
-          //       style={{
-          //         maxWidth: 200,
-          //         whiteSpace: "nowrap",
-          //         overflow: "hidden",
-          //         textOverflow: "ellipsis",
-          //         color: text ? "green" : "red",
-          //         fontWeight: "bold",
-          //       }}
-          //     >
-          //       {text ? "Active" : "Inactive"}
-          //     </div>
-          //   ),
-          // },
-        ];
-
+  const { data, isLoading } = useListGoldPrice();
+  const columns = [
+    // {
+    //   title: "No",
+    //   dataIndex: "@row",
+    //   key: "@row",
+    // },
+    {
+      title: "Name",
+      render: (_: any, record: any) => (
+        <div>{record[`@n_${record["@row"]}`]}</div>
+      ),
+    },
+    // {
+    //   title: "Kara",
+    //   render: (_: any, record: any) => (
+    //     <div>{record[`@k_${record["@row"]}`]}</div>
+    //   ),
+    // },
+    {
+      title: "Purchase",
+      render: (_: any, record: any) => (
+        <div>{numberWithCommas(record[`@pb_${record["@row"]}`])} VND</div>
+      ),
+    },
+    {
+      title: "Saleprice",
+      render: (_: any, record: any) => (
+        <div>{numberWithCommas(record[`@ps_${record["@row"]}`])} VND</div>
+      ),
+    },
+  ];
   return (
     <Modal
-      title={`Gold price`}
+      title={`Gold price updated at: ${data?.DataList?.Data[0]["@d_1"]}`}
       open
       onCancel={() => onClose()}
       width={1300}
@@ -205,21 +48,34 @@ export function GoldPriceTable({ onClose }: GoldPriceProps) {
         <Button key="back" onClick={onClose}>
           Cancel
         </Button>,
+        <Button
+          type="primary"
+          onClick={() =>
+            window.open("http://localhost:5173/#/goldPrice", "_blank")
+          }
+        >
+          Show Gold price
+        </Button>,
       ]}
     >
-      {/* <Table
-        dataSource={data?.DataList?.Data}
-        columns={columns}
-        loading={isLoading}
-        scroll={{ x: 700 }}
-      /> */}
-      <Table
-        // pagination={false}
-        columns={columns}
-        dataSource={data?.items}
-        loading={isLoading}
-        scroll={{ x: 700 }}
-      />
+      <div className="flex gap-3">
+        <Table
+          dataSource={data?.DataList?.Data}
+          columns={columns}
+          loading={isLoading}
+          scroll={{ x: 700 }}
+        />
+        <div className="w-full">
+          <iframe
+            className="w-full"
+            src="https://www.tradingview-widget.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22FOREXCOM%3AXAUUSD%22%2C%22colorTheme%22%3A%22light%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A126%2C%22isTransparent%22%3Afalse%2C%22utm_source%22%3A%22www.goldapi.io%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22single-quote%22%2C%22page-uri%22%3A%22www.goldapi.io%2Fdashboard%22%7D"
+          />
+          <iframe
+            className="w-full h-[500px]"
+            src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_8a92b&symbol=OANDA%3AXAUUSD&interval=3&symboledit=1&saveimage=1&toolbarbg=f1f3f6&details=1&hotlist=1&studies=%5B%5D&theme=light&style=1&timezone=Asia%2FHo_Chi_Minh&withdateranges=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=vi_VN&referral_id=1713&utm_source=giavang.org&utm_medium=widget&utm_campaign=chart&utm_term=OANDA%3AXAUUSD#%7B%22page-uri%22%3A%22giavang.org%2Fthe-gioi%2F%22%7D"
+          />
+        </div>
+      </div>
     </Modal>
   );
 }

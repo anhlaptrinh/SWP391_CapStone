@@ -1,10 +1,13 @@
 import { useChangeInvoice, useListInvoice, useListPurchaseInvoice } from "@/api/staff/listInvoice";
 import { CircleLoading } from "@/components/loading";
-import { Table, Popover, Tag, Tabs, Button, Col, Form, Input, Row } from "antd";
+import { Table, Popover, Tag, Tabs, Button, Col, Form, Input, Row, InputRef, Space, TableColumnType } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import OrderPurchase from "./order.purchase";
 import OrderRePurchase from "./order.repurchase";
+import { SearchOutlined } from "@ant-design/icons";
+import { FilterDropdownProps } from "antd/es/table/interface";
+import Highlighter from "react-highlight-words";
 
 export default function InvoiceChecked() {
   const data: any = [];
@@ -20,17 +23,124 @@ export default function InvoiceChecked() {
   const [openPurchaseModal, setPurchaseModal] = useState(false);
   const [datarepurchase,setrePurchase]=useState([]);
   const [dataopenPurchase,setopenPurchase]=useState(false);
+  const [searchText,setSearchText]=useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
   if (isLoadingDelivered) return <CircleLoading />;
   if (isLoadingPPending) return <CircleLoading />;
   if (isLoadingPDraft) return <CircleLoading />;
   if (isLoadingPDelivered) return <CircleLoading />;
- 
+  const handleSearch=(
+    selectedKeys:string[],
+    confirm:FilterDropdownProps["confirm"],
+    dataIndex:any)=>{
+      confirm();
+      setSearchText(selectedKeys[0]);
+      setSearchedColumn(dataIndex);
+    };
+     const handleReset = (clearFilters: () => void) => {
+            clearFilters();
+            setSearchText("");
+          };
+  
+    const getColumnSearchProps = (dataIndex: any ): TableColumnType<any> => ({
+            filterDropdown: ({
+              setSelectedKeys,
+              selectedKeys,
+              confirm,
+              clearFilters,
+              close,
+            }) => (
+              <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+                <Input
+                  ref={searchInput}
+                  placeholder={`Search ${dataIndex}`}
+                  value={selectedKeys[0]}
+                  onChange={(e) =>
+                    setSelectedKeys(e.target.value ? [e.target.value] : [])
+                  }
+                  onPressEnter={() =>
+                    handleSearch(selectedKeys as string[], confirm, dataIndex)
+                  }
+                  style={{ marginBottom: 8, display: "block" }}
+                />
+                <Space>
+                  <Button
+                    type="primary"
+                    onClick={() =>
+                      handleSearch(selectedKeys as string[], confirm, dataIndex)
+                    }
+                    icon={<SearchOutlined  />}
+                    size="small"
+                    style={{ width: 90, borderRadius: 5 }}
+                  >
+                    Search
+                  </Button>
+                  <Button
+                    onClick={() => clearFilters && handleReset(clearFilters)}
+                    size="small"
+                    style={{ width: 90, borderRadius: 5 }}
+                  >
+                    Reset
+                  </Button>
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                      confirm({ closeDropdown: false });
+                      setSearchText((selectedKeys as string[])[0]);
+                      setSearchedColumn(dataIndex);
+                    }}
+                  >
+                    Filter
+                  </Button>
+                  <Button
+                    type="link"
+                    size="small"
+                    style={{ color: "red" }}
+                    onClick={() => {
+                      close();
+                    }}
+                  >
+                    Close
+                  </Button>
+                </Space>
+              </div>
+            ),
+            filterIcon: (filtered: boolean) => (
+              <SearchOutlined
+                style={{fontSize: '17px',alignContent:'center',width: '17px', color: filtered ? "#1677ff" : undefined }}
+              />
+            ),
+            onFilter: (value, record) =>
+              record[dataIndex]
+                .toString()
+                .toLowerCase()
+                .includes((value as string).toLowerCase()),
+            onFilterDropdownOpenChange: (visible) => {
+              if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+              }
+            },
+            render: (text) =>
+              searchedColumn === dataIndex ? (
+                <Highlighter
+                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  searchWords={[searchText]}
+                  autoEscape
+                  textToHighlight={text ? text.toString() : ""}
+                />
+              ) : (
+                text
+              ),
+          });
   const columns: ColumnsType<any> = [
     {
       title: "ID",
       dataIndex: "invoiceId",
       key: "invoiceId",
       width: "5%",
+      ...getColumnSearchProps("invoiceId"),
     },
 
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
@@ -91,6 +201,7 @@ export default function InvoiceChecked() {
       align: "center",
       dataIndex: "total",
       key: "total",
+      
       render: (text) => `${new Intl.NumberFormat("en-US").format(text)}VND`,
     },
     {
@@ -106,6 +217,7 @@ export default function InvoiceChecked() {
       title: "Amount",
       align: "center",
       dataIndex: "totalWithDiscount",
+      sorter: (a, b) => b.total - a.total,
       key: "totalWithDiscount",
       render: (text) => `${new Intl.NumberFormat("en-US").format(text)}VND`,
     },
@@ -208,6 +320,7 @@ export default function InvoiceChecked() {
       align: "center",
       dataIndex: "total",
       key: "total",
+      
       render: (_,record) => `${new Intl.NumberFormat('en-US').format(record.total || 0)} VND`,
     },
     {
@@ -251,20 +364,8 @@ export default function InvoiceChecked() {
     <div className="mt-3 text-sm">
       <Form form={form} onFinish={onFinishHandler}>
         <Row gutter={24} justify="space-between">
-          <Col span={14}>
-            <Row gutter={12}>
-              <Col span={18}>
-                <Form.Item name="Search">
-                  <Input placeholder="Search by ID" allowClear />
-                </Form.Item>
-              </Col>
-
-              <Col span={6}>
-                <Button type="primary">Reset</Button>
-              </Col>
-            </Row>
-          </Col>
-          <Col span={6}>
+         
+          <Col span={12}>
             <Button
               className="mt-3"
               size="small"

@@ -23,6 +23,10 @@ export const uselistGold=(payload?:any) => {
         apiClient.get({ url: `/products/materials?isActive=true&page=1&pageSize=100`,params:{materialId:payload}}),
     );
 }
+export const useGetProductById=(payload?:any)=>{
+    return useQuery(['get-product-by-id'], () =>
+        apiClient.get({ url: `/products/${payload}`}),)
+}
 
 
 

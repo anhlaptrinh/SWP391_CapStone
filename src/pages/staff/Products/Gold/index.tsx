@@ -1,4 +1,4 @@
-import {  GoldPrice, GoldProduct, ProductGem } from "#/jwelry";
+import {  GoldProduct } from "#/jwelry";
 import { CircleLoading } from "@/components/loading";
 import { Row, Col, Card, Button,Image, Typography, Divider, Pagination, Tooltip } from "antd";
 import { useState } from "react";
@@ -79,7 +79,7 @@ export default function Gold() {
                 <Button
                   size="middle"
                   type="default"
-                  style={{backgroundColor: '#4F6F52', color:'white'}}
+                  style={{backgroundColor: '#53c41a', color:'#fff'}}
                   onClick={() => handleAddToCart(gold)}
                 >
                   Select

@@ -217,6 +217,7 @@ export default function Invoice() {
       align: "center",
       dataIndex: "totalWithDiscount",
       key: "totalWithDiscount",
+      sorter: (a, b) => b.totalWithDiscount - a.totalWithDiscount,
       render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
     },
     {

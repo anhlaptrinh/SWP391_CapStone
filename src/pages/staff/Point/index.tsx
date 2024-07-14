@@ -5,20 +5,26 @@ import {
   Col,
   Form,
   Input,
+  InputRef,
   message,
   Modal,
   Pagination,
   Popconfirm,
   Popover,
   Row,
+  Space,
+  TableColumnType,
   Typography,
 } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { InputType } from "#/api";
 import { useCreateDiscount, useDiscount } from "@/api/staff/discount";
 import { useCustomerStore } from "@/store/discount";
+import { SearchOutlined } from "@ant-design/icons";
+import { FilterDropdownProps } from "antd/es/table/interface";
+import Highlighter from "react-highlight-words";
 
 export default function DiscountPoint() {
   const { Title,Text } = Typography;
@@ -30,12 +36,119 @@ export default function DiscountPoint() {
   const setSelectedCustomer = useCustomerStore((state) => state.setSelectedCustomer);
   // Thêm dữ liệu cứng cho bảng
   const {data,isLoading} = useDiscount();
+  const [searchText,setSearchText]=useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
 
+  const handleSearch=(
+    selectedKeys:string[],
+    confirm:FilterDropdownProps["confirm"],
+    dataIndex:any)=>{
+      confirm();
+      setSearchText(selectedKeys[0]);
+      setSearchedColumn(dataIndex);
+    };
+     const handleReset = (clearFilters: () => void) => {
+            clearFilters();
+            setSearchText("");
+          };
+  
+    const getColumnSearchProps = (dataIndex: any ): TableColumnType<any> => ({
+            filterDropdown: ({
+              setSelectedKeys,
+              selectedKeys,
+              confirm,
+              clearFilters,
+              close,
+            }) => (
+              <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+                <Input
+                  ref={searchInput}
+                  placeholder={`Search ${dataIndex}`}
+                  value={selectedKeys[0]}
+                  onChange={(e) =>
+                    setSelectedKeys(e.target.value ? [e.target.value] : [])
+                  }
+                  onPressEnter={() =>
+                    handleSearch(selectedKeys as string[], confirm, dataIndex)
+                  }
+                  style={{ marginBottom: 8, display: "block" }}
+                />
+                <Space>
+                  <Button
+                    type="primary"
+                    onClick={() =>
+                      handleSearch(selectedKeys as string[], confirm, dataIndex)
+                    }
+                    icon={<SearchOutlined  />}
+                    size="small"
+                    style={{ width: 90, borderRadius: 5 }}
+                  >
+                    Search
+                  </Button>
+                  <Button
+                    onClick={() => clearFilters && handleReset(clearFilters)}
+                    size="small"
+                    style={{ width: 90, borderRadius: 5 }}
+                  >
+                    Reset
+                  </Button>
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                      confirm({ closeDropdown: false });
+                      setSearchText((selectedKeys as string[])[0]);
+                      setSearchedColumn(dataIndex);
+                    }}
+                  >
+                    Filter
+                  </Button>
+                  <Button
+                    type="link"
+                    size="small"
+                    style={{ color: "red" }}
+                    onClick={() => {
+                      close();
+                    }}
+                  >
+                    Close
+                  </Button>
+                </Space>
+              </div>
+            ),
+            filterIcon: (filtered: boolean) => (
+              <SearchOutlined
+                style={{fontSize: '17px',alignContent:'center',width: '17px', color: filtered ? "#1677ff" : undefined }}
+              />
+            ),
+            onFilter: (value, record) =>
+              record[dataIndex]
+                .toString()
+                .toLowerCase()
+                .includes((value as string).toLowerCase()),
+            onFilterDropdownOpenChange: (visible) => {
+              if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+              }
+            },
+            render: (text) =>
+              searchedColumn === dataIndex ? (
+                <Highlighter
+                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  searchWords={[searchText]}
+                  autoEscape
+                  textToHighlight={text ? text.toString() : ""}
+                />
+              ) : (
+                text
+              ),
+          });
   const columns: ColumnsType<any> = [
     {
       title: "No",
-      dataIndex: "no",
-      render: (_text, _data, index) => <Title level={5}>{++index}</Title>,
+      dataIndex: "customerId",
+      ...getColumnSearchProps("customerId"),
       width: "5%",
     },
     {
@@ -45,10 +158,12 @@ export default function DiscountPoint() {
     {
       title: "Phone Number",
       dataIndex: "phoneNumber",
+      ...getColumnSearchProps("phoneNumber")
     },
     {
       title: "Point",
       dataIndex: "point",
+      sorter: (a, b) => b.point - a.point,
     },
     {
       title: "Ưu Đãi",
@@ -140,32 +255,22 @@ export default function DiscountPoint() {
           <Col span={20}>
             <Row gutter={24}>
               <Col span={8}>
-                <Form.Item name="Search">
-                  <Input placeholder="Search by name" allowClear />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
                 <Row>
-                  <Col span={7}>
-                    <Form.Item name="search">
-                      <Button type="primary" htmlType="submit">
-                        Search
-                      </Button>
-                    </Form.Item>
-                  </Col>
-                  <Col span={7}>
-                    <Button type="primary" onClick={resetHandler}>
+                  <Col span={18}>
+                    <Button type="primary" danger onClick={resetHandler}>
                       Reset
                     </Button>
                   </Col>
+                  <Col span={2}>
+                    <Row>
+                      <Col span={12}>
+                        <Button type="primary" onClick={() => setPoint(true)}>
+                          New
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Col>
                 </Row>
-              </Col>
-            </Row>
-          </Col>
-          <Col span={2}>
-            <Row>
-              <Col span={12}>
-                <Button type="primary" onClick={()=>setPoint(true)} >New</Button>
               </Col>
             </Row>
           </Col>
@@ -174,17 +279,17 @@ export default function DiscountPoint() {
       <Table
         rowKey="id"
         size="small"
+        className="mt-3"
         scroll={{ x: "max-content" }}
         columns={columns}
         dataSource={data?.items} // Sử dụng dữ liệu cứng đã tạo
         // loading={isLoading}
       />
-     <Modal
+      <Modal
         title="Nhập thông tin ưu đãi"
         open={createPoint}
         onOk={handleOk}
         onCancel={handleCancel}
-        
       >
         <Form form={form} layout="vertical" name="userForm">
           <Form.Item
@@ -203,16 +308,11 @@ export default function DiscountPoint() {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="point"
-            label="Promotion point"
-           
-          >
+          <Form.Item name="point" label="Promotion point">
             <Input disabled defaultValue={0} />
           </Form.Item>
         </Form>
       </Modal>
     </Card>
-    
   );
 }

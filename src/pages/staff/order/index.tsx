@@ -3,8 +3,7 @@ import Gems from "../Products/Gems";
 import Gold from "../Products/Gold";
 import OrderDetail from "./orderDetails";
 import Jwelery from "../Products/Jwelery";
-import { useState } from "react";
-import DiscountPoint from "../Point";
+
 
 
 

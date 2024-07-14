@@ -1,9 +1,11 @@
-import { useChangeInvoice, useListInvoice, useListPurchaseInvoice, usePaymentVNPAY, usePrintInvoice, usePrintWarranty } from '@/api/staff/listInvoice';
+import { useChangeInvoice, useListInvoice, useListPurchaseInvoice, usePaymentVNPAY,  usePrintWarranty } from '@/api/staff/listInvoice';
 import { IconButton, Iconify } from '@/components/icon';
 import { CircleLoading } from '@/components/loading';
 import { ArrowDownOutlined, DeliveredProcedureOutlined, FileProtectOutlined, PayCircleOutlined } from '@ant-design/icons';
-import { Table, Popover, Tag, Tabs, Button } from 'antd';
+import { Table, Popover, Tag, Tabs, Button, message } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import axios from 'axios';
+import { useState } from 'react';
 
 
 export default function Invoice() {
@@ -14,12 +16,14 @@ export default function Invoice() {
   const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending','Sale')
   const {data: invoiceProcessing,isLoading: isLoadingProcessing}= useListInvoice('Processing','Sale')
   const { data: deliveredInvoices, isLoading: isLoadingDelivered } = useListInvoice('Delivered','Sale');
-  const{mutateAsync:printInvoice}=usePrintInvoice();
+  
   const {mutateAsync:printWarranty}=usePrintWarranty();
   const {mutateAsync: statusInvoice}=useChangeInvoice();
   const {mutateAsync:vnpayPayment}=usePaymentVNPAY();
+  const [invoiceId,setInvoiceId]=useState();
+  const [error, setError] = useState<string | null>(null);
   const { TabPane } = Tabs;
-
+  const [loading, setLoading] = useState<boolean>(false);
   if (isLoadingPending) return <CircleLoading />;
   if (isLoadingProcessing) return <CircleLoading />;
   if (isLoadingDelivered) return <CircleLoading />;
@@ -213,6 +217,7 @@ export default function Invoice() {
       align: "center",
       dataIndex: "totalWithDiscount",
       key: "totalWithDiscount",
+      sorter: (a, b) => b.totalWithDiscount - a.totalWithDiscount,
       render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
     },
     {
@@ -238,7 +243,32 @@ export default function Invoice() {
         return <Tag color={color}>{status}</Tag>;
       }
     },
-
+    {
+      title: "Action",
+      dataIndex: "actions",
+      align: "center",
+      render: (_, record) => (
+        <div className="text-gray  flex w-full items-center justify-around">
+          <Popover content="Print Invoice">
+            <Button
+              size='middle'
+              type="primary"
+              danger
+              onClick={()=>handlePrinInvoice(record.invoiceId)}
+              icon={<FileProtectOutlined />}
+            ></Button>
+          </Popover>
+          <Popover content="Print Warranty">
+            <Button
+              onClick={()=>handlePrintWarranty(record.invoiceId)}
+              size='middle'
+              type="primary"
+              icon={<DeliveredProcedureOutlined />}
+            ></Button>
+          </Popover>
+        </div>
+      ),
+    },
     
   ];
   const columnsBuy: ColumnsType<any> = [
@@ -437,24 +467,7 @@ export default function Invoice() {
       dataIndex: "actions",
       align: "center",
       render: (_, record) => (
-        <div className="text-gray  flex w-full items-center justify-around">
-          <Popover content="Print Invoice">
-            <Button
-              size='middle'
-              type="primary"
-              danger
-              onClick={()=>handlePrintInvoice(record.invoiceId)}
-              icon={<FileProtectOutlined />}
-            ></Button>
-          </Popover>
-          <Popover content="Print Warranty">
-            <Button
-              onClick={()=>handlePrintWarranty(record.invoiceId)}
-              size='middle'
-              type="primary"
-              icon={<DeliveredProcedureOutlined />}
-            ></Button>
-          </Popover>
+        <div className="text-gray  flex w-full items-center justify-center">
           <Popover content="Payment">
             <Button
             onClick={()=>handlePayment(record.invoiceId)}
@@ -467,11 +480,61 @@ export default function Invoice() {
       ),
     },
   ];
-  const handlePrintInvoice=(id:any)=>{
-    printInvoice(id);
+  const handlePrintWarranty=async(id:any)=>{
+    if (!id) {
+      message.error("id error");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `https://jewelrysalessystem.azurewebsites.net/api/invoices/pdf`,
+        {
+          params: {invoiceId: id,warrantyId: 1},
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `invoiceWarranty.pdf`); // You can set the file name here
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (error) {
+      message.error("Failed to fetch invoice report");
+    } finally {
+      setLoading(false);
+    }
   }
-  const handlePrintWarranty=(record:any)=>{
-      printWarranty(record);
+  const handlePrinInvoice=async(id:any)=>{
+    if (!id) {
+      message.error("id error");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `https://jewelrysalessystem.azurewebsites.net/api/invoices/${id}/pdf`,
+        {
+          
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `invoiceWarranty.pdf`); // You can set the file name here
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (error) {
+      message.error("Failed to fetch invoice report");
+    } finally {
+      setLoading(false);
+    }
   }
   const handlePayment=(id:any)=>{
        statusInvoice(id)

@@ -1,9 +1,13 @@
 import { useListPurchaseInvoice, useListInvoice, useChangeInvoice } from "@/api/staff/listInvoice";
-import { IconButton, Iconify } from "@/components/icon";
+import { useGetProductById } from "@/api/staff/listProduct";
 import { CircleLoading } from "@/components/loading";
+import { useCustomerStore } from "@/store/discount";
+import { useOrderStore } from "@/store/order";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Button, Modal, Popconfirm, Popover, Table, Tabs, Tag } from "antd";
+import { Button, message, Modal, Popconfirm, Popover, Table, Tabs, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 type updateOrderForm={
     onClose:()=>void;
@@ -12,17 +16,17 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
   const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending','Sale')
   const {data: invoiceDraft,isLoading: isLoadingDraft}= useListInvoice('Draft','Sale')
   const { data: deliveredInvoices, isLoading: isLoadingDelivered } = useListInvoice('Delivered','Sale');
-  
+  const {addCartItem,cartItems} = useOrderStore();
   const {mutateAsync: statusInvoice}=useChangeInvoice();
   const { TabPane } = Tabs;
-
+  const setSelectedCustomer = useCustomerStore((state) => state.setSelectedCustomer);
+ 
   if (isLoadingPending) return <CircleLoading />;
  
   if (isLoadingDelivered) return <CircleLoading />;
   
   if (isLoadingDraft) return <CircleLoading />;
  
-
 
 
   const columns: ColumnsType<any> = [
@@ -217,13 +221,13 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
       title: "Action",
       align: "center",
       key: "action",
-      render: (_) => (
+      render: (_,record) => (
         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
           <Popover content="Update this record">
             <Button
               type="primary"
               icon={<EditOutlined />}
-              // onClick={() => handleUpdate(record)}
+              onClick={() => handleUpdate(record)}
             />
           </Popover>
           <Popconfirm
@@ -244,6 +248,31 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
       )
     }
   ];
+  const handleUpdate=async(record:any)=>{
+    if(cartItems.length>0) return message.warning("Delete previous cart first")
+    try{
+      for (const item of record.items) {
+        const res = await axios.get(`https://jewelrysalessystem.azurewebsites.net/api/products/${item.productId}`);
+        const productData = res.data;
+  
+        // Add the item to the cart
+        addCartItem({
+          id: item.productId,
+          name: item.productName,
+          image: productData.featuredImage === "" ? 'https://st.depositphotos.com/1000128/1949/i/450/depositphotos_19492613-stock-photo-gold-ingots.jpg' : productData.featuredImage,
+          quantity: item.quantity, // Default quantity
+          price: item.productPrice,
+        });
+      }
+    }catch(error) {message.error("cannot find id")}
+    setSelectedCustomer({
+      name: record.customerName,
+      phone: record.phoneNumber,
+      discount:record.perDiscount
+    });
+  
+    onClose();
+  };
   
   return (
    <Modal

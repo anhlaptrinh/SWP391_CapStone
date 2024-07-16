@@ -20,7 +20,7 @@ export const useCreateDiscount = () => {
         {
             onSuccess: () => {
                 message.success('Create Discount successfully');
-                queryClient.invalidateQueries(['discount']);
+                queryClient.refetchQueries(['discount']);
                 close();
             },
         },

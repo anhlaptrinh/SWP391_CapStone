@@ -1,8 +1,8 @@
 import create from 'zustand';
 
 interface CustomerState {
-  selectedCustomer: { name: string; phone: string; discount?: number } | null;
-  setSelectedCustomer: (customer: { name: string; phone: string; discount?: number }) => void;
+  selectedCustomer: { name: string; phone: string; discount?: number;InvoiceId?:number;status?:string } | null;
+  setSelectedCustomer: (customer: { name: string; phone: string; discount?: number;InvoiceId?:number;status?:string }) => void;
   clearCustomer: () => void;
 }
 

@@ -1,5 +1,4 @@
-import { useListPurchaseInvoice, useListInvoice, useChangeInvoice } from "@/api/staff/listInvoice";
-import { useGetProductById } from "@/api/staff/listProduct";
+import { useListInvoice, useChangeInvoice, useCancelInvoice } from "@/api/staff/listInvoice";
 import { CircleLoading } from "@/components/loading";
 import { useCustomerStore } from "@/store/discount";
 import { useOrderStore } from "@/store/order";
@@ -7,17 +6,18 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Button, message, Modal, Popconfirm, Popover, Table, Tabs, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import axios from "axios";
-import { useEffect, useState } from "react";
 
 type updateOrderForm={
     onClose:()=>void;
+    setUpdate:(value:boolean)=>void;
 }
-export default function OrderUpdater({onClose}:updateOrderForm) {
+export default function OrderUpdater({onClose,setUpdate}:updateOrderForm) {
   const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending','Sale')
   const {data: invoiceDraft,isLoading: isLoadingDraft}= useListInvoice('Draft','Sale')
   const { data: deliveredInvoices, isLoading: isLoadingDelivered } = useListInvoice('Delivered','Sale');
   const {addCartItem,cartItems} = useOrderStore();
   const {mutateAsync: statusInvoice}=useChangeInvoice();
+  const {mutateAsync:cancelInvoice}=useCancelInvoice();
   const { TabPane } = Tabs;
   const setSelectedCustomer = useCustomerStore((state) => state.setSelectedCustomer);
  
@@ -232,7 +232,7 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
           </Popover>
           <Popconfirm
             title="Are you sure you want to delete this record?"
-            // onConfirm={() => handleDelete(record)}
+            onConfirm={() => cancelInvoice(record.invoiceId)}
             okText="Yes"
             cancelText="No"
           >
@@ -268,9 +268,11 @@ export default function OrderUpdater({onClose}:updateOrderForm) {
     setSelectedCustomer({
       name: record.customerName,
       phone: record.phoneNumber,
-      discount:record.perDiscount
+      discount:record.perDiscount,
+      InvoiceId:record.invoiceId,
+      status:record.invoiceStatus
     });
-  
+    setUpdate(true);
     onClose();
   };
   

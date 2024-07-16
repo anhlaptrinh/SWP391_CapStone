@@ -10,16 +10,21 @@ import {
   Image,
   Pagination,
   message,
+  Popconfirm,
+  Popover,
 } from "antd";
 import OrderForm from "./order.create";
 import { useCustomerStore } from "@/store/discount";
 import OrderUpdater from "./order.state";
+import { DeleteOutlined, RetweetOutlined } from "@ant-design/icons";
+import { useUpdateInvoice } from "@/api/staff/listInvoice";
 
 const { Text } = Typography;
 
 const OrderDetail: React.FC = () => {
-  const cartItems = useOrderStore((state) => state.cartItems);
-  const removeCartItem = useOrderStore((state) => state.removeCartItem);
+  
+  const {removeCartItem,cartItems,clearCart} = useOrderStore();
+  
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -29,9 +34,11 @@ const OrderDetail: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<Date>(new Date()); // Thời gian hiện tại
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [statusOrder, setStatusOrder] = useState("Pending");
-  const { selectedCustomer } = useCustomerStore();
+  const { selectedCustomer,clearCustomer } = useCustomerStore();
   const [isUpdate, setisUpdate] = useState(false);
   const [stateOrder, setStateOrder] = useState(false);
+  const {mutateAsync:updateOrder}=useUpdateInvoice(clearCart,setisUpdate);
+  const [loading,setloading]=useState<boolean>(false);
 
   // Cập nhật thời gian mỗi giây
   useEffect(() => {
@@ -75,6 +82,57 @@ const OrderDetail: React.FC = () => {
     }
   };
 
+  const handleOpenUpdate=async()=>{
+    const invoiceDetails = cartItems.map(item => ({
+      productId: item.id,
+      quantity: item.quantity,
+    }));
+    const editData={
+      invoiceDetails:invoiceDetails,
+      invoiceStatus: 'Pending',
+      total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+      invoiceId:selectedCustomer?.InvoiceId
+    }
+    try{
+        setloading(true);
+        
+          await updateOrder(editData);
+          setloading(false);
+          
+          
+        
+      } catch (error) {
+        message.error(error.message || error);
+        console.log(error);
+        setloading(false);
+      }
+  }
+  const handleDraftUpdate=async()=>{
+    const invoiceDetails = cartItems.map(item => ({
+      productId: item.id,
+      quantity: item.quantity,
+    }));
+    const editData={
+      invoiceDetails:invoiceDetails,
+      invoiceStatus: 'Draft',
+      total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+      invoiceId:selectedCustomer?.InvoiceId
+    }
+    try{
+        setloading(true);
+        
+          await updateOrder(editData);
+          setloading(false);
+          
+          
+        
+      } catch (error) {
+        message.error(error.message || error);
+        console.log(error);
+        setloading(false);
+      }
+  }
+
   // Xử lý khi xóa sản phẩm
   const handleRemoveItem = (item: any) => {
     removeCartItem(item);
@@ -82,6 +140,7 @@ const OrderDetail: React.FC = () => {
     if (currentItems.length === 1 && currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
+    if(cartItems.length===0) setisUpdate(false);
   };
 
   // Định dạng thời gian
@@ -102,14 +161,43 @@ const OrderDetail: React.FC = () => {
 
     return `${dayName}, ${day}/${month}/${year}`;
   };
-
+  const handleResetinfo=()=>{
+    setisUpdate(false);
+    if(cartItems.length>0){
+    clearCart();
+    clearCustomer();
+    message.success("Clear success")
+    }
+    else message.warning("Your cart is empty")
+  }
   return (
     <div>
-      <Row justify="space-between" className="mb-3">
+      <Row justify="space-between" className="mb-3 mt-3">
         <Col span={24}>
-          <Text type="danger" strong>
+          <Row>
+          <Col span={20}>
+            <Text type="danger" strong>
             Confirmation
-          </Text>
+            </Text>
+          </Col>
+          <Col span={4}>
+          <Popconfirm
+            title="Are you sure you want to Clear all?"
+             onConfirm={handleResetinfo}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Popover content="Clear all deatails?">
+              <Button
+                type="primary"
+                size="small"
+                danger
+                icon={<RetweetOutlined />}
+              >Reset</Button>
+            </Popover>
+          </Popconfirm>
+          </Col>
+          </Row>
         </Col>
         <Col span={24}>
           <Text strong>Customer Name: {selectedCustomer?.name} </Text>
@@ -131,14 +219,14 @@ const OrderDetail: React.FC = () => {
             <Text>Order Number:</Text>
           </Col>
           <Col span={12}>
-            <Tag color="red-inverse">----</Tag>
+            <Tag color="red-inverse">{selectedCustomer?.InvoiceId||"---"}</Tag>
           </Col>
           <Col span={12}>
-            <Text>Delivery:</Text>
+            <Text>Status:</Text>
           </Col>
           <Col span={12}>
             <Text>
-              <Tag color="green-inverse">----</Tag>
+              <Tag color="green-inverse">{selectedCustomer?.status||"---"}</Tag>
             </Text>
           </Col>
         </Row>
@@ -166,8 +254,8 @@ const OrderDetail: React.FC = () => {
               <Col span={6}>
                 <Image src={item.image} alt={item.name} width={50} />
               </Col>
-              <Col span={5}>{item.name}</Col>
-              <Col span={5}>x{item.quantity}</Col>
+              <Col span={5}><Text type="success" strong>{item.name}</Text></Col>
+              <Col span={5}><Text type="danger" strong>x{item.quantity}</Text></Col>
               <Col span={4}>
                 {new Intl.NumberFormat("vi-VN", {
                   style: "currency",
@@ -203,6 +291,15 @@ const OrderDetail: React.FC = () => {
             <Button className="mr-3" type="dashed" onClick={handleOpenDraft}>
               Draft
             </Button>
+           
+            <Popconfirm
+            title="Do you want to change Draft into Pending?"
+             onConfirm={handleOpenUpdate}
+             onCancel={handleDraftUpdate}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Popover content="Update Order?">
             <Button
               disabled={!isUpdate}
               style={{
@@ -212,10 +309,11 @@ const OrderDetail: React.FC = () => {
                 pointerEvents: !isUpdate ? 'none' : 'auto',
               }}
               type="primary"
-              onClick={handleOpenDraft}
             >
               Update
             </Button>
+            </Popover>
+          </Popconfirm>
           </Col>
         </Row>
         <Pagination
@@ -241,13 +339,20 @@ const OrderDetail: React.FC = () => {
               size="middle"
               type="primary"
               onClick={handleOpenCreate}
+              disabled={isUpdate}
+              style={{
+                backgroundColor: isUpdate ? "lightgray" : "blue",
+                color: isUpdate ? "gray" : "#fff",
+                cursor: isUpdate ? 'pointer' : 'not-allowed',
+                pointerEvents: isUpdate ? 'none' : 'auto',
+              }}
             >
               Create Order
             </Button>
           </Col>
         </Row>
       </div>
-      {stateOrder !== false && <OrderUpdater onClose={handleStateModal} />}
+      {stateOrder !== false && <OrderUpdater onClose={handleStateModal} setUpdate={setisUpdate} />}
       {openCreateModal !== false && (
         <OrderForm
           status={statusOrder}

@@ -1,28 +1,39 @@
 import { useListJwelery } from "@/api/staff/listProduct";
 import { CircleLoading } from "@/components/loading";
 import { useOrderStore } from "@/store/order";
-import { Typography, Row, Col, Card, Divider, Tooltip,Image, Button, Pagination } from "antd";
-import { useState } from "react";
+import { Typography, Row, Col, Card, Divider, Tooltip, Image, Button, Pagination, Input } from "antd";
+import { useMemo, useState } from "react";
 import Jwelerydetails from "./jwelery.details";
 
-
 const { Text } = Typography;
+
 export default function Jwelery() {
   const { data, isLoading, error } = useListJwelery();
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const pageSize = 6; // Số lượng sản phẩm trên mỗi trang
-  const [showDetail,setShowDetail]=useState<any>(false);
+  const [showDetail, setShowDetail] = useState<any>(false);
+
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const currentItems = data?.items?.slice(startIndex, endIndex);
+  const filteredData = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return data?.items;
+    }
+    return data?.items?.filter((item: any) =>
+      item.productId.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [data, searchTerm]);
+  const currentItems = filteredData?.slice(startIndex, endIndex);
   const addCartItem = useOrderStore((state) => state.addCartItem);
+
   if (isLoading) return <CircleLoading />;
   if (error) return <div>Error loading Jwelery data.</div>;
-  // Tính toán chỉ mục sản phẩm trên trang hiện tại
- 
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
   const handleAddToCart = (product: any) => {
     addCartItem({
       id: product.productId,
@@ -32,40 +43,45 @@ export default function Jwelery() {
       price: product.productPrice,
     });
   };
-  const handleCloseDetail=()=>{
+
+  const handleCloseDetail = () => {
     setShowDetail(false);
-  }
+  };
+
   return (
     <div>
+      <Input.Search
+        placeholder="Search by ID"
+        style={{ marginBottom: "16px" }}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
       <Row gutter={[16, 16]}>
         {currentItems?.map((product: any) => (
           <Col xs={24} sm={12} lg={8} key={product.productId}>
             <Card
               hoverable
-              
               className="shadow-lg rounded-lg overflow-hidden h-30"
             >
-          <Card  className="flex  items-center overflow-hidden shadow-lg justify-center h-20">
-            <Image
-                src={product.featuredImage}
-                alt={product.productName}
-                className="w-full h-full object-cover "
-                
-              />
-            </Card>
+              <Card className="flex  items-center overflow-hidden shadow-lg justify-center h-20">
+                <Image
+                  src={product.featuredImage}
+                  alt={product.productName}
+                  className="w-full h-full object-cover"
+                />
+              </Card>
               <Divider />
               <Card.Meta
-              className="text-center"
-              title={<Tooltip>{product.productName}</Tooltip>}
-              description={
-                <Text strong style={{ color: 'green' }}>
-                  {new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                  }).format(product?.productPrice)}
-                </Text>
-              }
-            />
+                className="text-center"
+                title={<Tooltip title={product.productName}>{product.productName}</Tooltip>}
+                description={
+                  <Text strong style={{ color: 'green' }}>
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(product?.productPrice)}
+                  </Text>
+                }
+              />
               <div className="mt-3 flex justify-around">
                 <Button
                   size="middle"
@@ -76,7 +92,7 @@ export default function Jwelery() {
                 </Button>
                 <Button
                   size="middle"
-                  style={{color:'#fff',backgroundColor:'#53c41a'}}
+                  style={{ color: '#fff', backgroundColor: '#53c41a' }}
                   type="default"
                   onClick={() => handleAddToCart(product)}
                 >
@@ -90,14 +106,14 @@ export default function Jwelery() {
       <div className="mt-4 flex justify-center">
         <Pagination
           current={currentPage}
-          total={data?.items?.length}
+          total={filteredData?.length}
           pageSize={pageSize}
-          onChange={(page)=>handlePageChange(page)}
+          onChange={handlePageChange}
           showSizeChanger={false}
         />
       </div>
-      {showDetail!==false &&(
-        <Jwelerydetails data={showDetail} onClose={handleCloseDetail}/>
+      {showDetail !== false && (
+        <Jwelerydetails data={showDetail} onClose={handleCloseDetail} />
       )}
     </div>
   );

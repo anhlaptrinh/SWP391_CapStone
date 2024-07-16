@@ -16,8 +16,6 @@ export default function Invoice() {
   const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending','Sale')
   const {data: invoiceProcessing,isLoading: isLoadingProcessing}= useListInvoice('Processing','Sale')
   const { data: deliveredInvoices, isLoading: isLoadingDelivered } = useListInvoice('Delivered','Sale');
-  
-  const {mutateAsync:printWarranty}=usePrintWarranty();
   const {mutateAsync: statusInvoice}=useChangeInvoice();
   const {mutateAsync:vnpayPayment}=usePaymentVNPAY();
   const [invoiceId,setInvoiceId]=useState();
@@ -373,7 +371,115 @@ export default function Invoice() {
     },
     
   ];
+ 
   const columnsProcess: ColumnsType<any> = [
+    {
+      title: "ID",
+      dataIndex: "invoiceId",
+      key: 'invoiceId',
+      width: '5%'
+    },
+    
+    { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
+
+    {
+      title: "Items Order",
+      align: "center",
+      dataIndex: "items",
+      key: "items",
+      render: (items) => {
+        const popoverContent = (
+          <Table
+            dataSource={items.map((item:any, index:number) => ({ ...item, key: index }))}
+            columns={[
+              { title: 'ID', dataIndex: 'productId', key: 'productId' },
+              { title: 'Name', dataIndex: 'productName', key: 'productName' },
+              { title: 'Quantity',align:'center', dataIndex: 'quantity', key: 'quantity' },
+              { 
+                title: 'Price', 
+                dataIndex: 'productPrice', 
+                key: 'productPrice', 
+                render: (text) => `${new Intl.NumberFormat('en-US').format(text)} VND`
+              }
+            ]}
+            pagination={false}
+            size="small"
+            bordered
+          />
+        );
+        return (
+          <Popover content={popoverContent} title="Item Details" trigger="hover">
+            <a>View Items</a>
+          </Popover>
+        );
+      }
+    },
+    {
+      title: "Price",
+      align: "center",
+      dataIndex: "total",
+      key: "total",
+      render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
+    },
+    {
+      title: "Promotion",
+      align: "center",
+      dataIndex: "perDiscount",
+      key: "perDiscount",
+      render: (text) => <Tag color="red">{text}%</Tag>
+    },
+    
+
+    {
+      title: "Amount",
+      align: "center",
+      dataIndex: "totalWithDiscount",
+      key: "totalWithDiscount",
+      render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
+    },
+    {
+      title: "Order Status",
+      align: "center",
+      dataIndex: "invoiceStatus",
+      key: "invoiceStatus",
+      render: (status) => {
+        let color;
+        switch(status) {
+          case 'Delivered':
+            color = 'green';
+            break;
+          case 'Pending':
+            color = 'gold';
+            break;
+          case 'Processing':
+            color = 'magenta';
+            break;
+          default:
+            color = 'blue';
+        }
+        return <Tag color={color}>{status}</Tag>;
+      }
+    },
+    // statusInvoice(record.invoiceId)
+    {
+      title: "Action",
+      dataIndex: "actions",
+      align: "center",
+      render: (_, record) => (
+        <div className="text-gray  flex w-full items-center justify-center">
+          <Popover content="Payment">
+            <Button
+            onClick={()=>handlePayment(record.invoiceId)}
+              size='middle'
+              type="primary"
+              style={{backgroundColor:'green'}}
+            >Pay bill</Button>
+          </Popover>
+        </div>
+      ),
+    },
+  ];
+  const columnsBuyProcess: ColumnsType<any> = [
     {
       title: "ID",
       dataIndex: "invoiceId",
@@ -595,7 +701,7 @@ export default function Invoice() {
           <TabPane tab="Processing" key="2-2">
             <Table
               rowKey="invoiceId"
-              columns={columnsProcess}
+              columns={columnsBuyProcess}
               
               scroll={{ x: "max-content" }}
               dataSource={invoicePProcessing?.items}
@@ -606,7 +712,7 @@ export default function Invoice() {
           <TabPane tab="Delivered" key="2-3">
             <Table
               rowKey="invoiceId"
-              columns={columnsBuy}
+              columns={columnsDeliver}
               
               scroll={{ x: "max-content" }}
               dataSource={deliveredPInvoices?.items}

@@ -1,4 +1,5 @@
 import { useCreateInvoice, useUpdateInvoice } from "@/api/staff/listInvoice";
+import { useCustomerStore } from "@/store/discount";
 import { useOrderStore } from "@/store/order";
 import { Button, Form, Input, Modal, Select, message } from "antd";
 import { useEffect, useState } from "react";
@@ -18,8 +19,9 @@ export default function OrderForm({status,formData,onclose}:OrderCreateFormProps
 
 // Lấy username và id
     const { cartItems, clearCart } = useOrderStore();
+    const {clearCustomer}=useCustomerStore();
     // const {mutateAsync: updateInvoice}=useUpdateInvoice();
-    const {mutateAsync: createInvoice}=useCreateInvoice(clearCart);
+    const {mutateAsync: createInvoice}=useCreateInvoice(clearCart,clearCustomer,onclose);
 
     
     useEffect(() => {

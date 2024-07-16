@@ -18,7 +18,7 @@ export default function InvoiceChecked() {
   const { TabPane } = Tabs;
   const [form] = Form.useForm();
   const {data: invoicePPending,isLoading: isLoadingPPending}=useListPurchaseInvoice('Pending','Purchase')
-  const {data: invoicePDraft,isLoading: isLoadingPDraft}= useListPurchaseInvoice('Draft','Purchase')
+  const {data: invoicePDraft,isLoading: isLoadingPDraft}= useListPurchaseInvoice('Processing','Purchase')
   const { data: deliveredPInvoices, isLoading: isLoadingPDelivered } = useListPurchaseInvoice('Delivered','Purchase');
   const [openPurchaseModal, setPurchaseModal] = useState(false);
   const [datarepurchase,setrePurchase]=useState([]);

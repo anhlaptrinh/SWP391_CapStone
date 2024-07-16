@@ -12,6 +12,7 @@ export default function Order() {
   const userlocal=localStorage.getItem('user')||"";
   const user = JSON.parse(userlocal);
   const username=user.username;
+  const {Text}=Typography;
   
 
 
@@ -21,18 +22,14 @@ const { Title } = Typography;
     <Row gutter={12}>
       <Col span={14}>
         <Card style={{ backgroundColor: '#f0f2f5' }} >
-          <Input.Search
-            placeholder="Search"
-            style={{ marginBottom: "16px" }}
-          />
-          <Tabs defaultActiveKey="gold">
-            <TabPane tab="Gold" key="gold">
+          <Tabs style={{fontSize:'30px'}} defaultActiveKey="gold" type="card">
+            <TabPane tab={<Text style={{color:'Orange'}} strong>Gold</Text>} key="gold">
               <Gold />
             </TabPane>
-            <TabPane tab="Gems" key="gems">
+            <TabPane tab={<Text style={{color:'blueviolet'}} strong>Gems</Text>} key="gems">
               <Gems />
             </TabPane>
-            <TabPane tab="Jwelery" key="jwelery">
+            <TabPane tab={<Text style={{color:'blue'}} strong>Jwelery</Text>} key="jwelery">
               <Jwelery />
             </TabPane>
           </Tabs>

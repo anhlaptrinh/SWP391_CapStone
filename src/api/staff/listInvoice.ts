@@ -19,7 +19,7 @@ export const useListInvoice=(invoiceStatus: string,invoiceType:string, payload?:
           page: 1,
           pageSize: 100,
           invoiceId: payload
-        }}) 
+        }}),
     )
 }
 export const useListPurchaseInvoice=(invoiceStatus: string,invoiceType:string, payload?: any)=>{
@@ -46,7 +46,7 @@ export const useListPurchaseInvoice=(invoiceStatus: string,invoiceType:string, p
 
 
 
-  export const useUpdateInvoice=()=>{
+  export const useUpdateInvoice=(clearCart:()=>void,setupdate:(value:boolean)=>void)=>{
     return useMutation(
         async (values: any) =>
             apiClient.put({
@@ -56,13 +56,15 @@ export const useListPurchaseInvoice=(invoiceStatus: string,invoiceType:string, p
         {
             onSuccess: () => {
                 message.success('Update Invoice successfully');
-                queryClient.invalidateQueries(['listInvoice']);
+                queryClient.refetchQueries(['listInvoice']);
+                clearCart();
+                setupdate(false);
             },
         },
     )
 }
 
-export const useCreateInvoice = (clearCart:()=>void) => {
+export const useCreateInvoice = (clearCart:()=>void,clearCustomer:()=>void,onClose:()=>void) => {
     return useMutation(
         async (values: any) =>
             apiClient.post({
@@ -72,8 +74,11 @@ export const useCreateInvoice = (clearCart:()=>void) => {
         {
             onSuccess: () => {
                 message.success('Create Invoice successfully');
-                queryClient.invalidateQueries(['listInvoice']);
+                queryClient.refetchQueries(['listInvoice']);
                 clearCart();
+                clearCustomer();
+                onClose();
+                // window.location.reload();
             },
         },
     );
@@ -88,7 +93,7 @@ export const useCreatePurchaseInvoice = (clearCart:()=>void) => {
         {
             onSuccess: () => {
                 message.success('Create Purchase Invoice successfully');
-                queryClient.invalidateQueries(['listInvoice']);
+                queryClient.refetchQueries(['listPurchaseInvoice']);
                 clearCart();
             },
         },
@@ -98,7 +103,7 @@ export const useCreatePurchaseInvoice = (clearCart:()=>void) => {
 export const useCancelInvoice = () => {
   return useMutation(
       async (values: any) =>
-          apiClient.delete({ url: `/invoices/${values}` }),
+          apiClient.put({ url: `/invoices/${values}/cancel` }),
       {
           onSuccess: () => {
               queryClient.fetchQuery(['listInvoice'])
@@ -116,7 +121,7 @@ export const useChangeInvoice = () => {
       {
         onSuccess: () => {
               message.success('Update Invoice successfully');
-              queryClient.invalidateQueries(['listInvoice']); 
+              queryClient.refetchQueries(['listInvoice']); 
             
           },
       },

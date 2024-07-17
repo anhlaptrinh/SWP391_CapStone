@@ -102,7 +102,14 @@ export function FormUser({ formData, onClose }: UserCreateFormProps) {
           label="Phone Number"
           name="phoneNumber"
           required
-          rules={[{ required: true, message: "Please input phoneNumber" }]}
+          rules={[
+            { required: true, message: "Please input phoneNumber" },
+            {
+              pattern: /^[0-9]{10}$/,
+              message:
+                "The input is not a valid phone number (must be 10 digits)",
+            },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -110,7 +117,10 @@ export function FormUser({ formData, onClose }: UserCreateFormProps) {
           label="Email"
           name="email"
           required
-          rules={[{ required: true, message: "Please input email" }]}
+          rules={[
+            { required: true, message: "Please input email" },
+            { type: "email", message: "The input is not a valid email" },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -120,7 +130,7 @@ export function FormUser({ formData, onClose }: UserCreateFormProps) {
           required
           rules={[{ required: true, message: "Please input password" }]}
         >
-          <Input />
+          <Input.Password type="password" placeholder="Password" />
         </Form.Item>
         <Form.Item
           label="Address"

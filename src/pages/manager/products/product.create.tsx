@@ -217,7 +217,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               onChange={onChange}
               filterOption={filterOption}
               options={prepareSelectOptions(
-                dataCounter,
+                dataCounter.items,
                 "counterId",
                 "counterName"
               )}
@@ -310,7 +310,9 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               onChange={onChange}
               filterOption={filterOption}
               options={prepareSelectOptions(
-                dataMaterial?.items,
+                dataMaterial?.items.filter(
+                  (material: any) => material.isActive
+                ),
                 "materialId",
                 "materialName"
               )}
@@ -329,7 +331,11 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               optionFilterProp="children"
               onChange={onChange}
               filterOption={filterOption}
-              options={prepareSelectOptions(dataGem?.items, "gemId", "gemName")}
+              options={prepareSelectOptions(
+                dataGem?.items.filter((gem: any) => gem.isActive),
+                "gemId",
+                "gemName"
+              )}
             />
           </Form.Item>
           <Form.Item

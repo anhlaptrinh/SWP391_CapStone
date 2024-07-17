@@ -21,12 +21,13 @@ import { CircleLoading } from "@/components/loading";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import { Counters } from "./counters";
-import { useUpdateStatus } from "@/api/manager/products";
+import { useListRole, useUpdateStatus } from "@/api/manager/products";
 import axios from "axios";
 export default function ManagerUserList() {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
+   const { data: dataRole } = useListRole();
   const [formUser, setFormUser] = useState<any>(false);
   const [formCounter, setFormCounter] = useState<any>(false);
   const { data, isLoading } = useListUser();

@@ -40,12 +40,6 @@ export default function Invoice() {
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-    {
-      title: "Warranty",
-      align: "center",
-      dataIndex: "warranty",
-      key: "warranty",
-    },
 
     {
       title: "Items Order",
@@ -155,12 +149,6 @@ export default function Invoice() {
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-    {
-      title: "Warranty",
-      align: "center",
-      dataIndex: "warranty",
-      key: "warranty",
-    },
 
     {
       title: "Items Order",
@@ -643,8 +631,8 @@ export default function Invoice() {
     }
   }
   const handlePayment=(id:any)=>{
-       statusInvoice(id)
-    // vnpayPayment(id)
+      //  statusInvoice(id)
+    vnpayPayment(id)
   }
   return (
     <Tabs defaultActiveKey="1" className="mt-3" >

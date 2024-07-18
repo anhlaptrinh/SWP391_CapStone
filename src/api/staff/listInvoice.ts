@@ -178,7 +178,7 @@ export const usePaymentVNPAY = () => {
                 url: `/invoices/${invoiceId}/payment`,
                 
             });
-            return response.data.paymentUrl; // URL từ API trả về
+            return response.paymentUrl; // URL từ API trả về
         },
         {
             onSuccess: (paymentUrl) => {

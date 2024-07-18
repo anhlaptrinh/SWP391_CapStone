@@ -48,10 +48,16 @@ export default function Router() {
         </AuthGuard>
       ),
     };
+    
+    const PaymentSuccessRoute: AppRouteObject = {
+      path: '/payment/success',
+      Component: lazy(() => import('@/pages/payment/paymentsuccess')),
+  };
   const routes = [
     LoginRoute,
     asyncRoutes,
     ErrorRoutes,
+    PaymentSuccessRoute,
     goldPriceAsyncRoutes,
     PAGE_NOT_FOUND_ROUTE,
   ];

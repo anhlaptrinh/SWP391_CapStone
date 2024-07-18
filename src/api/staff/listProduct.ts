@@ -3,7 +3,7 @@ import apiClient from "../apiClient";
 
 export const useListJwelery = (payload?:any) => {
     return useQuery(['listProduct'], () =>
-        apiClient.get({ url: `/products/jewelries?page=1&pageSize=100`,params:{productId:payload}}),
+        apiClient.get({ url: `/products/jewelries?isActive=true&page=1&pageSize=100`,params:{productId:payload}}),
     );
 };
 

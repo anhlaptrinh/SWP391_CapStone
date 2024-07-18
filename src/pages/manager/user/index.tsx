@@ -16,7 +16,7 @@ import Highlighter from "react-highlight-words";
 import { SearchOutlined } from "@ant-design/icons";
 import { InputType } from "#/api";
 import { FormUser } from "./formUser";
-import { useEmployeeRevenue, useListUser } from "@/api/manager/user";
+import { useEmployeeRevenue, useListCounters, useListUser } from "@/api/manager/user";
 import { CircleLoading } from "@/components/loading";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
@@ -28,6 +28,7 @@ export default function ManagerUserList() {
   const [form] = Form.useForm();
   const [listRelateParams, setListRelateParams] = useState<InputType>();
    const { data: dataRole } = useListRole();
+     const { data: dataCounters } = useListCounters();
   const [formUser, setFormUser] = useState<any>(false);
   const [formCounter, setFormCounter] = useState<any>(false);
   const { data, isLoading } = useListUser();

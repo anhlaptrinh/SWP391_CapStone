@@ -87,7 +87,7 @@ export function Counters({ formData, onClose }: GemCreateFormProps) {
             onChange={onChange}
             filterOption={filterOption}
             options={prepareSelectOptions(
-              dataCounters,
+              dataCounters?.items,
               "counterId",
               "counterName"
             )}

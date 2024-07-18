@@ -340,7 +340,10 @@ export default function ManagerUserList() {
         <FormUser formData={formUser} onClose={closeFormUser} />
       )}
       {formCounter !== false && (
-        <Counters formData={formCounter} onClose={closeFormUser} />
+        <Counters
+          formData={{ ...formCounter, counterId: formCounter?.counter }}
+          onClose={closeFormUser}
+        />
       )}
     </Card>
   );

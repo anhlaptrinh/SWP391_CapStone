@@ -122,7 +122,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
           materials: [
             {
               materialId:
-                values.materials[0] || formData.materials[0].materialId,
+                values.materials || formData.materials[0].materialId,
               weight: values.weight || formData.materials[0].weight,
             },
           ],

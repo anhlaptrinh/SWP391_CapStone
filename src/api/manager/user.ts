@@ -26,7 +26,7 @@ export const useEmployeeRevenue = () => {
 };
 export const useListCounters = () => {
     return useQuery(['listCounters'], () =>
-        apiClient.get({ url: '/counters' }),
+        apiClient.get({ url: '/counters?page=1&pageSize=100' }),
     );
 };
 export const useDetailUser = (payload?: any) => {
@@ -69,7 +69,7 @@ export const useUpdateCounters = () => {
     return useMutation(
         async (values: any) =>
             apiClient.put({
-                url: `/users/${values.userId}/assign-to-counter?counterId=${values.counterId}`,
+                url: `/counters/${values.counterId}/assign-to-user?userId=${values.userId}`,
             }),
         {
             onSuccess: () => {

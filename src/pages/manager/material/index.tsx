@@ -274,7 +274,9 @@ export default function MaterialList() {
       <div className="text-right">
         <Button
           type="primary"
-          onClick={() => onOpenFormHandler({ check: true, checkName: true })}
+          onClick={() =>
+            onOpenFormHandler({ check: true, checkName: true, post: true })
+          }
           className="mb-2"
         >
           Create Material

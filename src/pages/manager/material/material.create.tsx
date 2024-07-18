@@ -22,8 +22,8 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
     setLoading(true);
     const values = await form.validateFields();
     try {
-      if (formData) {
-        if (formData?.check) {
+      if (!formData?.post) {
+        if (formData?.checkName) {
           const updateData: any = {
             materialId: formData.materialId,
             materialName: values.materialName || formData.materialName,

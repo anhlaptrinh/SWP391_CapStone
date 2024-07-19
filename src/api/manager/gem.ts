@@ -84,8 +84,8 @@ export const useUpdateGem = (payload?: any) => {
         {
             onSuccess: () => {
                 message.success('Update gem successfully');
-                queryClient.refetchQueries(['listGems']);
-                queryClient.refetchQueries(['listGem']);
+                
+                queryClient.invalidateQueries(['listGem']);
             },
         },
     );

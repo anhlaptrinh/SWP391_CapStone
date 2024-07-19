@@ -208,6 +208,7 @@ export default function ProductsList() {
     },
     { title: "Gender", dataIndex: "gender" },
     { title: "Counter", dataIndex: "counter" },
+    { title: "Quantity", dataIndex: "quantity" },
     {
       title: " Product Price",
       dataIndex: "productPrice",

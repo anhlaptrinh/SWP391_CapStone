@@ -12,8 +12,9 @@ import { usePermissionRoutes } from "@/router/hooks";
 import { ErrorRoutes } from "@/router/routes/error-routes";
 
 import { AppRouteObject } from "#/router";
-import { GoldPriceTable } from "@/layouts/dashboard/goldPrice";
+
 import { GoldPriceTableShow } from "@/layouts/dashboard/goldPrice2";
+import PaymentSuccess from "@/pages/payment/paymentsuccess";
 
 const { VITE_APP_HOMEPAGE: HOMEPAGE } = import.meta.env;
 const LoginRoute: AppRouteObject = {
@@ -48,16 +49,21 @@ export default function Router() {
         </AuthGuard>
       ),
     };
+    const PaymentRoute: AppRouteObject = {
+      path: "/payment/success",
+      element: (
+        <AuthGuard>
+          <PaymentSuccess  />
+        </AuthGuard>
+      ),
+    };
     
-    const PaymentSuccessRoute: AppRouteObject = {
-      path: '/payment/success',
-      Component: lazy(() => import('@/pages/payment/paymentsuccess')),
-  };
+    
   const routes = [
     LoginRoute,
     asyncRoutes,
+    PaymentRoute,
     ErrorRoutes,
-    PaymentSuccessRoute,
     goldPriceAsyncRoutes,
     PAGE_NOT_FOUND_ROUTE,
   ];

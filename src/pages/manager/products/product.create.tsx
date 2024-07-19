@@ -217,7 +217,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               onChange={onChange}
               filterOption={filterOption}
               options={prepareSelectOptions(
-                dataCounter.items,
+                dataCounter,
                 "counterId",
                 "counterName"
               )}

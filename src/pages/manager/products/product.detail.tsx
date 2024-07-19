@@ -82,9 +82,9 @@ export function ProductDetail({ data, onClose }: ProductDetailProps) {
           <Descriptions.Item label="Gender" span={2}>
             <Typography.Text>{data?.gender}</Typography.Text>
           </Descriptions.Item>
-          {/* <Descriptions.Item label="Colour" span={2}>
-            <Typography.Text strong>{data?.colour}</Typography.Text>
-          </Descriptions.Item> */}
+          <Descriptions.Item label="Counter" span={2}>
+            <Typography.Text>{data?.counter}</Typography.Text>
+          </Descriptions.Item>
         </Descriptions>
         {data?.materials.length > 0 && (
           <Descriptions title="Material Detail" bordered>

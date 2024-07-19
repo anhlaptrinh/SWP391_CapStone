@@ -99,7 +99,7 @@ export const useListProducttype = () => {
 };
 export const useListCounter = () => {
     return useQuery(['listCounter'], () =>
-        apiClient.get({ url: '/counters' }),
+        apiClient.get({ url: '/counters/id-name' }),
     );
 };
 export const useListRole = () => {

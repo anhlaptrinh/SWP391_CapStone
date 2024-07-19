@@ -207,7 +207,7 @@ export default function ProductsList() {
       dataIndex: "category",
     },
     { title: "Gender", dataIndex: "gender" },
-    // { title: "Colour", dataIndex: "colour" },
+    { title: "Counter", dataIndex: "counter" },
     {
       title: " Product Price",
       dataIndex: "productPrice",

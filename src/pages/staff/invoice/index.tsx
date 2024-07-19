@@ -454,14 +454,22 @@ export default function Invoice() {
       dataIndex: "actions",
       align: "center",
       render: (_, record) => (
-        <div className="text-gray  flex w-full items-center justify-center">
-          <Popover content="Payment">
+        <div className="text-gray  flex w-full items-center justify-around">
+          <Popover content="Banking">
             <Button
             onClick={()=>handlePayment(record.invoiceId)}
               size='middle'
               type="primary"
               style={{backgroundColor:'green'}}
-            >Pay bill</Button>
+            >Credit</Button>
+          </Popover>
+          <Popover content="Payment">
+            <Button
+            onClick={()=>handleCash(record.invoiceId)}
+              size='middle'
+              type="primary"
+              style={{backgroundColor:'Orange'}}
+            >Cash</Button>
           </Popover>
         </div>
       ),
@@ -564,11 +572,11 @@ export default function Invoice() {
         <div className="text-gray  flex w-full items-center justify-center">
           <Popover content="Payment">
             <Button
-            onClick={()=>handlePayment(record.invoiceId)}
+            onClick={()=>handleCash(record.invoiceId)}
               size='middle'
               type="primary"
               style={{backgroundColor:'green'}}
-            >Pay bill</Button>
+            >Complete</Button>
           </Popover>
         </div>
       ),
@@ -634,6 +642,10 @@ export default function Invoice() {
       //  statusInvoice(id)
     vnpayPayment(id)
   }
+  const handleCash=(id:any)=>{
+      statusInvoice(id)
+  
+}
   return (
     <Tabs defaultActiveKey="1" className="mt-3" >
       <TabPane tab="Sales Invoice" key="1">

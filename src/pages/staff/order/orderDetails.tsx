@@ -67,6 +67,7 @@ const OrderDetail: React.FC = () => {
   const handleOpenCreate = () => {
     if (cartItems.length > 0) {
       setOpenCreateModal(true);
+      setStatusOrder("Pending");
     } else {
       message.error("Cart is empty");
       setOpenCreateModal(false);
@@ -288,7 +289,13 @@ const OrderDetail: React.FC = () => {
             </Text>
           </Col>
           <Col span={12}>
-            <Button className="mr-3" type="dashed" onClick={handleOpenDraft}>
+            <Button  disabled={isUpdate}
+              style={{
+                backgroundColor: isUpdate ? "lightgray" : "Orange",
+                color: isUpdate ? "gray" : "#fff",
+                cursor: isUpdate ? 'pointer' : 'not-allowed',
+                pointerEvents: isUpdate ? 'none' : 'auto',
+              }} className="mr-3" type="primary" onClick={handleOpenDraft}>
               Draft
             </Button>
            

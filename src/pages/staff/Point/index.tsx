@@ -166,7 +166,7 @@ export default function DiscountPoint() {
       sorter: (a, b) => b.point - a.point,
     },
     {
-      title: "Ưu Đãi",
+      title: "Promotion",
       dataIndex: "discount",
       align:'center',
       render: (text)=><Text strong style={{color:'red'}}>{text}%</Text>
@@ -283,7 +283,7 @@ export default function DiscountPoint() {
         scroll={{ x: "max-content" }}
         columns={columns}
         dataSource={data?.items} // Sử dụng dữ liệu cứng đã tạo
-        // loading={isLoading}
+        loading={isLoading}
       />
       <Modal
         title="Nhập thông tin ưu đãi"
@@ -294,17 +294,17 @@ export default function DiscountPoint() {
         <Form form={form} layout="vertical" name="userForm">
           <Form.Item
             name="phoneNumber"
-            label="Số điện thoại"
+            label="Phone Number"
             rules={[
-              { required: true, message: "Vui lòng nhập số điện thoại!" },
+              { required: true, message: "Please Enter Phone Number!" },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="customerName"
-            label="Tên Khách Hàng"
-            rules={[{ required: true, message: "Vui lòng nhập tên!" }]}
+            label="Customer Name"
+            rules={[{ required: true, message: "Please Enter Customer Name!" }]}
           >
             <Input />
           </Form.Item>

@@ -16,7 +16,7 @@ export interface GemPayload {
     // gemPrice: object;
 }
 export const useListGem = (payload?: any) => {
-    return useQuery(['listGems'], () =>
+    return useQuery(['listGem'], () =>
         apiClient.get({ url: '/gems?page=1&pageSize=100', params: { gemId: payload }}),
     );
 };
@@ -68,6 +68,7 @@ export const useCreateGem = (payload?: any) => {
             onSuccess: () => {
                 message.success('Create gem successfully');
                 queryClient.invalidateQueries(['listGems']);
+                queryClient.invalidateQueries(['listGem']);
             },
         },
     );
@@ -83,7 +84,8 @@ export const useUpdateGem = (payload?: any) => {
         {
             onSuccess: () => {
                 message.success('Update gem successfully');
-                queryClient.invalidateQueries(['listGems']);
+                queryClient.refetchQueries(['listGems']);
+                queryClient.refetchQueries(['listGem']);
             },
         },
     );

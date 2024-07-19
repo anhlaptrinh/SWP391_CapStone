@@ -63,8 +63,9 @@ export const useUpdatePriceMaterial = (payload?: any) => {
         {
             onSuccess: () => {
                 message.success('Update price Material successfully');
-                queryClient.invalidateQueries(['listMaterial']);
-                queryClient.invalidateQueries(['listProduct']);
+                queryClient.refetchQueries(['listMaterial']);
+                queryClient.refetchQueries(['listProduct']);
+                queryClient.refetchQueries(['list-gold']);
             },
         },
     );

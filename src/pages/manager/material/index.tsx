@@ -225,7 +225,7 @@ export default function MaterialList() {
             className="mr-2"
             onClick={() => onOpenFormHandler({ ...record, checkName: true })}
           >
-            Edit Gem
+            Edit Name
           </Button>
           <Button
             type="primary"

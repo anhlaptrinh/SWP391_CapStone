@@ -96,14 +96,10 @@ export const useSignIn = () => {
         user.permissions = CASHIER_PERMISSION;
         setUserInfo(user);
         navigatge("/dashboard", { replace: true });
-      }else if(
-        decodetoken[
-          'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
-        ] === 'Seller'
-      ) {
+      }else  {
         user.permissions = STAFF_PERMISSION;
         setUserInfo(user);
-        navigatge("/staff/order", { replace: true });
+        navigatge("/dashboard", { replace: true });
       }
       notification.success({
         message: 'Login sucessfully',

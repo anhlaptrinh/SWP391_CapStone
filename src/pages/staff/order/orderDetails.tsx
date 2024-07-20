@@ -26,7 +26,7 @@ const OrderDetail: React.FC = () => {
   const {removeCartItem,cartItems,clearCart} = useOrderStore();
   
   const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) => total + item.price ,
     0
   );
   const itemsPerPage = 4; // Số lượng sản phẩm trên mỗi trang
@@ -52,7 +52,7 @@ const OrderDetail: React.FC = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = cartItems.slice(indexOfFirstItem, indexOfLastItem);
-
+  
   // Xử lý khi chuyển trang
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -63,7 +63,7 @@ const OrderDetail: React.FC = () => {
   const handleStateModal = () => {
     setStateOrder(false);
   };
-
+  
   const handleOpenCreate = () => {
     if (cartItems.length > 0) {
       setOpenCreateModal(true);
@@ -84,29 +84,31 @@ const OrderDetail: React.FC = () => {
   };
 
   const handleOpenUpdate=async()=>{
-    const invoiceDetails = cartItems.map(item => ({
-      productId: item.id,
-      quantity: item.quantity,
-    }));
-    const editData={
-      invoiceDetails:invoiceDetails,
-      invoiceStatus: 'Pending',
-      total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
-      invoiceId:selectedCustomer?.InvoiceId
-    }
-    try{
-        setloading(true);
-        
-          await updateOrder(editData);
-          setloading(false);
-          
-          
-        
-      } catch (error) {
-        message.error(error.message || error);
-        console.log(error);
-        setloading(false);
+    if(cartItems.length>0){
+      const invoiceDetails = cartItems.map(item => ({
+        productId: item.id,
+        quantity: item.quantity,
+      }));
+      const editData={
+        invoiceDetails:invoiceDetails,
+        invoiceStatus: 'Pending',
+        total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+        invoiceId:selectedCustomer?.InvoiceId
       }
+      try{
+          setloading(true);
+          
+            await updateOrder(editData);
+            setloading(false);
+            
+            
+          
+        } catch (error) {
+          message.error(error.message || error);
+          console.log(error);
+          setloading(false);
+        }
+    }else{message.warning("Cart is empty to update"); setisUpdate(false)}
   }
   const handleDraftUpdate=async()=>{
     const invoiceDetails = cartItems.map(item => ({
@@ -164,7 +166,7 @@ const OrderDetail: React.FC = () => {
   };
   const handleResetinfo=()=>{
     setisUpdate(false);
-    if(cartItems.length>0){
+    if(cartItems.length>0 ||selectedCustomer){
     clearCart();
     clearCustomer();
     message.success("Clear success")
@@ -261,7 +263,7 @@ const OrderDetail: React.FC = () => {
                 {new Intl.NumberFormat("vi-VN", {
                   style: "currency",
                   currency: "VND",
-                }).format(item.price * item.quantity)}
+                }).format(item.price)}
               </Col>
               <Col span={4}>
                 <Button
@@ -308,7 +310,7 @@ const OrderDetail: React.FC = () => {
           >
             <Popover content="Update Order?">
             <Button
-              disabled={!isUpdate}
+              disabled={!isUpdate&&cartItems.length===0}
               style={{
                 backgroundColor: !isUpdate ? "lightgray" : "greenyellow",
                 color: !isUpdate ? "gray" : "black",

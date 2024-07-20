@@ -13,6 +13,8 @@ interface OrderStore {
   cartItems: CartItem[];
   setCartItems: (items: CartItem[]) => void;
   addCartItem: (newItem: CartItem) => void;
+  updateCartItemQuantity: (id: number, quantity: number) => void;
+  updateCartItemPrice: (id: number, price: number) => void; // Thêm hàm để cập nhật giá nếu cần
   removeCartItem: (itemToRemove: CartItem) => void;
   clearCart: () => void;
 }
@@ -26,11 +28,23 @@ export const useOrderStore = create<OrderStore>()(
         const existingItem = state.cartItems.find(item => item.id === newItem.id);
         const updatedCartItems = existingItem
           ? state.cartItems.map(item =>
-              item.id === newItem.id ? { ...item, quantity: item.quantity + 1 } : item
+              item.id === newItem.id 
+                ? { ...item, quantity: item.quantity + newItem.quantity,price:item.price+newItem.price} 
+                : item
             )
-          : [...state.cartItems, { ...newItem, quantity: 1 }];
+          : [...state.cartItems, { ...newItem }];
         return { cartItems: updatedCartItems };
       }),
+      updateCartItemQuantity: (id: number, quantity: number) => set((state) => ({
+        cartItems: state.cartItems.map(item =>
+          item.id === id ? { ...item, quantity: quantity } : item
+        )
+      })),
+      updateCartItemPrice: (id: number, price: number) => set((state) => ({
+        cartItems: state.cartItems.map(item =>
+          item.id === id ? { ...item, price: price } : item
+        )
+      })),
       removeCartItem: (itemToRemove: CartItem) => set((state) => ({
         cartItems: state.cartItems.filter(item => item.id !== itemToRemove.id)
       })),

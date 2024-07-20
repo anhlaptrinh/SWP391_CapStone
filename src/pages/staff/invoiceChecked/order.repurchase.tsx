@@ -121,7 +121,7 @@ export default function OrderRePurchase({
                               value={detail.quantity}
                               onChange={(e) => handleQuantityChange(detail.productId, parseInt(e.target.value))}
                               style={{ width: '100px', marginLeft: '8px' }}
-                              min={0} // Giới hạn số lượng không được nhập số âm
+                              min={1} // Giới hạn số lượng không được nhập số âm
                               max={detail.quantity} // Giới hạn số lượng không được vượt quá số lượng hiện có
                             />
                             

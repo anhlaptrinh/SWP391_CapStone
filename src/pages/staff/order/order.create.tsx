@@ -43,7 +43,7 @@ export default function OrderForm({status,formData,onclose}:OrderCreateFormProps
       }));
       const values=await form.validateFields()
        const payload = {
-        total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+        total: cartItems.reduce((acc, item) => acc + item.price , 0),
         perDiscount: form.getFieldValue('perDiscount')||values.perDiscount,
         customerName: form.getFieldValue('customerName') ||values.customerName,
         phoneNumber: form.getFieldValue('phoneNumber') || values.customerName ,

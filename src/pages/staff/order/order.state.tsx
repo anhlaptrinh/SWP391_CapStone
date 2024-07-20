@@ -254,7 +254,7 @@ export default function OrderUpdater({onClose,setUpdate}:updateOrderForm) {
       for (const item of record.items) {
         const res = await axios.get(`https://jewelrysalessystem.azurewebsites.net/api/products/${item.productId}`);
         const productData = res.data;
-  
+        console.log(item.quantity);
         // Add the item to the cart
         addCartItem({
           id: item.productId,

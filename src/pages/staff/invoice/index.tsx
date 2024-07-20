@@ -5,12 +5,13 @@ import { ArrowDownOutlined, DeleteOutlined, DeliveredProcedureOutlined, FileProt
 import { Table, Popover, Tag, Tabs, Button, message, Popconfirm } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 
 
 export default function Invoice() {
  
-  const {data: invoicePPending,isLoading: isLoadingPPending}=useListPurchaseInvoice('Pending','Purchase')
+  const {data: invoicePPending,isLoading: isLoadingPPending,refetch}=useListPurchaseInvoice('Pending','Purchase')
   const {data: invoicePProcessing,isLoading: isLoadingPProcessing}= useListPurchaseInvoice('Processing','Purchase')
   const { data: deliveredPInvoices, isLoading: isLoadingPDelivered } = useListPurchaseInvoice('Delivered','Purchase');
   const {data: invoicePending,isLoading: isLoadingPending}=useListInvoice('Pending','Sale')
@@ -42,7 +43,7 @@ export default function Invoice() {
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-
+    { title: "Customer", align: "center", dataIndex: "customerName", key: "customerName" },
     {
       title: "Items Order",
       align: "center",
@@ -76,7 +77,7 @@ export default function Invoice() {
       }
     },
     {
-      title: "Price",
+      title: "Price Product",
       align: "center",
       dataIndex: "total",
       key: "total",
@@ -121,6 +122,7 @@ export default function Invoice() {
         return <Tag color={color}>{status}</Tag>;
       }
     },
+    { title: "Order Date", align: "center", dataIndex: "orderDate", key: "orderDate",render: (text: string) => dayjs(text).format("DD/MM/YYYY") },
 
     {
       title: "Action",
@@ -164,7 +166,7 @@ export default function Invoice() {
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-
+    { title: "Customer", align: "center", dataIndex: "customerName", key: "customerName" },
     {
       title: "Items Order",
       align: "center",
@@ -244,6 +246,7 @@ export default function Invoice() {
         return <Tag color={color}>{status}</Tag>;
       }
     },
+    { title: "Order Date", align: "center", dataIndex: "orderDate", key: "orderDate",render: (text: string) => dayjs(text).format("DD/MM/YYYY") },
     {
       title: "Action",
       dataIndex: "actions",
@@ -281,7 +284,7 @@ export default function Invoice() {
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-
+    { title: "Customer", align: "center", dataIndex: "customerName", key: "customerName" },
     {
       title: "Items Order",
       align: "center",
@@ -361,6 +364,7 @@ export default function Invoice() {
         return <Tag color={color}>{status}</Tag>;
       }
     },
+    { title: "Order Date", align: "center", dataIndex: "orderDate", key: "orderDate",render: (text: string) => dayjs(text).format("DD/MM/YYYY") },
     {
       title: "Action",
       dataIndex: "actions",
@@ -391,7 +395,7 @@ export default function Invoice() {
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-
+    { title: "Customer", align: "center", dataIndex: "customerName", key: "customerName" },
     {
       title: "Items Order",
       align: "center",
@@ -463,6 +467,7 @@ export default function Invoice() {
         return <Tag color={color}>{status}</Tag>;
       }
     },
+    { title: "Order Date", align: "center", dataIndex: "orderDate", key: "orderDate",render: (text: string) => dayjs(text).format("DD/MM/YYYY") },
     {
       title: "Action",
       dataIndex: "actions",
@@ -507,7 +512,7 @@ export default function Invoice() {
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-
+    { title: "Customer", align: "center", dataIndex: "customerName", key: "customerName" },
     {
       title: "Items Order",
       align: "center",
@@ -561,6 +566,7 @@ export default function Invoice() {
       align: "center",
       dataIndex: "totalWithDiscount",
       key: "totalWithDiscount",
+      sorter: (a, b) => b.totalWithDiscount - a.totalWithDiscount,
       render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
     },
     {
@@ -586,17 +592,17 @@ export default function Invoice() {
         return <Tag color={color}>{status}</Tag>;
       }
     },
-    // statusInvoice(record.invoiceId)
+    { title: "Order Date", align: "center", dataIndex: "orderDate", key: "orderDate",render: (text: string) => dayjs(text).format("DD/MM/YYYY") },
     {
       title: "Action",
       dataIndex: "actions",
       align: "center",
       render: (_, record) => (
-        <div className="text-gray  flex w-full items-center justify-around">
+        <div className="text-gray  flex w-full items-center justify-between">
           <Popover content="Banking">
             <Button
             onClick={()=>handlePayment(record.invoiceId)}
-              size='middle'
+              size='small'
               type="primary"
               style={{backgroundColor:'green'}}
             >Credit</Button>
@@ -604,7 +610,7 @@ export default function Invoice() {
           <Popover content="Payment">
             <Button
             onClick={()=>handleCash(record.invoiceId)}
-              size='middle'
+              size='small'
               type="primary"
               style={{backgroundColor:'Orange'}}
             >Cash</Button>
@@ -622,7 +628,7 @@ export default function Invoice() {
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-
+    { title: "Customer", align: "center", dataIndex: "customerName", key: "customerName" },
     {
       title: "Items Order",
       align: "center",

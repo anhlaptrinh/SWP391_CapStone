@@ -707,6 +707,7 @@ export default function Invoice() {
         return <Tag color={color}>{status}</Tag>;
       }
     },
+    { title: "Order Date", align: "center", dataIndex: "orderDate", key: "orderDate",render: (text: string) => dayjs(text).format("DD/MM/YYYY") },
     // statusInvoice(record.invoiceId)
     {
       title: "Action",

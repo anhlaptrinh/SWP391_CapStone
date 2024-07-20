@@ -53,7 +53,12 @@ export default function Gems() {
     <div>
       <Input.Search
         placeholder="Search by ID"
-        style={{ marginBottom: "16px" }}
+        style={{ marginBottom: "16px",
+           // Adjust the width as needed
+          borderRadius: "5px", // Adds rounded corners
+          borderColor: "#1890ff", // Changes border color
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
+         }}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
       <Row gutter={[16, 16]}>

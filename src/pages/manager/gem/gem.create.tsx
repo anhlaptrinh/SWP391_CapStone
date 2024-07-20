@@ -75,22 +75,13 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
     ) {
       form.setFieldsValue({
         ...formData,
-        shapeId: dataShape.find(
-          (g) => g.name === formData?.shape
-        ).shapeId,
-        originId: dataOrigin.find((g) => g.name === formData?.origin)
-          .originId,
+        shapeId: dataShape.find((g) => g.name === formData?.shape).shapeId,
+        originId: dataOrigin.find((g) => g.name === formData?.origin).originId,
         clarityId: dataClarity.find((g) => g.level === formData?.clarity)
           .clarityId,
-        caratId: dataCarat.find(
-          (g) => g.weight === formData?.carat
-        ).caratId,
-                cutId: dataCut.find(
-          (g) => g.level === formData?.cut
-        ).cutId,
-                colorId: dataColor.find(
-          (g) => g.name === formData?.color
-        ).colorId,
+        caratId: dataCarat.find((g) => g.weight === formData?.carat).caratId,
+        cutId: dataCut.find((g) => g.level === formData?.cut).cutId,
+        colorId: dataColor.find((g) => g.name === formData?.color).colorId,
       });
     }
   }, [form, formData]);
@@ -119,27 +110,11 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         await updateMutate(updateData);
         setLoading(false);
       } else {
-        const result = dataGemPrices.find(
-          (item) =>
-            item.caratId === values.caratId &&
-            item.clarityId === values.clarityId &&
-            item.colorId === values.colorId &&
-            item.cutId === values.cutId &&
-            item.originId === values.originId
-        );
-
-        const price = result ? result.price : null;
-        if (price === null && checkPrice === false) {
-          setCheckPrice(true);
-          setLoading(false);
-          return Message.error("Price not found! Please enter price.");
-        }
         const updateImageUrl: string = await uploadFileToFirebase(
           values?.featuredImage[0]
         );
         const createData: GemPayload = {
           ...values,
-          price: price === null ? values.price : price,
           featuredImage: updateImageUrl,
         };
         await createMutate(createData);
@@ -169,11 +144,11 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
       label: item[nameField],
     }));
   };
-    const onChange = (_value: string) => {};
-    const filterOption = (
-      input: string,
-      option?: { label: string; value: string }
-    ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+  const onChange = (_value: string) => {};
+  const filterOption = (
+    input: string,
+    option?: { label: string; value: string }
+  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   return (
     <Modal
@@ -299,38 +274,38 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
         </div>
         {!formData?.gemId && (
           <>
-            {checkPrice ? (
-              <div className="flex items-center">
-                <Form.Item
-                  className="rounded-sm"
-                  label="Gem price"
-                  name="price"
-                  required
-                  rules={[{ required: true, message: "Please input price" }]}
-                >
-                  <Input placeholder="Gem price" />
-                </Form.Item>
-                <Button
-                  type="primary"
-                  ghost
-                  danger
-                  className="ml-4"
-                  style={{ marginTop: "5px" }}
-                  onClick={() => setCheckPrice(false)}
-                >
-                  Close Price
-                </Button>
-              </div>
-            ) : (
+            <div className="flex items-center">
+              <Form.Item
+                className="rounded-sm"
+                label="Gem price"
+                name="price"
+                required
+                // rules={[{ required: true, message: "Please input price" }]}
+              >
+                <Input placeholder="Gem price" />
+              </Form.Item>
               <Button
                 type="primary"
                 ghost
-                className="mr-2"
-                onClick={() => setCheckPrice(true)}
+                className="ml-4"
+                style={{ marginTop: "5px" }}
+                onClick={async () => {
+                  const values = await form.validateFields();
+                  const result = dataGemPrices.find(
+                    (item) =>
+                      item.caratId === values.caratId &&
+                      item.clarityId === values.clarityId &&
+                      item.colorId === values.colorId &&
+                      item.cutId === values.cutId &&
+                      item.originId === values.originId
+                  );
+                  form.setFieldValue("price", result?.price || 0);
+                  // setCheckPrice(result?.price || false);
+                }}
               >
-                Add Price
+                check Price
               </Button>
-            )}
+            </div>
           </>
         )}
         <Form.Item

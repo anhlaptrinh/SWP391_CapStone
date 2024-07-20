@@ -77,7 +77,7 @@ export default function OrderRePurchase({
       <Modal title="Purchase Order" open onCancel={onclose} footer={null}>
         <Form form={form} layout="vertical" onFinish={handleFinish}>
           <Tabs defaultActiveKey="Jewellery" onChange={handleTabChange}>
-            <TabPane tab="Gem & Jewellery" key="Jewellery">
+            <TabPane tab="Please Enter Information" key="Jewellery">
               <Form.Item
                 name="customerName"
                 label="Customer Name"
@@ -85,16 +85,17 @@ export default function OrderRePurchase({
                   { required: true, message: "Please enter customer name" },
                 ]}
               >
-                <Input />
+                <Input disabled/>
               </Form.Item>
               <Form.Item
                 name="phoneNumber"
                 label="Phone Number"
+                
                 rules={[
                   { required: true, message: "Please enter phone number" },
                 ]}
               >
-                <Input />
+                <Input  disabled/>
               </Form.Item>
               <Form.Item
                 name="invoiceDetails"

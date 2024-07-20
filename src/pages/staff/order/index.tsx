@@ -4,6 +4,7 @@ import Gold from "../Products/Gold";
 import OrderDetail from "./orderDetails";
 import Jwelery from "../Products/Jwelery";
 import { useListGems, uselistGold, useListJwelery } from "@/api/staff/listProduct";
+import { CrownOutlined,  GoldOutlined,  RubyOutlined } from "@ant-design/icons";
 
 
 
@@ -33,14 +34,20 @@ const handleRefresh=()=>{
         <Card style={{ backgroundColor: '#f0f2f5' }} >
           <Tabs tabBarExtraContent={
             <Button danger onClick={handleRefresh}>Refresh</Button>
-          } style={{fontSize:'30px'}} defaultActiveKey="gold" type="card">
-            <TabPane tab={<Text style={{color:'Orange'}} strong>Gold</Text>} key="gold">
+          } style={{fontSize:'30px'}} defaultActiveKey="gold" type="line" >
+            <TabPane tab={<> <GoldOutlined   style={{ color: 'Orange', fontSize: '20px', marginRight: '8px' }} /> <Text style={{ color: 'Orange', fontSize: '18px',fontFamily:'sans-serif' }} strong>Gold</Text></>} key="gold">
               <Gold />
             </TabPane>
-            <TabPane tab={<Text style={{color:'blueviolet'}} strong>Gems</Text>} key="gems">
+            <TabPane tab={ <>
+                    <RubyOutlined  style={{ color: 'blueviolet', fontSize: '18px', marginRight: '8px' }} />
+                    <Text style={{ color: 'blueviolet', fontSize: '18px', fontFamily:'sans-serif' }} strong>Gems</Text>
+                  </>} key="gems">
               <Gems />
             </TabPane>
-            <TabPane tab={<Text style={{color:'blue'}} strong>Jwelery</Text>} key="jwelery">
+            <TabPane tab={<>
+                    <CrownOutlined style={{ color: '#FF1493', fontSize: '20px', marginRight: '8px' }} />
+                    <Text style={{ color: '#FF1493', fontSize: '18px',fontFamily:'sans-serif' }} strong>Jewelry</Text>
+                  </>} key="jwelery">
               <Jwelery />
             </TabPane>
           </Tabs>

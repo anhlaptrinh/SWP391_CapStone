@@ -305,7 +305,7 @@ export default function ProductsList() {
           onClick={() => onOpenFormHandler()}
           className="mb-2"
         >
-          Create Jwelery
+          Create Jewelry
         </Button>
       </div>
       <Table

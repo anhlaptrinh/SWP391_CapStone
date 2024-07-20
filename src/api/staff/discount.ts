@@ -23,6 +23,24 @@ export const useCreateDiscount = () => {
                 queryClient.refetchQueries(['discount']);
                 close();
             },
+            onError: () => message.error("Phone Number is exist")
         },
     );
 };
+export const useUpdateDiscount = () => {
+    return useMutation(
+        async (values: any) =>
+            apiClient.put({
+                url: `/customers`,
+                data: values,
+            }),
+        {
+            onSuccess: () => {
+                message.success('Update Discount successfully');
+                queryClient.refetchQueries(['discount']);
+                close();
+            },
+        },
+    );
+};
+

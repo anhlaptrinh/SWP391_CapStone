@@ -272,7 +272,7 @@ export default function InvoiceChecked() {
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
-
+    { title: "Customer", align: "center", dataIndex: "customerName", key: "customerName" },
     {
       title: "Items Order",
       align: "center",

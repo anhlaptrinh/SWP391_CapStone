@@ -57,6 +57,7 @@ export const useListPurchaseInvoice=(invoiceStatus: string,invoiceType:string, p
             onSuccess: () => {
                 message.success('Update Invoice successfully');
                 queryClient.refetchQueries(['listInvoice']);
+                queryClient.refetchQueries(['listPurchaseInvoice']);
                 clearCart();
                 setupdate(false);
             },
@@ -109,6 +110,7 @@ export const useCancelInvoice = () => {
               queryClient.fetchQuery(['listInvoice'])
               message.success('Cancel Invoice successfully');
               queryClient.invalidateQueries(['listInvoice']);
+              queryClient.invalidateQueries(['listPurchaseInvoice']);
           },
       },
   );
@@ -122,7 +124,7 @@ export const useChangeInvoice = () => {
         onSuccess: () => {
               message.success('Update Invoice successfully');
               queryClient.refetchQueries(['listInvoice']); 
-            
+              queryClient.refetchQueries(['listPurchaseInvoice']);  
           },
       },
   );

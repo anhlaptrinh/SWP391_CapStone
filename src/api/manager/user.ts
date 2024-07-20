@@ -26,7 +26,7 @@ export const useEmployeeRevenue = () => {
 };
 export const useListCounters = () => {
     return useQuery(['listCounters'], () =>
-        apiClient.get({ url: '/counters?page=1&pageSize=100' }),
+        apiClient.get({ url: '/counters/id-name' }),
     );
 };
 export const useDetailUser = (payload?: any) => {

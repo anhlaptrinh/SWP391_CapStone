@@ -207,7 +207,8 @@ export default function ProductsList() {
       dataIndex: "category",
     },
     { title: "Gender", dataIndex: "gender" },
-    // { title: "Colour", dataIndex: "colour" },
+    { title: "Counter", dataIndex: "counter" },
+    { title: "Quantity", dataIndex: "quantity" },
     {
       title: " Product Price",
       dataIndex: "productPrice",
@@ -333,7 +334,10 @@ export default function ProductsList() {
         <FormProduct
           formData={
             formProduct
-              ? { ...formProduct, weight: formProduct.materials[0].weight }
+              ? {
+                  ...formProduct,
+                  weight: formProduct.materials[0].weight,
+                }
               : formProduct
           }
           onClose={closeFormProduct}

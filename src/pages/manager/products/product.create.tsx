@@ -74,8 +74,8 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
         productTypeId: dataProducttype.find(
           (g) => g.name === formData?.productType
         ).id,
-        // colourId: dataColour.find((g) => g.colourName === formData?.colour)
-        //   .colourId,
+        counterId: dataCounter.find((g) => g.counterName === formData?.counter)
+          .counterId,
         genderId: dataGender.find((g) => g.genderName === formData?.gender)
           .genderId,
         categoryId: dataCategory.find(
@@ -119,10 +119,11 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
           counterId: values.counterId || formData.counter,
           genderId: values.genderId || formData.gender,
           gems: values.gems || formData.gems,
+          quantity: values.quantity || formData.quantity,
           materials: [
             {
-              materialId:
-                values.materials || formData.materials[0].materialId,
+              materialId: values.materials[0] || formData.materials[0].materialId,
+              // 4,
               weight: values.weight || formData.materials[0].weight,
             },
           ],

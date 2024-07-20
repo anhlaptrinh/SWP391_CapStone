@@ -334,7 +334,10 @@ export default function ProductsList() {
         <FormProduct
           formData={
             formProduct
-              ? { ...formProduct, weight: formProduct.materials[0].weight }
+              ? {
+                  ...formProduct,
+                  weight: formProduct.materials[0].weight,
+                }
               : formProduct
           }
           onClose={closeFormProduct}

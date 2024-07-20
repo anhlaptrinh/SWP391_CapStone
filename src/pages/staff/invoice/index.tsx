@@ -1,8 +1,8 @@
-import { useChangeInvoice, useListInvoice, useListPurchaseInvoice, usePaymentVNPAY,  usePrintWarranty } from '@/api/staff/listInvoice';
+import { useCancelInvoice, useChangeInvoice, useListInvoice, useListPurchaseInvoice, usePaymentVNPAY,  usePrintWarranty } from '@/api/staff/listInvoice';
 import { IconButton, Iconify } from '@/components/icon';
 import { CircleLoading } from '@/components/loading';
-import { ArrowDownOutlined, DeliveredProcedureOutlined, FileProtectOutlined, PayCircleOutlined } from '@ant-design/icons';
-import { Table, Popover, Tag, Tabs, Button, message } from 'antd';
+import { ArrowDownOutlined, DeleteOutlined, DeliveredProcedureOutlined, FileProtectOutlined, PayCircleOutlined } from '@ant-design/icons';
+import { Table, Popover, Tag, Tabs, Button, message, Popconfirm } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import axios from 'axios';
 import { useState } from 'react';
@@ -19,6 +19,8 @@ export default function Invoice() {
   const {mutateAsync: statusInvoice}=useChangeInvoice();
   const {mutateAsync:vnpayPayment}=usePaymentVNPAY();
   const [invoiceId,setInvoiceId]=useState();
+  const {mutateAsync:cancelInvoice}=useCancelInvoice();
+
   const [error, setError] = useState<string | null>(null);
   const { TabPane } = Tabs;
   const [loading, setLoading] = useState<boolean>(false);
@@ -135,7 +137,20 @@ export default function Invoice() {
           >
             <Iconify icon="mdi:credit-card-outline" size={18} />
           </IconButton>
-          
+          <Popconfirm
+            title="Are you sure you want to delete this record?"
+            onConfirm={() => cancelInvoice(record.invoiceId)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Popover content="Delete this record">
+              <Button
+                type="primary"
+                danger
+                icon={<DeleteOutlined />}
+              />
+            </Popover>
+          </Popconfirm>
         </div>
       ),
     },
@@ -257,6 +272,116 @@ export default function Invoice() {
     },
     
   ];
+  const columnsbuyDeliver: ColumnsType<any> = [
+    {
+      title: "ID",
+      dataIndex: "invoiceId",
+      key: 'invoiceId',
+      width: '5%'
+    },
+    
+    { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
+
+    {
+      title: "Items Order",
+      align: "center",
+      dataIndex: "items",
+      key: "items",
+      render: (items) => {
+        const popoverContent = (
+          <Table
+            dataSource={items.map((item:any, index:number) => ({ ...item, key: index }))}
+            columns={[
+              { title: 'ID', dataIndex: 'productId', key: 'productId' },
+              { title: 'Name', dataIndex: 'productName', key: 'productName' },
+              { title: 'Quantity',align:'center', dataIndex: 'quantity', key: 'quantity' },
+              { 
+                title: 'Price', 
+                dataIndex: 'productPrice', 
+                key: 'productPrice', 
+                render: (text) => `${new Intl.NumberFormat('en-US').format(text)} VND`
+              }
+            ]}
+            pagination={false}
+            size="small"
+            bordered
+          />
+        );
+        return (
+          <Popover content={popoverContent} title="Item Details" trigger="hover">
+            <a>View Items</a>
+          </Popover>
+        );
+      }
+    },
+    {
+      title: "Price",
+      align: "center",
+      dataIndex: "total",
+      key: "total",
+      render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
+    },
+    {
+      title: "Promotion",
+      align: "center",
+      dataIndex: "perDiscount",
+      key: "perDiscount",
+      render: (text) => <Tag color="red">{text}%</Tag>
+    },
+    
+
+    {
+      title: "Amount",
+      align: "center",
+      dataIndex: "totalWithDiscount",
+      key: "totalWithDiscount",
+      sorter: (a, b) => b.totalWithDiscount - a.totalWithDiscount,
+      render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
+    },
+    {
+      title: "Order Status",
+      align: "center",
+      dataIndex: "invoiceStatus",
+      key: "invoiceStatus",
+      render: (status) => {
+        let color;
+        switch(status) {
+          case 'Delivered':
+            color = 'green';
+            break;
+          case 'Pending':
+            color = 'gold';
+            break;
+          case 'Processing':
+            color = 'magenta';
+            break;
+          default:
+            color = 'blue';
+        }
+        return <Tag color={color}>{status}</Tag>;
+      }
+    },
+    {
+      title: "Action",
+      dataIndex: "actions",
+      align: "center",
+      render: (_, record) => (
+        <div className="text-gray  flex w-full items-center justify-around">
+          <Popover content="Print Invoice">
+            <Button
+              size='middle'
+              type="primary"
+              danger
+              onClick={()=>handlePrinInvoice(record.invoiceId)}
+              icon={<FileProtectOutlined />}
+            ></Button>
+          </Popover>
+          
+        </div>
+      ),
+    },
+    
+  ];
   const columnsBuy: ColumnsType<any> = [
     {
       title: "ID",
@@ -353,7 +478,20 @@ export default function Invoice() {
           >
             <Iconify icon="mdi:credit-card-outline" size={18} />
           </IconButton>
-          
+          <Popconfirm
+            title="Are you sure you want to delete this record?"
+            onConfirm={() => cancelInvoice(record.invoiceId)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Popover content="Delete this record">
+              <Button
+                type="primary"
+                danger
+                icon={<DeleteOutlined />}
+              />
+            </Popover>
+          </Popconfirm>
         </div>
       ),
     },
@@ -712,7 +850,7 @@ export default function Invoice() {
           <TabPane tab="Delivered" key="2-3">
             <Table
               rowKey="invoiceId"
-              columns={columnsDeliver}
+              columns={columnsbuyDeliver}
               
               scroll={{ x: "max-content" }}
               dataSource={deliveredPInvoices?.items}

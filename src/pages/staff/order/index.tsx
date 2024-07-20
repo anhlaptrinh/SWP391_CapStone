@@ -1,8 +1,9 @@
-import { Card, Col, Input, Row, Tabs, Tag, Typography } from "antd";
+import { Button, Card, Col, Row, Tabs, Typography } from "antd";
 import Gems from "../Products/Gems";
 import Gold from "../Products/Gold";
 import OrderDetail from "./orderDetails";
 import Jwelery from "../Products/Jwelery";
+import { useListGems, uselistGold, useListJwelery } from "@/api/staff/listProduct";
 
 
 
@@ -13,16 +14,26 @@ export default function Order() {
   const user = JSON.parse(userlocal);
   const username=user.username;
   const {Text}=Typography;
-  
+  const {refetch:jrefresh}=useListJwelery();
+  const {refetch:grefresh}=useListGems();
+  const {refetch:refresh}=uselistGold();
 
 
 const { Title } = Typography;
+const handleRefresh=()=>{
+  // window.location.reload();
+  jrefresh();
+  grefresh();
+  refresh();
+}
   return (
     <div className="h-full">
     <Row gutter={12}>
       <Col span={14}>
         <Card style={{ backgroundColor: '#f0f2f5' }} >
-          <Tabs style={{fontSize:'30px'}} defaultActiveKey="gold" type="card">
+          <Tabs tabBarExtraContent={
+            <Button danger onClick={handleRefresh}>Refresh</Button>
+          } style={{fontSize:'30px'}} defaultActiveKey="gold" type="card">
             <TabPane tab={<Text style={{color:'Orange'}} strong>Gold</Text>} key="gold">
               <Gold />
             </TabPane>

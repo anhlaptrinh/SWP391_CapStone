@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiClient from "../apiClient";
 
 export const useListJwelery = (payload?:any) => {
-    return useQuery(['listProduct'], () =>
+    return useQuery(['listProducts'], () =>
         apiClient.get({ url: `/products/jewelries?isActive=true&page=1&pageSize=100`,params:{productId:payload}}),
     );
 };

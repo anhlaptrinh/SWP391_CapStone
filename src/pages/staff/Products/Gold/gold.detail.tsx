@@ -40,7 +40,7 @@ export default function GoldDetail({data,onClose}:GoldDetailProps) {
               </Typography.Text>
             </Descriptions.Item>
             <Descriptions.Item label="Purchase Price" span={2}>
-              <Typography.Text strong>{data?.materialPrice?.buyPrice}</Typography.Text>
+              <Typography.Text strong>{numberWithCommas(data.materialPrice?.buyPrice)||""} VND</Typography.Text>
 
             </Descriptions.Item>
             {/* <Descriptions.Item label="Create at">

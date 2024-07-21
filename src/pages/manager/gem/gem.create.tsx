@@ -280,7 +280,13 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
                 label="Gem price"
                 name="price"
                 required
-                // rules={[{ required: true, message: "Please input price" }]}
+                rules={[
+                  { required: true, message: "Please input price" },
+                  {
+                    pattern: /^[0-9]*\.?[0-9]*$/,
+                    message: "The input is not a valid number",
+                  },
+                ]}
               >
                 <Input placeholder="Gem price" />
               </Form.Item>

@@ -245,6 +245,10 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             required
             rules={[
               { required: true, message: "Please input Percent Price Rate" },
+              {
+                pattern: /^[0-9]*\.?[0-9]*$/,
+                message: "The input is not a valid number",
+              },
             ]}
           >
             <Input />
@@ -255,6 +259,10 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             required
             rules={[
               { required: true, message: "Please input  Production Cost" },
+              {
+                pattern: /^[0-9]*\.?[0-9]*$/,
+                message: "The input is not a valid number",
+              },
             ]}
           >
             <Input />
@@ -343,7 +351,13 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             label="Weight"
             name="weight"
             required
-            rules={[{ required: true, message: "Please input weight" }]}
+            rules={[
+              { required: true, message: "Please input weight" },
+              {
+                pattern: /^[0-9]*\.?[0-9]*$/,
+                message: "The input is not a valid number",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -351,7 +365,13 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
             label="Quantity"
             name="quantity"
             required
-            rules={[{ required: true, message: "Please input quantity" }]}
+            rules={[
+              { required: true, message: "Please input quantity" },
+              {
+                pattern: /^[0-9]*\.?[0-9]*$/,
+                message: "The input is not a valid number",
+              },
+            ]}
           >
             <Input />
           </Form.Item>

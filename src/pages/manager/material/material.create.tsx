@@ -103,7 +103,13 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
               label="Buy Price"
               name="buyPrice"
               required
-              rules={[{ required: true, message: "Please input Buy Price" }]}
+              rules={[
+                { required: true, message: "Please input Buy Price" },
+                {
+                  pattern: /^[0-9]*\.?[0-9]*$/,
+                  message: "The input is not a valid number",
+                },
+              ]}
             >
               <Input />
             </Form.Item>
@@ -111,7 +117,13 @@ export function FormMaterial({ formData, onClose }: MaterialCreateFormProps) {
               label="Sell price"
               name="sellPrice"
               required
-              rules={[{ required: true, message: "Please input Sell price" }]}
+              rules={[
+                { required: true, message: "Please input Sell price" },
+                {
+                  pattern: /^[0-9]*\.?[0-9]*$/,
+                  message: "The input is not a valid number",
+                },
+              ]}
             >
               <Input />
             </Form.Item>

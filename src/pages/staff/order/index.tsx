@@ -34,7 +34,13 @@ const handleRefresh=()=>{
         <Card style={{ backgroundColor: '#f0f2f5' }} >
           <Tabs tabBarExtraContent={
             <Button danger onClick={handleRefresh}>Refresh</Button>
-          } style={{fontSize:'30px'}} defaultActiveKey="gold" type="line" >
+          } style={{fontSize:'30px'}} defaultActiveKey="jwelery" type="line" >
+            <TabPane tab={<>
+                    <CrownOutlined style={{ color: '#FF1493', fontSize: '20px', marginRight: '8px' }} />
+                    <Text style={{ color: '#FF1493', fontSize: '18px',fontFamily:'sans-serif' }} strong>Jewelry</Text>
+                  </>} key="jwelery">
+              <Jwelery />
+            </TabPane>
             <TabPane tab={<> <GoldOutlined   style={{ color: 'Orange', fontSize: '20px', marginRight: '8px' }} /> <Text style={{ color: 'Orange', fontSize: '18px',fontFamily:'sans-serif' }} strong>Gold</Text></>} key="gold">
               <Gold />
             </TabPane>
@@ -44,12 +50,7 @@ const handleRefresh=()=>{
                   </>} key="gems">
               <Gems />
             </TabPane>
-            <TabPane tab={<>
-                    <CrownOutlined style={{ color: '#FF1493', fontSize: '20px', marginRight: '8px' }} />
-                    <Text style={{ color: '#FF1493', fontSize: '18px',fontFamily:'sans-serif' }} strong>Jewelry</Text>
-                  </>} key="jwelery">
-              <Jwelery />
-            </TabPane>
+            
           </Tabs>
         </Card>
       </Col>

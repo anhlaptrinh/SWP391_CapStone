@@ -2,12 +2,13 @@ import { useCancelInvoice, useChangeInvoice, useListInvoice, useListPurchaseInvo
 import { IconButton, Iconify } from '@/components/icon';
 import { CircleLoading } from '@/components/loading';
 import { ArrowDownOutlined, DeleteOutlined, DeliveredProcedureOutlined, FileProtectOutlined, PayCircleOutlined, SearchOutlined } from '@ant-design/icons';
-import { Table, Popover, Tag, Tabs, Button, message, Popconfirm, InputRef, Input, Space, TableColumnType } from 'antd';
+import { Table, Popover, Tag, Tabs, Button, message, Popconfirm, InputRef, Input, Space, TableColumnType, Modal, Form } from 'antd';
+import form from 'antd/es/form';
 import { ColumnsType } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 
 
@@ -26,17 +27,21 @@ export default function Invoice() {
 
   const [error, setError] = useState<string | null>(null);
   const { TabPane } = Tabs;
+  const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
+  const [cashOpen,setcashOpen]=useState(false);
+  const [id,setId]=useState();
+  
   if (isLoadingPending) return <CircleLoading />;
   if (isLoadingProcessing) return <CircleLoading />;
   if (isLoadingDelivered) return <CircleLoading />;
   if (isLoadingPPending) return <CircleLoading />;
   if (isLoadingPProcessing) return <CircleLoading />;
   if (isLoadingPDelivered) return <CircleLoading />;
-
+  
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
@@ -437,6 +442,13 @@ export default function Invoice() {
       }
     },
     {
+      title: "Type",
+      align: "center",
+      dataIndex: "inOrOut",
+      key: "inOrOut",
+      render: (text) => <Tag color="purple">{text}</Tag>
+    },
+    {
       title: "Price",
       align: "center",
       dataIndex: "total",
@@ -666,6 +678,7 @@ export default function Invoice() {
         );
       }
     },
+    
     {
       title: "Price",
       align: "center",
@@ -730,7 +743,13 @@ export default function Invoice() {
           </Popover>
           <Popover content="Payment">
             <Button
-            onClick={()=>handleCash(record.invoiceId)}
+            onClick={()=>{
+              setcashOpen(true);
+              form.setFieldsValue({
+                totalWithDiscount:record.totalWithDiscount
+              });
+              setId(record.invoiceId);
+            }}
               size='small'
               type="primary"
               style={{backgroundColor:'Orange'}}
@@ -784,6 +803,13 @@ export default function Invoice() {
       }
     },
     {
+      title: "Type",
+      align: "center",
+      dataIndex: "inOrOut",
+      key: "inOrOut",
+      render: (text) => <Tag color="purple">{text}</Tag>
+    },
+    {
       title: "Price",
       align: "center",
       dataIndex: "total",
@@ -825,7 +851,7 @@ export default function Invoice() {
         <div className="text-gray  flex w-full items-center justify-center">
           <Popover content="Payment">
             <Button
-            onClick={()=>handleCash(record.invoiceId)}
+            onClick={()=>handleBuyCash(record.invoiceId)}
               size='middle'
               type="primary"
               style={{backgroundColor:'green'}}
@@ -835,6 +861,25 @@ export default function Invoice() {
       ),
     },
   ];
+  const onFormValuesChange = (_:any, allValues:any) => {
+    calculateMoneyExchange();
+  };
+
+  const calculateMoneyExchange = () => {
+    const enterAmount = form.getFieldValue("enteramount");
+    const totalWithDiscount = form.getFieldValue("totalWithDiscount") || 0;
+    if (enterAmount !== undefined) {
+      const moneyEx = Math.max(0, enterAmount - totalWithDiscount);
+      const formattedMoneyEx = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      }).format(moneyEx);
+      form.setFieldsValue({ moneyex: formattedMoneyEx });
+    }
+  };
+
+  // Lắng nghe sự thay đổi của ô "Enter Amount"
+  
   const handlePrintWarranty=async(id:any)=>{
     if (!id) {
       message.error("id error");
@@ -895,12 +940,25 @@ export default function Invoice() {
       //  statusInvoice(id)
     vnpayPayment(id)
   }
-  const handleCash=(id:any)=>{
-      statusInvoice(id)
-  
+  const handleCash=()=>{
+    form.resetFields();
+    
+      form.validateFields().then(()=>{statusInvoice(id);setcashOpen(false);}).catch((info) => {
+       
+      }); 
+  }
+const handleCancel=()=>{
+  form.resetFields();
+  setcashOpen(false);
+    
+
+}
+const handleBuyCash=(id:any)=>{
+  statusInvoice(id)
 }
   return (
-    <Tabs defaultActiveKey="1" className="mt-3" >
+    <>
+      <Tabs defaultActiveKey="1" className="mt-3" >
       <TabPane tab="Sales Invoice" key="1">
         <Tabs defaultActiveKey="1" type='card'>
           <TabPane tab="Pending" key="1-1">
@@ -976,6 +1034,34 @@ export default function Invoice() {
         </Tabs>
       </TabPane>
     </Tabs>
+    <Modal
+        title='Payment'
+        open={cashOpen}
+        onOk={handleCash}
+        onCancel={handleCancel}
+        okText='Pay'
+      >
+         <Form onValuesChange={onFormValuesChange} form={form} layout="vertical" name="userForm">
+      <Form.Item
+        name="enteramount"
+        label="Enter Amount"
+        rules={[{ required: true, message: "Please Enter Amount!" }]}
+      >
+        <Input onChange={calculateMoneyExchange} />
+      </Form.Item>
+      <Form.Item name="totalWithDiscount" label="Money to Pay">
+        <Input disabled defaultValue={0} />
+      </Form.Item>
+      <Form.Item
+        name="moneyex"
+        label="Money Exchange"
+        rules={[{ required: true, message: "Please Enter Exchange Money!" }]}
+      >
+        <Input disabled />
+      </Form.Item>
+    </Form>
+      </Modal>
+    </>
   )
 }
 

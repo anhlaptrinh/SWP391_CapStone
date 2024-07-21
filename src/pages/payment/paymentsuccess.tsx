@@ -7,7 +7,7 @@ const PaymentSuccess: React.FC = () => {
   const navigate = useNavigate();
 
   const goToHome = () => {
-    navigate("/staff/invoices");
+    navigate("/invoice");
   };
 
   return (

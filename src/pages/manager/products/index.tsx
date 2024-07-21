@@ -82,7 +82,9 @@ export default function ProductsList() {
           setSearchText("");
         };
 
-        const getColumnSearchProps = (dataIndex: any ): TableColumnType<any> => ({
+        const getColumnSearchProps = (
+          dataIndex: any
+        ): TableColumnType<any> => ({
           filterDropdown: ({
             setSelectedKeys,
             selectedKeys,
@@ -155,7 +157,7 @@ export default function ProductsList() {
             record[dataIndex]
               .toString()
               .toLowerCase()
-              .includes((value as string).toLowerCase()),
+              .includes((value as string).trim().toLowerCase()),
           onFilterDropdownOpenChange: (visible) => {
             if (visible) {
               setTimeout(() => searchInput.current?.select(), 100);

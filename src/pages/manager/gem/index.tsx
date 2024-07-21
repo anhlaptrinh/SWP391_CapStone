@@ -147,7 +147,7 @@ export default function GemList() {
         record[dataIndex]
           .toString()
           .toLowerCase()
-          .includes((value as string).toLowerCase()),
+          .includes((value as string).trim().toLowerCase()),
       onFilterDropdownOpenChange: (visible) => {
         if (visible) {
           setTimeout(() => searchInput.current?.select(), 100);

@@ -202,7 +202,7 @@ export default function DiscountPoint() {
               >Apply</Button>
             </Popover>
           </Popconfirm>
-          {/* <Button
+          <Button
                 onClick={() => {
                   setUpdatePoint(true);
                   setCurrentRecord(record); // Lưu bản ghi hiện tại để cập nhật
@@ -215,7 +215,7 @@ export default function DiscountPoint() {
                 }}
                 type="primary"
                 style={{ backgroundColor: "green" }}
-              >Edit</Button> */}
+              >Edit</Button>
         </div>
       )
     },
@@ -338,7 +338,7 @@ export default function DiscountPoint() {
             <Input />
           </Form.Item>
           <Form.Item
-            name={updatePoint?"fullName":"customerName"}
+            name="customerName"
             label="Customer Name"
             rules={[{ required: true, message: "Please Enter Customer Name!" }]}
           >

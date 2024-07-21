@@ -164,7 +164,7 @@ export default function DiscountPoint() {
     },
     {
       title: "Name",
-      dataIndex: "fullName",
+      dataIndex: "customerName",
     },
     {
       title: "Phone Number",
@@ -207,8 +207,9 @@ export default function DiscountPoint() {
                   setUpdatePoint(true);
                   setCurrentRecord(record); // Lưu bản ghi hiện tại để cập nhật
                   form.setFieldsValue({
+                    customerId:record.customerId,
                     phoneNumber: record.phoneNumber,
-                    customerName: record.fullName,
+                    customerName: record.customerName,
                     point: record.point,
                   });
                   setPoint(true);
@@ -223,7 +224,7 @@ export default function DiscountPoint() {
 
   const handleApply = (record: any) => {
     setSelectedCustomer({
-      name: record.fullName,
+      name: record.customerName,
       phone: record.phoneNumber,
       discount: record.discount
     });
@@ -232,7 +233,7 @@ export default function DiscountPoint() {
 
   const handleNoApply = (record: any) => {
     setSelectedCustomer({
-      name: record.fullName,
+      name: record.customerName,
       phone: record.phoneNumber,
       discount: 0,
     });
@@ -328,6 +329,15 @@ export default function DiscountPoint() {
         okText={updatePoint ? "Update" : "Ok"}
       >
         <Form form={form} layout="vertical" name="userForm">
+        {updatePoint&&(<Form.Item
+            name="customerId"
+            label="ID"
+            rules={[
+              { required: true, message: "Please Enter ID!" },
+            ]}
+          >
+            <Input disabled />
+          </Form.Item>)}
           <Form.Item
             name="phoneNumber"
             label="Phone Number"

@@ -8,6 +8,7 @@ import OrderRePurchase from "./order.repurchase";
 import { SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
+import dayjs from "dayjs";
 
 export default function InvoiceChecked() {
   const data: any = [];
@@ -245,7 +246,7 @@ export default function InvoiceChecked() {
         return <Tag color={color}>{status}</Tag>;
       },
     },
-
+    { title: "Order Date", align: "center", dataIndex: "orderDate", key: "orderDate",render: (text: string) => dayjs(text).format("DD/MM/YYYY") },
     {
       title: "Action",
       dataIndex: "actions",

@@ -92,7 +92,7 @@ const OrderDetail: React.FC = () => {
       const editData={
         invoiceDetails:invoiceDetails,
         invoiceStatus: 'Pending',
-        total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+        total: cartItems.reduce((acc, item) => acc + item.price , 0),
         invoiceId:selectedCustomer?.InvoiceId
       }
       try{
@@ -118,7 +118,7 @@ const OrderDetail: React.FC = () => {
     const editData={
       invoiceDetails:invoiceDetails,
       invoiceStatus: 'Draft',
-      total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+      total: cartItems.reduce((acc, item) => acc + item.price, 0),
       invoiceId:selectedCustomer?.InvoiceId
     }
     try{
@@ -310,7 +310,7 @@ const OrderDetail: React.FC = () => {
           >
             <Popover content="Update Order?">
             <Button
-              disabled={!isUpdate&&cartItems.length===0}
+              disabled={!isUpdate}
               style={{
                 backgroundColor: !isUpdate ? "lightgray" : "greenyellow",
                 color: !isUpdate ? "gray" : "black",

@@ -251,12 +251,13 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               },
             ]}
           >
-            <Input />
+            <Input disabled={formData?.productId}/>
           </Form.Item>
           <Form.Item
             label="Production Cost"
             name="productionCost"
             required
+           
             rules={[
               { required: true, message: "Please input  Production Cost" },
               {
@@ -265,7 +266,7 @@ export function FormProduct({ formData, onClose }: ProductCreateFormProps) {
               },
             ]}
           >
-            <Input />
+            <Input  disabled={formData?.productId}/>
           </Form.Item>
           <Form.Item
             label="Category"

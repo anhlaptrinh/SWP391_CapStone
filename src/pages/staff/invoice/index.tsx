@@ -1,12 +1,14 @@
 import { useCancelInvoice, useChangeInvoice, useListInvoice, useListPurchaseInvoice, usePaymentVNPAY,  usePrintWarranty } from '@/api/staff/listInvoice';
 import { IconButton, Iconify } from '@/components/icon';
 import { CircleLoading } from '@/components/loading';
-import { ArrowDownOutlined, DeleteOutlined, DeliveredProcedureOutlined, FileProtectOutlined, PayCircleOutlined } from '@ant-design/icons';
-import { Table, Popover, Tag, Tabs, Button, message, Popconfirm } from 'antd';
+import { ArrowDownOutlined, DeleteOutlined, DeliveredProcedureOutlined, FileProtectOutlined, PayCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { Table, Popover, Tag, Tabs, Button, message, Popconfirm, InputRef, Input, Space, TableColumnType } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import { FilterDropdownProps } from 'antd/es/table/interface';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import Highlighter from 'react-highlight-words';
 
 
 export default function Invoice() {
@@ -25,6 +27,9 @@ export default function Invoice() {
   const [error, setError] = useState<string | null>(null);
   const { TabPane } = Tabs;
   const [loading, setLoading] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
   if (isLoadingPending) return <CircleLoading />;
   if (isLoadingProcessing) return <CircleLoading />;
   if (isLoadingDelivered) return <CircleLoading />;
@@ -32,14 +37,125 @@ export default function Invoice() {
   if (isLoadingPProcessing) return <CircleLoading />;
   if (isLoadingPDelivered) return <CircleLoading />;
 
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: FilterDropdownProps["confirm"],
+    dataIndex: any
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
 
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText("");
+  };
+
+  const getColumnSearchProps = (dataIndex: any): TableColumnType<any> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90, borderRadius: 5 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90, borderRadius: 5 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText((selectedKeys as string[])[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            style={{ color: "red" }}
+            onClick={() => {
+              close();
+            }}
+          >
+            Close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined
+        style={{
+          fontSize: '17px',
+          alignContent: 'center',
+          width: '17px',
+          color: filtered ? "#1677ff" : undefined
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes((value as string).trim().toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
 
   const columns: ColumnsType<any> = [
     {
       title: "ID",
       dataIndex: "invoiceId",
       key: 'invoiceId',
-      width: '5%'
+      width: '5%',
+      ...getColumnSearchProps("invoiceId")
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },
@@ -97,6 +213,7 @@ export default function Invoice() {
       align: "center",
       dataIndex: "totalWithDiscount",
       key: "totalWithDiscount",
+      sorter: (a, b) => b.totalWithDiscount - a.totalWithDiscount,
       render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
     },
     {
@@ -162,6 +279,7 @@ export default function Invoice() {
       title: "ID",
       dataIndex: "invoiceId",
       key: 'invoiceId',
+      ...getColumnSearchProps("invoiceId"),
       width: '5%'
     },
     
@@ -280,6 +398,7 @@ export default function Invoice() {
       title: "ID",
       dataIndex: "invoiceId",
       key: 'invoiceId',
+      ...getColumnSearchProps("invoiceId"),
       width: '5%'
     },
     
@@ -391,6 +510,7 @@ export default function Invoice() {
       title: "ID",
       dataIndex: "invoiceId",
       key: 'invoiceId',
+      ...getColumnSearchProps("invoiceId"),
       width: '5%'
     },
     
@@ -508,6 +628,7 @@ export default function Invoice() {
       title: "ID",
       dataIndex: "invoiceId",
       key: 'invoiceId',
+      ...getColumnSearchProps("invoiceId"),
       width: '5%'
     },
     
@@ -624,6 +745,7 @@ export default function Invoice() {
       title: "ID",
       dataIndex: "invoiceId",
       key: 'invoiceId',
+      ...getColumnSearchProps("invoiceId"),
       width: '5%'
     },
     
@@ -666,24 +788,10 @@ export default function Invoice() {
       align: "center",
       dataIndex: "total",
       key: "total",
+      sorter: (a, b) => b.total - a.total,
       render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
-    },
-    {
-      title: "Promotion",
-      align: "center",
-      dataIndex: "perDiscount",
-      key: "perDiscount",
-      render: (text) => <Tag color="red">{text}%</Tag>
     },
     
-
-    {
-      title: "Amount",
-      align: "center",
-      dataIndex: "totalWithDiscount",
-      key: "totalWithDiscount",
-      render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
-    },
     {
       title: "Order Status",
       align: "center",

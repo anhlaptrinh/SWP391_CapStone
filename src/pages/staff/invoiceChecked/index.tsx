@@ -116,7 +116,7 @@ export default function InvoiceChecked() {
               record[dataIndex]
                 .toString()
                 .toLowerCase()
-                .includes((value as string).toLowerCase()),
+                .includes((value as string).trim().toLowerCase()),
             onFilterDropdownOpenChange: (visible) => {
               if (visible) {
                 setTimeout(() => searchInput.current?.select(), 100);
@@ -155,6 +155,7 @@ export default function InvoiceChecked() {
       align: "center",
       dataIndex: "customerName",
       key: "customerName",
+      ...getColumnSearchProps("customerName"),
     },
     {
       title: "Items Order",
@@ -268,7 +269,8 @@ export default function InvoiceChecked() {
       title: "ID",
       dataIndex: "invoiceId",
       key: 'invoiceId',
-      width: '5%'
+      width: '5%',
+      ...getColumnSearchProps("invoiceId"),
     },
     
     { title: "Staff", align: "center", dataIndex: "userName", key: "userName" },

@@ -52,22 +52,17 @@ export default function Gemsdetails({data,onClose}:formGemDetails) {
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Quantity" span={2}>
-            <Tag color={data?.quantity<=3 ? "green" : "green"}>
+            <Tag color={data?.quantity<=3 ? "red" : "green"}>
               {data?.quantity }
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Product Type" span={2}>
             <Typography.Text strong>{data?.productType}</Typography.Text>
           </Descriptions.Item>
-          <Descriptions.Item label="Counter" span={2}>
-            <Typography.Text strong>{data?.counter}</Typography.Text>
-          </Descriptions.Item>
           <Descriptions.Item label="Image" span={2}>
           <img src={data?.featuredImage} alt="Product Image" style={{ maxWidth: '60px' }} />
           </Descriptions.Item>
-          <Descriptions.Item label="Unit" span={2}>
-          <Typography.Text strong>{data?.unit}</Typography.Text>
-          </Descriptions.Item>
+          
         </Descriptions>
         
         

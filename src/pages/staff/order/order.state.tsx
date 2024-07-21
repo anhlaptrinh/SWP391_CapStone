@@ -6,6 +6,7 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Button, message, Modal, Popconfirm, Popover, Table, Tabs, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import axios from "axios";
+import dayjs from "dayjs";
 
 type updateOrderForm={
     onClose:()=>void;
@@ -98,6 +99,7 @@ export default function OrderUpdater({onClose,setUpdate}:updateOrderForm) {
       key: "totalWithDiscount",
       render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
     },
+    { title: "Order Date", align: "center", dataIndex: "orderDate", key: "orderDate",render: (text: string) => dayjs(text).format("DD/MM/YYYY") },
     {
       title: "Order Status",
       align: "center",
@@ -193,6 +195,7 @@ export default function OrderUpdater({onClose,setUpdate}:updateOrderForm) {
       key: "totalWithDiscount",
       render: (text) => `${new Intl.NumberFormat('en-US').format(text)}VND`
     },
+    { title: "Order Date", align: "center", dataIndex: "orderDate", key: "orderDate",render: (text: string) => dayjs(text).format("DD/MM/YYYY") },
     {
       title: "Order Status",
       align: "center",

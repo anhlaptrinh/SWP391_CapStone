@@ -82,9 +82,18 @@ export default function Jwelerydetails({data,onClose}:JwerleryProps) {
             <Descriptions.Item label="Gender" span={2}>
               <Typography.Text strong>{data?.gender}</Typography.Text>
             </Descriptions.Item>
+            <Descriptions.Item label="Quantity" span={2}>
+            <Tag color={data?.quantity<=3 ? "red" : "green"}>
+              {data?.quantity }
+            </Tag>
+          </Descriptions.Item>
             <Descriptions.Item label="Image" span={2}>
             <img src={data?.featuredImage} alt="Product Image" style={{ maxWidth: '60px' }} />
             </Descriptions.Item>
+            <Descriptions.Item label="Counter" span={2}>
+            <Typography.Text strong>{data?.counter}</Typography.Text>
+            </Descriptions.Item>
+            
           </Descriptions>
           {data?.materials.length > 0 && (
           <Descriptions title="Material Detail" bordered>

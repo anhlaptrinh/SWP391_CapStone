@@ -957,9 +957,34 @@ const handleCancel=()=>{
 const handleBuyCash=(id:any)=>{
   statusInvoice(id)
 }
+const printReturnPolicy=async()=>{
+  setLoading(true);
+  setError(null);
+  try {
+    const response = await axios.get(
+      `https://jewelrysalessystem.azurewebsites.net/api/invoices/pdf`,
+      {
+        responseType: "blob",
+      }
+    );
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `invoiceWarranty.pdf`); // You can set the file name here
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode?.removeChild(link);
+  } catch (error) {
+    message.error("Failed to fetch invoice report");
+  } finally {
+    setLoading(false);
+  }
+}
   return (
     <>
-      <Tabs defaultActiveKey="1" className="mt-3" >
+      <Tabs tabBarExtraContent={
+            <Button type='primary' onClick={printReturnPolicy}>Download Return Policy</Button>
+          } defaultActiveKey="1" className="mt-3" >
       <TabPane tab="Sales Invoice" key="1">
         <Tabs defaultActiveKey="1" type='card'>
           <TabPane tab="Pending" key="1-1">

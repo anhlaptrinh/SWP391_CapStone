@@ -281,7 +281,7 @@ export function FormGem({ formData, onClose }: GemCreateFormProps) {
                 name="price"
                 required
                 rules={[
-                  { required: true, message: "Please input price" },
+                  // { required: true, message: "Please input price" },
                   {
                     pattern: /^[0-9]*\.?[0-9]*$/,
                     message: "The input is not a valid number",

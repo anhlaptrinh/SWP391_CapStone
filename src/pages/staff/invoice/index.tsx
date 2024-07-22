@@ -572,9 +572,10 @@ export default function Invoice() {
     {
       title: "Amount",
       align: "center",
-      dataIndex: "items",
-      key: "items",
-      render: (_,record) => `${new Intl.NumberFormat('en-US').format(record.items[0]?.productPrice || 0)} VND`,
+      dataIndex: "totalWithDiscount",
+      sorter: (a, b) => b.total - a.total,
+      key: "totalWithDiscount",
+      render: (text) => `${new Intl.NumberFormat("en-US").format(text)}VND`,
     },
     {
       title: "Order Status",
